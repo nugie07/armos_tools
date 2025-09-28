@@ -25,11 +25,11 @@ def get_env(name: str, default: Optional[str] = None) -> str:
     return value
 
 
-DB_HOST = get_env("DB_HOST")
-DB_PORT = int(get_env("DB_PORT", "5432"))
-DB_NAME = get_env("DB_NAME")
-DB_USER = get_env("DB_USER")
-DB_PASSWORD = get_env("DB_PASSWORD")
+DB_HOST = get_env("DATABASE_MAIN_HOST")
+DB_PORT = int(get_env("DATABASE_MAIN_PORT", "5432"))
+DB_NAME = get_env("DATABASE_MAIN_NAME")
+DB_USER = get_env("DATABASE_MAIN_USERNAME")
+DB_PASSWORD = get_env("DATABASE_MAIN_PASS")
 WH_TYPE = int(get_env("WH_TYPE"))
 
 
