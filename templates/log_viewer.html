@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log Viewer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <style>
+      .monospace { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
+      textarea.monospace { height: 200px; }
+    </style>
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <h4 class="mb-4">Log Viewer</h4>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <label class="form-label">Pilih File JSON</label>
+          <select id="ddlFile" class="form-select"></select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Cari Event</label>
+          <input id="searchEvent" type="text" class="form-control" placeholder="mis: WMS -> ARMOS" />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Cari Request</label>
+          <input id="searchRequest" type="text" class="form-control" placeholder="mis: M01SI4567-321" />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <button id="btnSearch" class="btn btn-primary">Search</button>
+      </div>
+
+      <div class="table-responsive mb-4">
+        <table class="table table-bordered table-striped" id="tblLogs">
+          <thead>
+            <tr>
+              <th>api_request_log_id</th>
+              <th>event</th>
+              <th>created_date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nama Event</label>
+          <input id="detailEvent" type="text" class="form-control monospace" readonly />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Created Date</label>
+          <input id="detailCreated" type="text" class="form-control monospace" readonly />
+        </div>
+        <div class="col-12">
+          <label class="form-label">Request</label>
+          <textarea id="detailRequest" class="form-control monospace" readonly></textarea>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Response</label>
+          <textarea id="detailResponse" class="form-control monospace" readonly></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const ddlFile = document.getElementById('ddlFile');
+      const searchEvent = document.getElementById('searchEvent');
+      const searchRequest = document.getElementById('searchRequest');
+      const btnSearch = document.getElementById('btnSearch');
+      const tblBody = document.querySelector('#tblLogs tbody');
+
+      const detailEvent = document.getElementById('detailEvent');
+      const detailCreated = document.getElementById('detailCreated');
+      const detailRequest = document.getElementById('detailRequest');
+      const detailResponse = document.getElementById('detailResponse');
+
+      let currentData = [];
+
+      function renderFileOptions(files){
+        ddlFile.innerHTML = '';
+        files.forEach(f => {
+          const opt = document.createElement('option');
+          opt.value = f;
+          opt.textContent = f;
+          ddlFile.appendChild(opt);
+        });
+      }
+
+      async function loadFiles(){
+        const res = await fetch('/api/log/files');
+        const json = await res.json();
+        renderFileOptions(json.data || []);
+      }
+
+      function renderRows(rows){
+        tblBody.innerHTML = '';
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.dataset.idx = r._idx;
+          tr.innerHTML = `<td>${r.api_request_log_id ?? ''}</td><td>${r.event ?? ''}</td><td>${r.created_date ?? ''}</td>`;
+          tr.addEventListener('dblclick', () => {
+            detailEvent.value = r.event ?? '';
+            detailCreated.value = r.created_date ?? '';
+            detailRequest.value = r.request ?? '';
+            detailResponse.value = r.response ?? '';
+          });
+          tblBody.appendChild(tr);
+        });
+      }
+
+      function fuzzyIncludes(haystack, needle){
+        if(!needle) return true;
+        if(haystack == null) return false;
+        return String(haystack).toLowerCase().includes(String(needle).toLowerCase());
+      }
+
+      async function doSearch(){
+        const file = ddlFile.value;
+        if(!file){
+          alert('Pilih file JSON terlebih dahulu');
+          return;
+        }
+        const qEvent = searchEvent.value.trim();
+        const qReq = searchRequest.value.trim();
+        const res = await fetch(`/api/log/search?file=${encodeURIComponent(file)}&event=${encodeURIComponent(qEvent)}&request=${encodeURIComponent(qReq)}`);
+        const json = await res.json();
+        currentData = (json.data || []).map((x, i) => ({...x, _idx: i}));
+        renderRows(currentData);
+      }
+
+      btnSearch.addEventListener('click', doSearch);
+      loadFiles();
+    </script>
+  </body>
+  </html>
+
+

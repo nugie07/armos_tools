@@ -1,0 +1,6356 @@
+[
+  {
+    "id": 1,
+    "outbound_reference": "B01SI2509-TESOPT0001",
+    "faktur_date": 45925,
+    "request_delivery_date": 45925,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00020",
+    "destination_name": "DINDA MOM & BABY SHOP",
+    "destination_address_1": "PANDEGILING 143",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "BBM",
+    "divisi": "VAPE",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "38343701090001",
+        "product_description": "VAPE 0.031 DIME JMB B EKONOMIS",
+        "group_id": 9,
+        "group_description": "09-COIL",
+        "product_type": 38,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1075137,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "38343701090002",
+        "product_description": "VAPE 0.031 DIME HITAM JUMBO",
+        "group_id": 9,
+        "group_description": "09-COIL",
+        "product_type": 38,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1620644,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "38343701090003",
+        "product_description": "VAPE HITAM",
+        "group_id": 9,
+        "group_description": "09-COIL",
+        "product_type": 38,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1280610,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "38343701090004",
+        "product_description": "VAPE 0.031 DIME JMB B SAKURA COIL",
+        "group_id": 9,
+        "group_description": "09-COIL",
+        "product_type": 38,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2105001,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "38343701090005",
+        "product_description": "VAPE STANDAR B",
+        "group_id": 9,
+        "group_description": "09-COIL",
+        "product_type": 38,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1434120,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "38343701090006",
+        "product_description": "VAPE JUMBO B",
+        "group_id": 9,
+        "group_description": "09-COIL",
+        "product_type": 38,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1291776,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "38343701090007",
+        "product_description": "VAPE STANDAR LAVENDER",
+        "group_id": 9,
+        "group_description": "09-COIL",
+        "product_type": 38,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 804137,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "outbound_reference": "B01SI2509-TESOPT0002",
+    "faktur_date": 45925,
+    "request_delivery_date": 45925,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00155",
+    "destination_name": "PALAPA MEGA GALAKSI",
+    "destination_address_1": "PP4J+4G9, Jl. Hayam Wuruk, Sawunggaling, Kec. Wonokromo, Surabaya, Jawa Timur 60242, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "BBM",
+    "divisi": "MIX",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "48364701080001",
+        "product_description": "EDP BRAVAS DIAMOND (YELLOW) 48X75ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1066208,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "48364701080002",
+        "product_description": "EDP BRAVAS ROMANCE (VIOLET) 48X75ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1643070,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "48364701080003",
+        "product_description": "EDP BRAVAS VALENTINE (PINK) 48X75ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1368700,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "48364701080004",
+        "product_description": "EDP BRAVAS CUPID (RED) 48X75ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 936278,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "48364701080005",
+        "product_description": "EDP BRAVAS FOREVER (GREEN) 48X75ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 371310,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "48364701080006",
+        "product_description": "EDP BRAVAS DIAMOND (YELLOW) 36X75ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 699584,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "outbound_reference": "G01SI2509-TESOPT0003",
+    "faktur_date": 45925,
+    "request_delivery_date": 45925,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00481",
+    "destination_name": "COOKIES BOX pronas",
+    "destination_address_1": "Jl. Mayjen HR. Muhammad No.163, Pradahkalikendal, Kec. Dukuhpakis, Surabaya, Jawa Timur 60226, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "HANASUI",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "52426006080011",
+        "product_description": "HN BODY EXFOLIATING GEL ALOE VERA WITH COLLAGEN 60X300ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 52,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 656220,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "52426006080012",
+        "product_description": "HN BODY EXFOLIATING GEL STRAW WITH COLLAGEN 60X300ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 52,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1019161,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "52426006080013",
+        "product_description": "HN BODY EXFOLIATING GEL CHERRY WITH COLLAGEN 60X300ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 52,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 271778,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "52426006080014",
+        "product_description": "HN BODY EXFOLIATING GEL ORANGE WITH COLLAGEN 60X300ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 52,
+        "qty": 50,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2539200,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "52426006080015",
+        "product_description": "HN BODY EXFOLIATING GEL BLUEBERRY WITH COLLAGEN 60X300ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 52,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 444061,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "outbound_reference": "G01SI2509-TESOPT0004",
+    "faktur_date": 45925,
+    "request_delivery_date": 45925,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01806",
+    "destination_name": "PAPUA SEJAHTERA, CV (TUAL) ok",
+    "destination_address_1": "KALIANAK MADYA I/4",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "NESTLE",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "90539701110001",
+        "product_description": "NESTLE PURE LIFE 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1099125,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "90539701110002",
+        "product_description": "NESTLE PURE LIFE 24X600ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1591038,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "90539701110003",
+        "product_description": "NESTLE PURE LIFE 12x1500ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1796592,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "outbound_reference": "G01SI2509-TESOPT0005",
+    "faktur_date": 45925,
+    "request_delivery_date": 45925,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL35145",
+    "destination_name": "BAHTERA YENDI SEJAHTERA, CV",
+    "destination_address_1": "RUNGKUT ASRI TIMUR II/7 RT. 06 RW. 09 RUNGKUT KIDUL, KEC. RUNGKUT",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PADAMU",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "39383801110001",
+        "product_description": "BIJAG PADAMU 60X60GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 622170,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "39383801110002",
+        "product_description": "BIJAG PADAMU 24X175GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1398700,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "39383801110003",
+        "product_description": "BIJAG PADAMU 12X350GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2706676,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "39383801110004",
+        "product_description": "BIJAG PADAMU 2.56KG",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 913450,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "39383801110005",
+        "product_description": "BIJAG PADAMU 12X300GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1058233,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "39383801110006",
+        "product_description": "BIJAG PADAMU 24X150GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 431496,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "39383801110007",
+        "product_description": "BIJAG PADAMU 12X300GR (STICKER)",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1252064,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "39383801110008",
+        "product_description": "BIJAG PADAMU 24X150GR (STICKER)",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 488826,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 9,
+        "product_id": "39383801110009",
+        "product_description": "BIJAG PADAMU 24X150GR (IDG88)",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 36,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 622980,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "outbound_reference": "C01SI2509-TESOPT0006",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02297",
+    "destination_name": "ANGEL\"S",
+    "destination_address_1": "SIMO GUNUNG 5",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "FINNA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0601001",
+        "product_description": "ULEG SAMBAL TERASI 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1010160,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0601002",
+        "product_description": "ULEG SAMBAL IJO 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2030174,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0601003",
+        "product_description": "ULEG SAMBAL PEDAS 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1858425,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0601004",
+        "product_description": "ULEG SAMBAL KEMIRI 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1324288,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "0601005",
+        "product_description": "ULEG SAMBAL RAWIT 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1744638,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "outbound_reference": "C01SI2509-TESOPT0007",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02797",
+    "destination_name": "BURSA COSMETIC",
+    "destination_address_1": "PGS LANTAI II BLOK D2-1",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "LARUTAN",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0401001",
+        "product_description": "LARUTAN PENYEGAR 200ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 397845,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0401002",
+        "product_description": "LARUTAN PENYEGAR 350ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 758457,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0401003",
+        "product_description": "LARUTAN PENYEGAR 500ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 742785,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0401004",
+        "product_description": "LARUTAN PENYEGAR KALENG JERUK 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1237504,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "0401005",
+        "product_description": "LARUTAN PENYEGAR KALENG STRW 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1488308,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "0401006",
+        "product_description": "LARUTAN PENYEGAR KALENG JAMBU 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1305089,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "0401007",
+        "product_description": "LARUTAN PENYEGAR KALENG LECHI 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2376144,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "outbound_reference": "C01SI2509-TESOPT0008",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL03563",
+    "destination_name": "IMELDA",
+    "destination_address_1": "PENGAMPON SQUARE D-55",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "LARUTAN",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0401006",
+        "product_description": "LARUTAN PENYEGAR KALENG JAMBU 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1838580,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0401007",
+        "product_description": "LARUTAN PENYEGAR KALENG LECHI 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 900110,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0401008",
+        "product_description": "LARUTAN PENYEGAR KALENG MELON 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1183094,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0401009",
+        "product_description": "LARUTAN PENYEGAR KALENG ANGGUR 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 371808,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "outbound_reference": "G01SI2509-TESOPT0009",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL32556",
+    "destination_name": "FORTUNA MM",
+    "destination_address_1": "MANUKAN TAMA 33-H/11",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "CUSSON",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "11101101130001",
+        "product_description": "CAREX HG 50ML SENSITIVE (DISC TOP) NEW",
+        "group_id": 13,
+        "group_description": "13-HAND SOAP",
+        "product_type": 11,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2130518,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "11101101130002",
+        "product_description": "CAREX HG 50ML ALOEVERA (DISC TOP) NEW",
+        "group_id": 13,
+        "group_description": "13-HAND SOAP",
+        "product_type": 11,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 294812,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "11101101130003",
+        "product_description": "CAREX HG 50ML LAVENDER & ROSEWOOD (DISC TOP) NEW",
+        "group_id": 13,
+        "group_description": "13-HAND SOAP",
+        "product_type": 11,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1150020,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "outbound_reference": "C01SI2509-TESOPT0010",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01990",
+    "destination_name": "LOTTE SHOPPING INDONESIA, PT",
+    "destination_address_1": "Raya Pepelegi Indah - Gendangan",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "VENTURA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "1104006",
+        "product_description": "BATISTE DRY SHAMPOO LIGHT & BREEZY FRESH 200ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 479856,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "1104007",
+        "product_description": "BATISTE DRY SHAMPOO ORIENTAL JASMINE OPULENCE 200ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2242184,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "1104008",
+        "product_description": "BATISTE DRY SHAMPOO PLUS WITH A HINT OF COLOUR DIVINE DARK 2",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 240312,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "1104009",
+        "product_description": "BATISTE DRY SHAMPOO SELF LOVE BEAMING BERRIES 200ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1266880,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "1104010",
+        "product_description": "BATISTE DRY SHAMPOO COCONUT & EXOTIC TROPICAL 200ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 48,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 4339824,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "outbound_reference": "G01SI2509-TESOPT0011",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL05640",
+    "destination_name": "SUMBER JAYA",
+    "destination_address_1": "PGS LT I BLOK D3 - 11 - TP",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "SHZ - GPP GT",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "05700510080001",
+        "product_description": "SHINZUI B. CLEANSER HANA 48X200 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 426625,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "05700510080002",
+        "product_description": "SHINZUI B. CLEANSER KENZO 48X200 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 643539,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "05700510080003",
+        "product_description": "SHINZUI B. CLEANSER KIREI 48X200 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 861619,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "05700510080004",
+        "product_description": "SHINZUI B. CLEANSER MYORI 48X200 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 491235,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "05700510080005",
+        "product_description": "SHINZUI B. CLEANSER REGULER 48X200 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1053003,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "05700510080006",
+        "product_description": "SHINZUI B. CLEANSER SAKURA 48X200 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 48,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 4150704,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "05700510080011",
+        "product_description": "SHINZUI B. CLEANSER HANA 48X225 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2906010,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "outbound_reference": "G01SI2509-TESOPT0012",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL06280",
+    "destination_name": "RUNGKUT JAYA TOSERBA",
+    "destination_address_1": "RUNGKUT KIDUL INDUSTRI 44-50",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "SHZ - GPP GT",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "05700510080012",
+        "product_description": "SHINZUI B. CLEANSER KENZO 48X225 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 601282,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "05700510080013",
+        "product_description": "SHINZUI B. CLEANSER KIREI 48X225 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 441008,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "05700510080014",
+        "product_description": "SHINZUI B. CLEANSER MYORI 48X225 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1232294,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "05700510080015",
+        "product_description": "SHINZUI B. CLEANSER REGULER 48X225 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 871701,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "05700510080016",
+        "product_description": "SHINZUI B. CLEANSER SAKURA 48X225 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 286044,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "05700510080024",
+        "product_description": "SHINZUI B. CLEANSER MYORI 24X450 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 303552,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "05700510080026",
+        "product_description": "SHINZUI B. CLEANSER SAKURA 24X450 ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1617550,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "05700510080031",
+        "product_description": "SHINZUI B. SCRUB HANA 96X120 GR",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1641556,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 9,
+        "product_id": "05700510080032",
+        "product_description": "SHINZUI B. SCRUB KENZO 96X120 GR",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1060472,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 10,
+        "product_id": "05700510080033",
+        "product_description": "SHINZUI B. SCRUB KIREI 96X120 GR",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 5,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1503414,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "outbound_reference": "G01SI2509-TESOPT0013",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL38240",
+    "destination_name": "YEU SAIGON",
+    "destination_address_1": "Jalan Kencana Sari Timur VIII",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "NESTLE",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "90539701110001",
+        "product_description": "NESTLE PURE LIFE 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1318280,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "90539701110002",
+        "product_description": "NESTLE PURE LIFE 24X600ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 100,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2744100,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "90539701110003",
+        "product_description": "NESTLE PURE LIFE 12x1500ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 474410,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "outbound_reference": "C01SI2509-TESOPT0014",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL22749",
+    "destination_name": "LOTTE MART PAKUWON lotte pakuwon..",
+    "destination_address_1": "PM6G+M3 Babatan, Surabaya, East Java, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "VENTURA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "1103001",
+        "product_description": "MARO DEO SCALP SHAMPOO 480ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 651712,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "1103002",
+        "product_description": "MARO DEO SCALP SHAMPOO COOL 400ML (BOTTLE)",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1088321,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "1103003",
+        "product_description": "MARO DEO SCALP SHAMPOO REFILL 400ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1375560,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "1103004",
+        "product_description": "MARO DEO SCALP SHAMPOO COOL REFILL 340ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2266000,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "1103005",
+        "product_description": "MARO 3D VOLUME UP SHAMPOO EX 460ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1203678,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "1103006",
+        "product_description": "MARO 3D VOLUME UP SHAMPOO COOL 400ML (BOTTLE)",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 454399,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "1103007",
+        "product_description": "MARO 3D VOLUME UP SHAMPOO EX REFILL 380ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1837316,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "1103008",
+        "product_description": "MARO 3D VOLUME ESSENCE 150ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 229740,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 9,
+        "product_id": "1103009",
+        "product_description": "MARO 17 COLLAGEN SHAMPOO MILD WASH 350ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 639027,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "outbound_reference": "G01SI2509-TESOPT0015",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL41299",
+    "destination_name": "NENI FITRI ASTUTIK",
+    "destination_address_1": "SUKOLEGOK 3 GANG DELIMA RT 12 RW 04, DESA SUKO KEC SUKODONO",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "NESTLE",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "90539701110001",
+        "product_description": "NESTLE PURE LIFE 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 638066,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "90539701110002",
+        "product_description": "NESTLE PURE LIFE 24X600ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1708296,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "90539701110003",
+        "product_description": "NESTLE PURE LIFE 12x1500ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 565020,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "90539702110001",
+        "product_description": "VICA 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 188952,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "90539702110002",
+        "product_description": "VICA 24X600ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 48,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 3184992,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "90539702110003",
+        "product_description": "VICA 12X1500ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 435512,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "90539702110004",
+        "product_description": "VICA 24X220ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 923933,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "90539702110006",
+        "product_description": "VICA 24X220ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2271483,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 9,
+        "product_id": "90539702110007",
+        "product_description": "VICA 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1735360,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "outbound_reference": "C01SI2509-TESOPT0016",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00020",
+    "destination_name": "DINDA MOM & BABY SHOP",
+    "destination_address_1": "PANDEGILING 143",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "INACO",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0901067",
+        "product_description": "INACO MINIJELLY-CURAH GRAPE 1KGX10",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1386369,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0901068",
+        "product_description": "INACO MINIJELLY-CURAH LYCHEE 1KGX10",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 540976,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0901069",
+        "product_description": "INACO MINIJELLY-CURAH MANGO 1KGX10",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 476392,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "outbound_reference": "G01SI2509-TESOPT0017",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00068",
+    "destination_name": "CHAN toko",
+    "destination_address_1": "Jl. Baliwerti No.43, Alun-alun Contong, Kec. Bubutan, Surabaya, Jawa Timur 60174, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "MIX",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "42124101110021",
+        "product_description": "CIMORY SOYAMILK ORIGINAL 24X300ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 42,
+        "qty": 48,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 4677216,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "42124101110022",
+        "product_description": "CIMORY SOYAMILK MOCHACINO 24X300ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 42,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1300000,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "42124101110023",
+        "product_description": "CIMORY SOYAMILK WATER MELON 24X300ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 42,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 779736,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "outbound_reference": "G01SI2509-TESOPT0018",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00234",
+    "destination_name": "USAHA MANDIRI Terkirim",
+    "destination_address_1": "Jl. St. Wonokromo No.26, Jagir, Kec. Wonokromo, Surabaya, Jawa Timur 60243, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PRONAS",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "01010107110111",
+        "product_description": "BUMBU NS GOR AYAM PRO KLG 110 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1165530,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "01010107110112",
+        "product_description": "BUMBU NS GOR AYAM PRO PCH 110 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 738300,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "01010107110116",
+        "product_description": "BUMBU NS GOR SAPI PRO KLG 110 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 998954,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "01010107110117",
+        "product_description": "BUMBU NS GOR SAPI PRO PCH 110 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1774140,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "outbound_reference": "G01SI2509-TESOPT0019",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01803",
+    "destination_name": "RENCANA BARU rencana baru kembang jepun",
+    "destination_address_1": "Jl. Kembang Jepun No.125-A, RT.002/RW.01, Bongkaran, Kec. Pabean Cantikan, Surabaya, Jawa Timur 60161, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "CUSSON",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "11101102030245",
+        "product_description": "CB SHAMPOO AVOCADO OIL & PRO VIT 200 ML",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 477550,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "11101102030301",
+        "product_description": "CB HAIR LOTION N.ALMOND EXT & HONEY 50 ML",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 420057,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "11101102030304",
+        "product_description": "CB HAIR LOTION N.ALOEVERA COCONUT 50 ML",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 682758,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "11101102030311",
+        "product_description": "CB HAIR LOTION N.ALMOND EXT & HONEY XFILL 50 ML",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1306744,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "outbound_reference": "G01SI2509-TESOPT0020",
+    "faktur_date": 45926,
+    "request_delivery_date": 45926,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01894",
+    "destination_name": "RENY, MINI MARKET RENY SWALAYAN",
+    "destination_address_1": "Jl. Bratang Gede No.138, Ngagelrejo, Kec. Wonokromo, Surabaya, Jawa Timur 60245, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PRONAS",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "01010107110118",
+        "product_description": "BUMBU NS GOR KORNET 110 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2008125,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "01010107110121",
+        "product_description": "DAGING RENDANG PRONAS 180 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 489346,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "01010107110129",
+        "product_description": "PRONAS BOLOGNESE SAUCE PCH 24X315GR RW",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 200,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 7123800,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "01010107110130",
+        "product_description": "PRONAS BOLOGNESE CHICKEN PCH 24X315GR RW",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 224224,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "01010107110131",
+        "product_description": "PRONAS BOLOGNAISE SAUCE PCH 120 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1036848,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "01010107110132",
+        "product_description": "PRONAS BOLOGNAISE SAUCE PCH 175 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2115086,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "01010107110134",
+        "product_description": "PRONAS BOLOGNAISE SAUCE PCH 350 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1300684,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "01010107110136",
+        "product_description": "BOLOGNESE CHICKEN POUCH 175GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 469821,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 9,
+        "product_id": "01010107110137",
+        "product_description": "BOLOGNESE CHICKEN POUCH 350GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 36,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1484928,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "outbound_reference": "G01SI2509-TESOPT0021",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01980",
+    "destination_name": "INTI CAKRAWALA(INDO GROSIR) PT. INTI CAKRAWALA ( INDOGROSIR)",
+    "destination_address_1": "Jl. Sidosermo Indah XIV No.1, Panjang Jiwo, Kec. Tenggilis Mejoyo, Surabaya, Jawa Timur 60239, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "FACETOLOGY",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "94611601100001",
+        "product_description": "FACETOLOGY FACIAL GEL CLEANSER 100ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1190488,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "94611601100002",
+        "product_description": "FACETOLOGY FACIAL WASH ACNE 100ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1593720,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "94611601100006",
+        "product_description": "FACETOLOGY HYDRA CLEANSER MICELLAR WATER 100ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 783513,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "94611601100007",
+        "product_description": "FACETOLOGY HYDRA CLEANSER MICELLAR WATER 300ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1267350,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "outbound_reference": "C01SI2509-TESOPT0022",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL21244",
+    "destination_name": "KHAYUN COSMETIC khayun",
+    "destination_address_1": "Ps. Soponyono, Jl. Rungkut Asri Utara II No.2, Kali Rungkut, Kec. Rungkut, Surabaya, Jawa Timur 60293, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "INACO",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0901070",
+        "product_description": "INACO MINIJELLY-CURAH MIX FLAVOR 1KGX10",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 810840,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0901071",
+        "product_description": "INACO MINIJELLY-CURAH ORANGE 1KGX10",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 247894,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0901072",
+        "product_description": "INACO MINIJELLY-CURAH PINAPPLE 1KGX10",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 670548,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0901073",
+        "product_description": "INACO MINIJELLY-CURAH STRAWBERRY 1KGX10",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1125820,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "outbound_reference": "G01SI2509-TESOPT0023",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02679",
+    "destination_name": "MAYA BEAUTY bI 14",
+    "destination_address_1": "BW - D2 - 18, Ps. Benowo, Jl. Raya Benowo, Benowo, Kec. Pakal, Surabaya, Jawa Timur 60195, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PRONAS",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "01010107110138",
+        "product_description": "PRONAS BOLOGNESE CHICKEN PCH 24X175GR RW",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1680432,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "01010107110139",
+        "product_description": "PRONAS BOLOGNESE SAUCE PCH 24X175GR RW",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 980330,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "01010107110141",
+        "product_description": "MACKEREL PRONAS ST 155 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 445225,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "01010107110142",
+        "product_description": "MACKEREL PRONAS SC 425 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 48,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 4625952,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "01010107110143",
+        "product_description": "MACKEREL PRONAS SC 155GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 675414,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "outbound_reference": "C01SI2509-TESOPT0024",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02930",
+    "destination_name": "DELIMA toko",
+    "destination_address_1": "Jalan Kalibutuh No.120, Tembok Dukuh, Surabaya, East Java, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "FINNA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0601001",
+        "product_description": "ULEG SAMBAL TERASI 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1276821,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0601002",
+        "product_description": "ULEG SAMBAL IJO 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2307424,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0601003",
+        "product_description": "ULEG SAMBAL PEDAS 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 228592,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0601004",
+        "product_description": "ULEG SAMBAL KEMIRI 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1116412,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "0601005",
+        "product_description": "ULEG SAMBAL RAWIT 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1680231,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "outbound_reference": "G01SI2509-TESOPT0025",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL03671",
+    "destination_name": "JAMUR RAYA toko jamur raya..jl kebraon..",
+    "destination_address_1": "Jl. Griya Kebraon Sel. Blok D No.17, Kebraon, Kec. Karangpilang, Surabaya, Jawa Timur 60222, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "HANASUI",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "52426006100003",
+        "product_description": "HN SERUM VIT C 20ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1194540,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "52426006100004",
+        "product_description": "HN SERUM ANTI ACNE 20ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 734590,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "52426006100005",
+        "product_description": "HN SERUM REJUVENATE 10ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 436080,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "52426006100016",
+        "product_description": "HN NAT PEEL OFF MASK RTG 10GRX480",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 519285,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "52426006100018",
+        "product_description": "HN ANTI AGING PEEL OFF MASK RTG 10GRX480",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 280232,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "outbound_reference": "C01SI2509-TESOPT0026",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL30783",
+    "destination_name": "EL KOSMETIK KAPASAN",
+    "destination_address_1": "Jl. Kapasan No.22a, Sidodadi, Kec. Simokerto, Surabaya, Jawa Timur 60141, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "INACO",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0901006",
+        "product_description": "INACO ALOEVERA SP LYCHEE 280G X 24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2306512,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0901007",
+        "product_description": "INACO NATADECOCO CUP LYCHEE 200G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 617457,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0901008",
+        "product_description": "INACO NATADECOCO CUP MANGO 200G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1827260,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0901009",
+        "product_description": "INACO NATADECOCO CUP SELASIH ORANGE 200G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1031870,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "0901010",
+        "product_description": "INACO NATADECOCO CUP SELASIH STRAWBRY 200G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 558277,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "outbound_reference": "C01SI2509-TESOPT0027",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL12287",
+    "destination_name": "NEW MART",
+    "destination_address_1": "BERINGIN 15 SAMBIKEREP",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "VENTURA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "1105010",
+        "product_description": "ADIDAS VIBES CHILL ZONE EAU DE PARFUM 100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1650200,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "1105011",
+        "product_description": "ADIDAS VIBES ENERGY DRIVE EAU DE PARFUM 100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 630234,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "1105012",
+        "product_description": "ADIDAS VIBES FULL RECHARGE EAU DE PARFUM 100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 296525,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "1105013",
+        "product_description": "ADIDAS VIBES GET COMFY EAU DE PARFUM 100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1231375,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "outbound_reference": "C01SI2509-TESOPT0028",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL43710",
+    "destination_name": "MAKMUR MANUKAN",
+    "destination_address_1": "MANUKAN TENGAH 52",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "LARUTAN",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0401001",
+        "product_description": "LARUTAN PENYEGAR 200ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1065922,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0401003",
+        "product_description": "LARUTAN PENYEGAR 350ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1992503,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0401003",
+        "product_description": "LARUTAN PENYEGAR 500ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 386661,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0401004",
+        "product_description": "LARUTAN PENYEGAR KALENG JERUK 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 428136,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "0401005",
+        "product_description": "LARUTAN PENYEGAR KALENG STRW 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1547952,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "0401006",
+        "product_description": "LARUTAN PENYEGAR KALENG JAMBU 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 259833,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "0401007",
+        "product_description": "LARUTAN PENYEGAR KALENG LECHI 320ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 48,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 702768,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "outbound_reference": "G01SI2509-TESOPT0029",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL06277",
+    "destination_name": "MASUYA SEJATI, PT",
+    "destination_address_1": "RAYA DARMO PERMAI SELATAN 3",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PRONAS",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "01010107110144",
+        "product_description": "MACKEREL PRONAS ST 425 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 378648,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "01010107110151",
+        "product_description": "WHOLE KERNEL SWEET CORN",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 712536,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "01010107110152",
+        "product_description": "CREAM STYLE SWEET CORN",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 976024,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "outbound_reference": "C01SI2509-TESOPT0030",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00687",
+    "destination_name": "HANDOYO",
+    "destination_address_1": "PASAR GENTENG G17-18",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "FINNA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0601001",
+        "product_description": "ULEG SAMBAL TERASI 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 658920,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0601002",
+        "product_description": "ULEG SAMBAL IJO 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1371570,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0601003",
+        "product_description": "ULEG SAMBAL PEDAS 10X18 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 26,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1394190,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "outbound_reference": "G01SI2509-TESOPT0031",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL18341",
+    "destination_name": "JEMMY HALIEM jemmy haliem kembang jepun",
+    "destination_address_1": "Jl. Kembang Jepun No.125d, Bongkaran, Kec. Pabean Cantikan, Surabaya, Jawa Timur 60162, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PADAMU",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "39383809110001",
+        "product_description": "LACTONA 1 GOLD+VANILA 400 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1067136,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "39383809110002",
+        "product_description": "LACTONA 1 GOLD+MADU 400 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1521624,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "39383809110011",
+        "product_description": "LACTONA 1 GOLD+VANILA 800 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 50,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1677650,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "39383809110012",
+        "product_description": "LACTONA 1 GOLD+MADU 800 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1278816,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "39383809110021",
+        "product_description": "LACTONA 3 VANILA 400 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1934116,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "39383809110022",
+        "product_description": "LACTONA 3 MADU 400 GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 374085,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "39383809110031",
+        "product_description": "LACTONA 1 GOLD+VANILA 200GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1839915,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "outbound_reference": "G01SI2509-TESOPT0032",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL25063",
+    "destination_name": "MOCHAMMAD YUWONO (APOTIK PENJARINGAN SARI)",
+    "destination_address_1": "PANDUGO BARU 1/Q-1",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "CUSSON",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "11101102030018",
+        "product_description": "CB POWDER 50G P HEAT XF RL",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 785004,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "11101102030030",
+        "product_description": "CB POWDER P HEAT XFILL 100 GR",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 867720,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "11101102030031",
+        "product_description": "CB POWDER MILD & GENTLE XFILL 100 GR",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 357550,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "11101102030032",
+        "product_description": "CB POWDER SOFT & SMOOTH XFILL 100 GR",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2163603,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "11101102030033",
+        "product_description": "CB POWDER CARES & PROTECTS XFILL 100 GR",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 36,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2006928,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "11101102030034",
+        "product_description": "CB POWDER BLUEBERRY SMOOTHLY XFILL 100 GR",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 805158,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "11101102030035",
+        "product_description": "CB POWDER PINK/NATURE XFILL 100 GR",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 433629,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "outbound_reference": "G01SI2509-TESOPT0033",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02930",
+    "destination_name": "DELIMA toko",
+    "destination_address_1": "Jalan Kalibutuh No.120, Tembok Dukuh, Surabaya, East Java, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PADAMU",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "39383802110001",
+        "product_description": "MIE KERING MIMORA REG 24X136GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1441424,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "39383802110002",
+        "product_description": "MIE KERING MIMORA PIPIH 24X140GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 645293,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "39383802110003",
+        "product_description": "MIE KERING MIMORA 24X123GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 626040,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "outbound_reference": "G01SI2509-TESOPT0034",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL06277",
+    "destination_name": "MASUYA SEJATI, PT",
+    "destination_address_1": "RAYA DARMO PERMAI SELATAN 3",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PRONAS",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "01010107110160",
+        "product_description": "TERASI UDANG PRONAS 16X80GR (BONUS)",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 910944,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "01010107110161",
+        "product_description": "TERASI UDANG PRONAS 16X80GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 928109,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "01010107110162",
+        "product_description": "SAMBAL TERASI RENCENG 30RCGX10PC",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 794880,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "01010107110171",
+        "product_description": "ABON DAGING SAPI ORI 24X100GR",
+        "group_id": 1,
+        "group_description": "ADULT DIAPERS",
+        "product_type": 11,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1255965,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "outbound_reference": "C01SI2509-TESOPT0035",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL18341",
+    "destination_name": "JEMMY HALIEM jemmy haliem kembang jepun",
+    "destination_address_1": "Jl. Kembang Jepun No.125d, Bongkaran, Kec. Pabean Cantikan, Surabaya, Jawa Timur 60162, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "VENTURA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "1106005",
+        "product_description": "KOSE SUNCUT TONE UP UV ESSENCE PN 80GR",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 527296,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "1106006",
+        "product_description": "KOSE SUNCUT LIGHT UP UV ESSENCE N 80GR",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2314512,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "1106007",
+        "product_description": "KOSE SUNCUT UV PERFECT GEL N 120GR",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2038743,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "outbound_reference": "C01SI2509-TESOPT0036",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL00111",
+    "destination_name": "KAWAN MULYA, CV",
+    "destination_address_1": "KEMBANG JEPUN 140",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "VENTURA",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "1104001",
+        "product_description": "BATISTE COLOUR BRUNETTE 200ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 217260,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "1104002",
+        "product_description": "BATISTE DRY SHAMPOO CHERRY CHEEKY CHERRY 200ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 516401,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "1104003",
+        "product_description": "BATISTE DRY SHAMPOO CLEAN & CLASSIC ORIGINAL 200ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 97,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1368092,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "outbound_reference": "G01SI2509-TESOPT0037",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02870",
+    "destination_name": "CLARISA COSMETIC",
+    "destination_address_1": "PASAR KAPASAN LANTAI DASAR I-160",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "FACETOLOGY",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "94611601100011",
+        "product_description": "FACETOLOGY MICELLAR WATER ACNE 100ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 880110,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "94611601100012",
+        "product_description": "FACETOLOGY MICELLAR WATER ACNE 300ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1071824,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "94611601100015",
+        "product_description": "FACETOLOGY TRIPLE CARE PEELING TREATMENT SERUM 33ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 55,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 3426115,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "94611601100016",
+        "product_description": "FACETOLOGY TRIPLE CARE SUNSCREEN SPF 40+++ 40ML @40",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1975306,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "94611601100017",
+        "product_description": "FACETOLOGY TRIPLE CARE SUNSCREEN SPF 40 PA+++ 100ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 371952,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "94611601100018",
+        "product_description": "FACETOLOGY TRIPLE CARE S.CREEN SPF 40 PA+++ 40ML OILY & ACNE SKIN",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 844662,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "outbound_reference": "B01SI2509-TESOPT0038",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01749",
+    "destination_name": "HOKKY FAMILY",
+    "destination_address_1": "ANCHOR PLAZA GRAHA FAMILY PRADAH KALI KENDAL",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "BBM",
+    "divisi": "MIX",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "48364703080002",
+        "product_description": "EDP BRASOV FRESH (MERAH) 36X100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2367275,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "48364703080003",
+        "product_description": "EDP BRASOV SOFT (HIJAU) 36X100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 192888,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "48364703080004",
+        "product_description": "EDP BRASOV SPORTY (HITAM) 36X100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 259370,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "48364703080005",
+        "product_description": "EDP BRASOV ENERGY (KUNING) 36X100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1834950,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "48364703080006",
+        "product_description": "EDP BRASOV EXTREME (ABU) 36X100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2592621,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "48364703080007",
+        "product_description": "EDP BRASOV LOVELY (PINK) 36X100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1491140,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "48364703080008",
+        "product_description": "EDP BRASOV MYSTERY (UNGU) 36X100ML",
+        "group_id": 8,
+        "group_description": "BODY TREATMENT",
+        "product_type": 48,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 949504,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "outbound_reference": "G01SI2509-TESOPT0039",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01830",
+    "destination_name": "BAGUS, SWALAYAN",
+    "destination_address_1": "RAYA MENGANTI 45",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "FACETOLOGY",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "94611601100006",
+        "product_description": "FACETOLOGY HYDRA CLEANSER MICELLAR WATER 100ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 333195,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "94611601100007",
+        "product_description": "FACETOLOGY HYDRA CLEANSER MICELLAR WATER 300ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2451736,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "94611601100011",
+        "product_description": "FACETOLOGY MICELLAR WATER ACNE 100ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 388575,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "94611601100012",
+        "product_description": "FACETOLOGY MICELLAR WATER ACNE 300ML @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 841041,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "94611601100017",
+        "product_description": "FACETOLOGY TRIPLE CARE SUNSCREEN SPF 40 PA+++ 100ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 434321,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "94611601100018",
+        "product_description": "FACETOLOGY TRIPLE CARE S.CREEN SPF 40 PA+++ 40ML OILY & ACNE SKIN",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 835107,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "94611601100019",
+        "product_description": "FACETOLOGY SUNSCREEN TINTED 40ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 297990,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "94611601110021",
+        "product_description": "FACETOLOGY PEELING SERUM BUNDLING (BUY 1 GET 1)",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 94,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1545240,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 9,
+        "product_id": "94611601370001",
+        "product_description": "FACETOLOGY TRIPLE CARE LIP S.SCREEN FLAVORED @25",
+        "group_id": 37,
+        "group_description": "MAKEUP",
+        "product_type": 94,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 445468,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 10,
+        "product_id": "94611601370002",
+        "product_description": "FACETOLOGY TRIPLE CARE LIP S.SCREEN UNFLAVORED @25",
+        "group_id": 37,
+        "group_description": "MAKEUP",
+        "product_type": 94,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2182584,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 11,
+        "product_id": "94611602100001",
+        "product_description": "SCORA D-PANTHENOL GENTLE LOS PH CLEANSER @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2587546,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 12,
+        "product_id": "94611602100002",
+        "product_description": "SCORA GENTLE AND SOOTHE MICELLAR CLEANSING WATER 100ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 653919,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 13,
+        "product_id": "94611602100006",
+        "product_description": "SCORA 1% SALICYLIC GENTLE LOS PH CLEANSER @36",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2269917,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "outbound_reference": "G01SI2509-TESOPT0040",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL01923",
+    "destination_name": "ALFA BREBEK SAT BREBEK",
+    "destination_address_1": "Jl. Berbek Industri VII No.35, Ngeni, Kepuhkiriman, Kec. Waru, Kabupaten Sidoarjo, Jawa Timur 61256, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "CUSSON",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "11101102030112",
+        "product_description": "CB OIL SOFT & SMOOTH XFILL 50 ML",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 893556,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "11101102030113",
+        "product_description": "CB OIL NATURALS XFILL 50 ML",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2968470,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "11101102030121",
+        "product_description": "CB OIL MILD & GENTLE 100 ML",
+        "group_id": 3,
+        "group_description": "03-BABY CARE",
+        "product_type": 11,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 772614,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "outbound_reference": "G01SI2509-TESOPT0041",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL41729",
+    "destination_name": "ES TEH INDONESIA (TEMPURA HIGH)",
+    "destination_address_1": "Jalan Embong Malang, Kedungdoro, Surabaya, East Java, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PRONAS",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "01010107110172",
+        "product_description": "ABON DAGING SAPI PEDAS 24X100GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1275650,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "01010107110173",
+        "product_description": "ABON DAGING SAPI BAWANG 24X100GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1021460,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "01010107110182",
+        "product_description": "PRONAS LYCHEE",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 655928,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "01010107110183",
+        "product_description": "PRONAS LYCHEE ZYT 510G",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 1,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2086920,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "outbound_reference": "G01SI2509-TESOPT0042",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02888",
+    "destination_name": "DAMAI toko",
+    "destination_address_1": "Jl. Genteng Bandar Lor No.62, RT.002/RW.08, Genteng, Kec. Genteng, Surabaya, Jawa Timur 60275, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "NESTLE",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "90539701110001",
+        "product_description": "NESTLE PURE LIFE 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1360110,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "90539701110002",
+        "product_description": "NESTLE PURE LIFE 24X600ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 573183,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "90539701110003",
+        "product_description": "NESTLE PURE LIFE 12x1500ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 211222,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "90539702110001",
+        "product_description": "VICA 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1339934,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "90539702110002",
+        "product_description": "VICA 24X600ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2325456,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "90539702110003",
+        "product_description": "VICA 12X1500ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 794024,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "90539702110004",
+        "product_description": "VICA 24X220ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 734416,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "outbound_reference": "G01SI2509-TESOPT0043",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL29232",
+    "destination_name": "MAJU JAYA KOSMETIK ok",
+    "destination_address_1": "Gg. Tengah Jl. Jagir Wonokromo No.10, RT.006/RW.06, Jagir, Kec. Wonokromo, Surabaya, Jawa Timur 60244, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "FACETOLOGY",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "94611601100019",
+        "product_description": "FACETOLOGY SUNSCREEN TINTED 40ML",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 94,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 623086,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "94611601110021",
+        "product_description": "FACETOLOGY PEELING SERUM BUNDLING (BUY 1 GET 1)",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 94,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 486005,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "94611601370001",
+        "product_description": "FACETOLOGY TRIPLE CARE LIP S.SCREEN FLAVORED @25",
+        "group_id": 37,
+        "group_description": "MAKEUP",
+        "product_type": 94,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1805820,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "94611601370002",
+        "product_description": "FACETOLOGY TRIPLE CARE LIP S.SCREEN UNFLAVORED @25",
+        "group_id": 37,
+        "group_description": "MAKEUP",
+        "product_type": 94,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 808590,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "outbound_reference": "C01SI2509-TESOPT0044",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL05393",
+    "destination_name": "SINAR BARU",
+    "destination_address_1": "LEBAK JAYA UTARA II/42",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "INACO",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0901001",
+        "product_description": "INACO ALOEVERA CUP BANANA 200G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 535311,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0901002",
+        "product_description": "INACO ALOEVERA CUP LYCHEE 200G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1267578,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0901003",
+        "product_description": "INACO ALOEVERA CUP PEACH 200G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1193232,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0901004",
+        "product_description": "INACO ALOEVERA SP BANANA 280G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1036252,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "0901005",
+        "product_description": "INACO ALOEVERA SP PEACH 280G X24",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2372084,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "outbound_reference": "G01SI2509-TESOPT0045",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL31413",
+    "destination_name": "RIZKA JAYA",
+    "destination_address_1": "RAYA SIMO GUNUNG 6-B ( SEBELAH ALFA )",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "PADAMU",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "39383814110001",
+        "product_description": "PROSTEO + VANILA 300GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1095540,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "39383814110002",
+        "product_description": "PROSTEO + COKELAT 300GR",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 975294,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "39383815110001",
+        "product_description": "GLATIK EMAS KOPI BUBUK 12 BND SW+GELASX500G",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 486120,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "39383815110002",
+        "product_description": "GLATIK SP KOPI BUBUK 5RTGX10PCX50G",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 39,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1767650,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "outbound_reference": "M01SI2509-TESOPT0046",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL06272",
+    "destination_name": "HOKKY BUAH",
+    "destination_address_1": "PANGLIMA SUDIRMAN 32",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "MJS",
+    "divisi": "FEVES",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "25202501340191",
+        "product_description": "FEVES HAIR COLOR 4.3 30ML (BONUS)",
+        "group_id": 34,
+        "group_description": "34-HADIAH",
+        "product_type": 25,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 294600,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "25202501340192",
+        "product_description": "FEVES HAIR COLOR 4.9 30ML (BONUS)",
+        "group_id": 34,
+        "group_description": "34-HADIAH",
+        "product_type": 25,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1537812,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "25202506370294",
+        "product_description": "MADAME GIE TOTAL COVER BB CUSHION REF 04",
+        "group_id": 37,
+        "group_description": "MAKEUP",
+        "product_type": 25,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 678670,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "outbound_reference": "G01SI2509-TESOPT0047",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL02745",
+    "destination_name": "BINTANG BARU",
+    "destination_address_1": "POGOT 40",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "HANASUI",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "52426006100065",
+        "product_description": "HN MUD MASK KOREAN HERBAL RTG 7GRX480",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2256968,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "52426006100103",
+        "product_description": "HN ACNE TREATMENT SERIES + SERUM 6PACKX21",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 19,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 403351,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "52426006100104",
+        "product_description": "HN FLAWLESS GLOW 10 SERIES + SERUM 5PACKX21",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 14,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 268828,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "52426006100107",
+        "product_description": "HN FLAWLESS GLOW 10 PACKAGE SPECIAL EDITION 4PACKX24 (FREE B",
+        "group_id": 10,
+        "group_description": "FACIAL TREATMENT",
+        "product_type": 52,
+        "qty": 11,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 640838,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "52426006120001",
+        "product_description": "HN SHAMPOO 2 IN 1 WITH KERATIN 200ML",
+        "group_id": 12,
+        "group_description": "BODY TREATMENT",
+        "product_type": 52,
+        "qty": 23,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1910196,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "52426006130001",
+        "product_description": "HN HAND GEL ALOE VERA TUBE PACK",
+        "group_id": 13,
+        "group_description": "13-HAND SOAP",
+        "product_type": 52,
+        "qty": 36,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1299312,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "52426006220001",
+        "product_description": "HN BODY SPA ALOE VERA + FREE 300MLX48",
+        "group_id": 22,
+        "group_description": "22-PAKET",
+        "product_type": 52,
+        "qty": 22,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1009822,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "52426006220004",
+        "product_description": "HN BODY SPA ORANGE + FREE 300MLX48",
+        "group_id": 22,
+        "group_description": "22-PAKET",
+        "product_type": 52,
+        "qty": 13,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 426322,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "outbound_reference": "G01SI2509-TESOPT0048",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL16466",
+    "destination_name": "SUKACITA ABADI, CV cv sukacita..citraland",
+    "destination_address_1": "Jl. Taman Gapura No.J9, Lontar, Kec. Sambikerep, Surabaya, Jawa Timur 60216, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "GPP",
+    "divisi": "NESTLE",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "90539702110001",
+        "product_description": "VICA 24X330ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 21,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 785085,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "90539702110002",
+        "product_description": "VICA 24X600ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 16,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 963104,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "90539702110003",
+        "product_description": "VICA 12X1500ML",
+        "group_id": 11,
+        "group_description": "FOOD & BEVERAGES",
+        "product_type": 90,
+        "qty": 20,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1078120,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "outbound_reference": "C01SI2509-TESOPT0049",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL23615",
+    "destination_name": "HOKKY DARMO",
+    "destination_address_1": "DARMO HARAPAN 1",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "LARUTAN",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0401014",
+        "product_description": "LARUTAN PENYEGAR HANGER JAMBU 24 HGRX7 ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 18,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 458838,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0401015",
+        "product_description": "LARUTAN PENYEGAR HANGER JERUK NIPIS 24 HGRX7 ML",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 26,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1267578,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0401016",
+        "product_description": "LARUTAN PENYEGAR PLUS CAP BADAK RASA JAMBU (CANISTER)",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 30,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1491540,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0401017",
+        "product_description": "LARUTAN PENYEGAR PLUS CAP BADAK RASA JERUK NIPIS (CANISTER)",
+        "group_id": 14,
+        "group_description": "14-HEALTH",
+        "product_type": 18,
+        "qty": 25,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1523900,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "outbound_reference": "C01SI2509-TESOPT0050",
+    "faktur_date": 45927,
+    "request_delivery_date": 45927,
+    "origin_name": "GADING PURI PERKASA",
+    "origin_address_1": "JL. KENJERAN NO.61760114, GADING, KEC. TAMBAKSARI, SURABAYA",
+    "origin_address_2": null,
+    "origin_city": "SURABAYA",
+    "origin_phone": "0818-174-999",
+    "origin_email": null,
+    "destination_id": "CL30783",
+    "destination_name": "EL KOSMETIK KAPASAN",
+    "destination_address_1": "Jl. Kapasan No.22a, Sidodadi, Kec. Simokerto, Surabaya, Jawa Timur 60141, Indonesia",
+    "destination_address_2": null,
+    "destination_city": "SURABAYA",
+    "destination_zip_code": null,
+    "destination_phone": null,
+    "destination_email": null,
+    "order_type": "REG",
+    "warehouse_id": "KJR01",
+    "client_id": "CSB",
+    "divisi": "INACO",
+    "items": [
+      {
+        "line_id": 1,
+        "product_id": "0901059",
+        "product_description": "INACO NATADECOCO BUBBLEBOI BLACKCURRANT 30GX80",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 29,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 2372084,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 2,
+        "product_id": "0901060",
+        "product_description": "INACO NATADECOCO BUBBLEBOI BUBBLEGUM 30G X80",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 24,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1314648,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 3,
+        "product_id": "0901061",
+        "product_description": "INACO NATADECOCO BUBBLEBOI GRAPE 30G X80",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 12,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 650196,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 4,
+        "product_id": "0901062",
+        "product_description": "INACO NATADECOCO BUBBLEBOI LYCHEE 30G X80",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 15,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 607650,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 5,
+        "product_id": "0901063",
+        "product_description": "INACO NATADECOCO BUBBLEBOI YAGHURT 30G X80",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 27,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1909062,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 6,
+        "product_id": "0901064",
+        "product_description": "INACO MINI GUMMY CANDY MIX FLAVOR 15GX48",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 17,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 333880,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 7,
+        "product_id": "0901065",
+        "product_description": "INACO FROZEN MIX - MIX FLAVOR 100G X12",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 28,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 1594768,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      },
+      {
+        "line_id": 8,
+        "product_id": "0901066",
+        "product_description": "INACO JELLY GUM 5S 35G X16",
+        "group_id": 56,
+        "group_description": "DESSERT 1",
+        "product_type": 95,
+        "qty": 10,
+        "uom": "PCS",
+        "pack_id": "0101",
+        "product_net_price": 678670,
+        "conversion": [
+          {
+            "uom": "PCS",
+            "numerator": 1,
+            "denominator": 1
+          }
+        ]
+      }
+    ]
+  }
+]

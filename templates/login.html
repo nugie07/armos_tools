@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <style>
+      .slider-container { position: relative; height: 44px; background: #f1f1f1; border-radius: 8px; }
+      .slider-track { position: absolute; top: 0; left: 0; height: 44px; width: 100%; border-radius: 8px; background: repeating-linear-gradient(45deg, #e9ecef, #e9ecef 10px, #f8f9fa 10px, #f8f9fa 20px); }
+      .slider-thumb { position: absolute; top: 2px; left: 2px; width: 40px; height: 40px; background: #0d6efd; border-radius: 6px; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+      .slider-label { position: absolute; top: 11px; left: 56px; color: #6c757d; }
+    </style>
+  </head>
+  <body class="p-4">
+    <div class="container" style="max-width: 520px;">
+      <h4 class="mb-4">Access</h4>
+
+      {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Access Key</label>
+          <input type="password" name="access_key" class="form-control" placeholder="Masukkan key" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Geser untuk verifikasi</label>
+          <div class="slider-container" id="slider">
+            <div class="slider-track"></div>
+            <div class="slider-thumb" id="thumb">»</div>
+            <div class="slider-label">Geser ke kanan sampai penuh</div>
+          </div>
+          <div id="captchaStatus" class="form-text">Captcha belum tervalidasi</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Masuk</button>
+      </form>
+    </div>
+
+    <script>
+      (function(){
+        const slider = document.getElementById('slider');
+        const thumb = document.getElementById('thumb');
+        const status = document.getElementById('captchaStatus');
+        let dragging = false;
+        let startX = 0;
+        let offsetX = 0;
+
+        function setThumb(px){
+          const max = slider.clientWidth - thumb.clientWidth - 2;
+          if(px < 2) px = 2;
+          if(px > max) px = max;
+          thumb.style.left = px + 'px';
+          offsetX = px;
+        }
+
+        thumb.addEventListener('mousedown', (e)=>{ dragging = true; startX = e.clientX; });
+        document.addEventListener('mousemove', (e)=>{
+          if(!dragging) return;
+          const dx = e.clientX - startX;
+          setThumb(2 + dx);
+        });
+        document.addEventListener('mouseup', async ()=>{
+          if(!dragging) return;
+          dragging = false;
+          const percent = Math.round( (offsetX / (slider.clientWidth - thumb.clientWidth)) * 100 );
+          try{
+            const res = await fetch('/api/captcha/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slider_value: percent }) });
+            if(res.ok){ status.textContent = 'Captcha tervalidasi'; status.className='form-text text-success'; }
+            else { status.textContent = 'Captcha gagal, geser lagi'; status.className='form-text text-danger'; setThumb(2); }
+          }catch(err){ status.textContent = 'Captcha gagal'; status.className='form-text text-danger'; setThumb(2); }
+        });
+      })();
+    </script>
+  </body>
+  </html>
+
+

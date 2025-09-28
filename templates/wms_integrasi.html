@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Update WMS Integrasi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <h4 class="mb-4">Update WMS Integrasi</h4>
+
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-8">
+          <label class="form-label">Nomor Faktur</label>
+          <input id="faktur" type="text" class="form-control" placeholder="Contoh: DO/FAKTUR" />
+        </div>
+        <div class="col-md-4">
+          <button id="btnCari" class="btn btn-primary w-100">Cari</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="tblResult">
+          <thead>
+            <tr>
+              <th>order_id</th>
+              <th>faktur_id</th>
+              <th>faktur_date</th>
+              <th>status</th>
+              <th>order_integration_id</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal Update -->
+    <div class="modal" tabindex="-1" id="modalUpdate">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update order_integration_id</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">order_integration_id</label>
+              <input id="txtIntegration" type="text" class="form-control" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btnSave">Simpan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const faktur = document.getElementById('faktur');
+      const btnCari = document.getElementById('btnCari');
+      const tblBody = document.querySelector('#tblResult tbody');
+      const modalEl = document.getElementById('modalUpdate');
+      const modal = new bootstrap.Modal(modalEl);
+      const txtIntegration = document.getElementById('txtIntegration');
+      const btnSave = document.getElementById('btnSave');
+
+      let current = null; // row clicked
+
+      function renderRows(rows){
+        tblBody.innerHTML = '';
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.order_id ?? ''}</td><td>${r.faktur_id ?? ''}</td><td>${r.faktur_date ?? ''}</td><td>${r.status ?? ''}</td><td>${r.order_integration_id ?? ''}</td>`;
+          tr.addEventListener('dblclick', () => {
+            current = r; txtIntegration.value = r.order_integration_id ?? ''; modal.show();
+          });
+          tblBody.appendChild(tr);
+        });
+      }
+
+      btnCari.addEventListener('click', async () => {
+        const f = faktur.value.trim();
+        if(!f){ alert('Isi faktur'); return; }
+        const res = await fetch(`/api/wms-integration?faktur_id=${encodeURIComponent(f)}`);
+        const json = await res.json();
+        renderRows(json.data || []);
+      });
+
+      btnSave.addEventListener('click', async () => {
+        if(!current){ return; }
+        const newVal = txtIntegration.value.trim();
+        if(!newVal){ alert('Isi nilai baru'); return; }
+        const res = await fetch('/api/wms-integration/update', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_id: current.order_id, order_integration_id: newVal })
+        });
+        const json = await res.json();
+        modal.hide();
+        if(json.status === 200){ alert('Berhasil update'); }
+        else { alert('Gagal update'); }
+      });
+    </script>
+  </body>
+  </html>
+
+

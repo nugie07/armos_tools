@@ -1,0 +1,9 @@
+# Environment files
+.env
+file.env
+.env.example
+
+# Archives
+data_archive_order/
+
+mst_list_of_values.csv

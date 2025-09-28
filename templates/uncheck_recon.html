@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Uncheck Document Reconciliation</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <h4 class="mb-4">Uncheck Document Reconciliation</h4>
+
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-8">
+          <label class="form-label">Nomor Faktur</label>
+          <input id="faktur" type="text" class="form-control" placeholder="Contoh: G10SI2412-1020" />
+        </div>
+        <div class="col-md-4">
+          <button id="btnCari" class="btn btn-primary w-100">Cari</button>
+        </div>
+      </div>
+
+      <div class="table-responsive d-none" id="resultWrap">
+        <table class="table table-bordered table-striped" id="tblRecon">
+          <thead>
+            <tr>
+              <th>order_id</th>
+              <th>faktur_id</th>
+              <th>created_at</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <button id="btnUncheck" class="btn btn-danger">Uncheck</button>
+      </div>
+    </div>
+
+    <!-- Modal Simple -->
+    <div class="modal" tabindex="-1" id="modalInfo">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Informasi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p id="modalMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            <button type="button" class="btn btn-primary d-none" id="modalYes">Ya</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const faktur = document.getElementById('faktur');
+      const btnCari = document.getElementById('btnCari');
+      const resultWrap = document.getElementById('resultWrap');
+      const tblBody = document.querySelector('#tblRecon tbody');
+      const btnUncheck = document.getElementById('btnUncheck');
+
+      const modalEl = document.getElementById('modalInfo');
+      const modal = new bootstrap.Modal(modalEl);
+      const modalMsg = document.getElementById('modalMessage');
+      const modalYes = document.getElementById('modalYes');
+
+      let current = null; // { order_id, faktur_id }
+
+      btnCari.addEventListener('click', async () => {
+        const f = faktur.value.trim();
+        if(!f){
+          alert('Nomor faktur wajib diisi');
+          return;
+        }
+        const res = await fetch(`/api/reconciliation?faktur_id=${encodeURIComponent(f)}`);
+        if(res.status === 404){
+          modalMsg.textContent = 'Data tidak ditemukan';
+          modalYes.classList.add('d-none');
+          modal.show();
+          resultWrap.classList.add('d-none');
+          return;
+        }
+        const json = await res.json();
+        const rows = json.data || [];
+        tblBody.innerHTML = '';
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          const orderId = r.order_id ?? r.ORDER_ID ?? null;
+          const fakturId = r.faktur_id ?? r.FAKTUR_ID ?? f;
+          tr.innerHTML = `<td>${orderId ?? ''}</td><td>${fakturId ?? ''}</td><td>${r.created_at ?? ''}</td>`;
+          tblBody.appendChild(tr);
+          current = { order_id: orderId, faktur_id: fakturId };
+        });
+        resultWrap.classList.remove('d-none');
+      });
+
+      btnUncheck.addEventListener('click', () => {
+        if(!current || !current.order_id){
+          modalMsg.textContent = 'Data tidak valid untuk dihapus';
+          modalYes.classList.add('d-none');
+          modal.show();
+          return;
+        }
+        modalMsg.textContent = 'Apakah anda yakin akan uncheck document reconciliation ini?';
+        modalYes.classList.remove('d-none');
+        modal.show();
+      });
+
+      modalYes.addEventListener('click', async () => {
+        if(!current) return;
+        const res = await fetch('/api/reconciliation/uncheck', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order_id: current.order_id })
+        });
+        const json = await res.json();
+        modal.hide();
+        if(json.status === 200){
+          alert('Berhasil dihapus');
+          resultWrap.classList.add('d-none');
+        } else {
+          alert('Gagal menghapus');
+        }
+      });
+    </script>
+  </body>
+  </html>
+
+

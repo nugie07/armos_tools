@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PRODUCT to ROUTE</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <h4 class="mb-4">PRODUCT to ROUTE</h4>
+
+      <div class="row g-3 align-items-end mb-3">
+        <div class="col-md-4">
+          <label class="form-label">SKU</label>
+          <input id="sku" type="text" class="form-control" placeholder="Contoh: 80478905080053" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Start Date</label>
+          <input id="startDate" type="date" class="form-control" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">End Date</label>
+          <input id="endDate" type="date" class="form-control" />
+        </div>
+        <div class="col-md-2">
+          <button id="btnCari" class="btn btn-primary w-100">Cari</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped" id="tblResult">
+          <thead>
+            <tr>
+              <th>route_id</th>
+              <th>manifest_reference</th>
+              <th>route_status</th>
+              <th>faktur_id</th>
+              <th>order_status</th>
+              <th>quantity_faktur</th>
+              <th>faktur_date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const sku = document.getElementById('sku');
+      const startDate = document.getElementById('startDate');
+      const endDate = document.getElementById('endDate');
+      const btnCari = document.getElementById('btnCari');
+      const tblBody = document.querySelector('#tblResult tbody');
+
+      function renderRows(rows){
+        tblBody.innerHTML = '';
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.route_id ?? ''}</td><td>${r.manifest_reference ?? ''}</td><td>${r.route_status ?? ''}</td><td>${r.faktur_id ?? ''}</td><td>${r.order_status ?? ''}</td><td>${r.quantity_faktur ?? ''}</td><td>${r.faktur_date ?? ''}</td>`;
+          tblBody.appendChild(tr);
+        });
+      }
+
+      btnCari.addEventListener('click', async () => {
+        const s = sku.value.trim();
+        const sd = startDate.value;
+        const ed = endDate.value;
+        if(!s || !sd || !ed){
+          alert('Lengkapi SKU dan rentang tanggal');
+          return;
+        }
+        const res = await fetch(`/api/product-to-route?sku=${encodeURIComponent(s)}&start_date=${encodeURIComponent(sd)}&end_date=${encodeURIComponent(ed)}`);
+        const json = await res.json();
+        renderRows(json.data || []);
+      });
+    </script>
+  </body>
+  </html>
+
+
