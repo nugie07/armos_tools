@@ -49,7 +49,23 @@ Buka halaman utama dan gunakan menu:
 - PRODUCT to ROUTE
 - Update WMS Integrasi
 
-Lihat petunjuk detail di `readme_web.md`.
+### Menjalankan di background (tanpa systemd) dengan Gunicorn
+
+Untuk run cepat di background dan bisa menutup terminal:
+
+```bash
+source .venv/bin/activate
+pip install gunicorn
+nohup gunicorn -w 2 -b 0.0.0.0:5000 app:app > gunicorn.log 2>&1 & echo $! > gunicorn.pid
+# Cek log
+tail -f gunicorn.log
+# Reload setelah update kode/template
+kill -HUP $(cat gunicorn.pid)
+# Stop
+kill $(cat gunicorn.pid)
+```
+
+Catatan: Perubahan file (termasuk `templates/login.html`) tidak otomatis terdeteksi. Gunakan perintah reload di atas atau stop+start agar perubahan terapply. Untuk produksi, gunakan systemd + Nginx (bagian deploy/SSL di bawah).
 
 ## Integrasi WMS – Ambil Inventory
 
@@ -92,12 +108,6 @@ Cron setiap 30 menit:
 ```cron
 */30 * * * * /usr/bin/python3 /path/ke/armos_preprod/log_konversi.py >> /var/log/log_konversi.log 2>&1
 ```
-
-## Catatan
-
-- Semua query database menggunakan parameterized query (psycopg2).
-- Log Viewer melakukan pencarian case-insensitive contains untuk `event` dan `request`.
-- Butuh fitur tambahan? Silakan informasikan agar ditambahkan.
 
 ## SSL/HTTPS Otomatis (Let's Encrypt)
 
