@@ -69,10 +69,9 @@ app.secret_key = get_env("SECRET_KEY", os.urandom(24).hex())
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-def validate_user_supabase(username: str, access_code: str) -> bool:
+def validate_user_supabase(username: str, access_code: str) -> tuple[bool, str]:
     if not SUPABASE_URL or not SUPABASE_KEY:
-        # If supabase not configured, deny by default
-        return False
+        return False, "Konfigurasi login belum lengkap (SUPABASE_URL/KEY)"
     try:
         endpoint = SUPABASE_URL.rstrip("/") + "/rest/v1/log_user_auth"
         headers = {
@@ -86,13 +85,18 @@ def validate_user_supabase(username: str, access_code: str) -> bool:
             "access_code": f"eq.{access_code}",
             "limit": 1,
         }
-        resp = requests.get(endpoint, headers=headers, params=params, timeout=30)
+        resp = requests.get(endpoint, headers=headers, params=params, timeout=15)
         if resp.status_code != 200:
-            return False
+            snippet = resp.text[:200] if resp.text else ""
+            return False, f"Autentikasi gagal (HTTP {resp.status_code}). {snippet}"
         data = resp.json() if resp.content else []
-        return isinstance(data, list) and len(data) > 0
-    except Exception:
-        return False
+        if isinstance(data, list) and len(data) > 0:
+            return True, "OK"
+        return False, "Username atau access code salah"
+    except requests.Timeout:
+        return False, "Timeout menghubungi layanan login"
+    except Exception as exc:
+        return False, f"Gagal menghubungi layanan login: {exc}"
 
 
 @app.before_request
@@ -118,12 +122,15 @@ def login():
     # POST
     username = str((request.form.get("username") or "").strip())
     access_code = str((request.form.get("access_code") or "").strip())
-    valid = bool(username) and bool(access_code) and validate_user_supabase(username, access_code)
+    valid = False
+    error_msg = None
+    if username and access_code:
+        valid, error_msg = validate_user_supabase(username, access_code)
     if valid:
         session["authorized"] = True
         session["username"] = username
         return redirect(url_for("index"))
-    error = "Username atau access code tidak valid"
+    error = error_msg or "Username atau access code tidak valid"
     return render_template("login.html", error=error)
 
 
