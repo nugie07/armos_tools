@@ -22,6 +22,10 @@ WMS_SECRET=...
 WMS_LIST_INV=api-wms.example.com/v2/inventory/list
 WMS_AUTH_HEADER_PREFIX=Bearer 
 WMS_LIST_INV_METHOD=POST
+
+# Supabase untuk login
+SUPABASE_URL=https://<project>.supabase.co
+SUPABASE_KEY=service-role-or-anon-key
 ```
 
 Install dependency:

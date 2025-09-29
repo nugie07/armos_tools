@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 import json
 from pathlib import Path
+import requests
 
 
 def try_load_dotenv() -> None:
@@ -65,19 +66,39 @@ app = Flask(__name__)
 app.secret_key = get_env("SECRET_KEY", os.urandom(24).hex())
 
 
-def _allowed_access_keys() -> set[str]:
-    keys: set[str] = set()
-    for i in range(1, 7):
-        val = os.getenv(f"APP_ACCESS_{i}")
-        if val is not None and str(val).strip() != "":
-            keys.add(str(val).strip())
-    return keys
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+def validate_user_supabase(username: str, access_code: str) -> bool:
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        # If supabase not configured, deny by default
+        return False
+    try:
+        endpoint = SUPABASE_URL.rstrip("/") + "/rest/v1/log_user_auth"
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+            "Accept": "application/json",
+        }
+        params = {
+            "select": "username,access_code",
+            "username": f"eq.{username}",
+            "access_code": f"eq.{access_code}",
+            "limit": 1,
+        }
+        resp = requests.get(endpoint, headers=headers, params=params, timeout=30)
+        if resp.status_code != 200:
+            return False
+        data = resp.json() if resp.content else []
+        return isinstance(data, list) and len(data) > 0
+    except Exception:
+        return False
 
 
 @app.before_request
 def _gate_access():
-    # Allow login and captcha verify without session
-    open_paths = {"/login", "/api/captcha/verify"}
+    # Allow login without session
+    open_paths = {"/login"}
     if request.path in open_paths or request.path.startswith("/static"):
         return
     if not session.get("authorized"):
@@ -92,33 +113,19 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        session.pop("captcha_ok", None)
         return render_template("login.html", error=None)
 
     # POST
-    access_key = str((request.form.get("access_key") or "").strip())
-    captcha_ok = bool(session.get("captcha_ok", False))
-    valid = access_key in _allowed_access_keys()
-    if valid and captcha_ok:
+    username = str((request.form.get("username") or "").strip())
+    access_code = str((request.form.get("access_code") or "").strip())
+    valid = bool(username) and bool(access_code) and validate_user_supabase(username, access_code)
+    if valid:
         session["authorized"] = True
-        session.pop("captcha_ok", None)
+        session["username"] = username
         return redirect(url_for("index"))
-    error = "Key atau captcha tidak valid"
+    error = "Username atau access code tidak valid"
     return render_template("login.html", error=error)
 
-
-@app.post("/api/captcha/verify")
-def api_captcha_verify():
-    payload = request.get_json(silent=True) or {}
-    try:
-        slider_val = int(payload.get("slider_value", 0))
-    except Exception:
-        slider_val = 0
-    # Consider verified if slider moved to >= 95
-    if slider_val >= 95:
-        session["captcha_ok"] = True
-        return jsonify({"status": 200, "message": "ok"})
-    return jsonify({"status": 400, "message": "captcha not complete"}), 400
 
 
 # ---------- Menu 1: Update Lokasi Customer ----------
