@@ -408,7 +408,7 @@ def fetch_wms_integration_by_faktur(faktur_id: str):
     sql = (
         'SELECT odr.order_id, odr.faktur_id, odr.faktur_date, odr.status, odr.order_integration_id '
         'FROM "order" odr '
-        'WHERE odr.faktur_id = %s AND (odr.order_integration_id = \"pending\" OR odr.order_integration_id IS NULL)'
+        'WHERE odr.faktur_id = %s'
     )
     with get_db_connection() as conn:
         with conn.cursor() as cur:
