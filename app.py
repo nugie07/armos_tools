@@ -336,6 +336,8 @@ def api_log_search():
 
     if not file_name:
         return jsonify({"status": 400, "message": "file required"}), 400
+    if not q_event:
+        return jsonify({"status": 400, "message": "event keyword required"}), 400
 
     data = _load_log_file(file_name)
 

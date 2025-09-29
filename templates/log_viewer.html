@@ -132,10 +132,8 @@
 
       async function doSearch(){
         const file = ddlFile.value;
-        if(!file){
-          alert('Pilih file JSON terlebih dahulu');
-          return;
-        }
+        if(!file){ alert('Pilih file JSON terlebih dahulu'); return; }
+        if(!searchEvent.value.trim()){ alert('Isi kata kunci Event'); return; }
         const qEvent = searchEvent.value.trim();
         const qReq = searchRequest.value.trim();
         loading.classList.remove('d-none');
