@@ -114,8 +114,38 @@ def write_json_today() -> str:
     return out_path
 
 
+def clean_old_logs(retention_days: int = 7) -> list[str]:
+    """Remove log files older than retention_days based on filename DDMMYYYY_log.json.
+
+    Returns list of deleted file paths.
+    """
+    data_dir = ensure_data_dir()
+    deleted: list[str] = []
+    cutoff = datetime.now().date() - timedelta(days=retention_days - 1)
+    for name in os.listdir(data_dir):
+      if not name.endswith("_log.json") or len(name) < 13:
+          continue
+      date_str = name[:8]
+      try:
+          dt = datetime.strptime(date_str, "%d%m%Y").date()
+      except Exception:
+          # Skip files that don't match expected pattern
+          continue
+      if dt < cutoff:
+          try:
+              os.remove(os.path.join(data_dir, name))
+              deleted.append(name)
+          except Exception:
+              # ignore deletion errors
+              pass
+    return deleted
+
+
 if __name__ == "__main__":
     out = write_json_today()
     print(f"Log JSON written: {out}")
+    removed = clean_old_logs(retention_days=7)
+    if removed:
+        print(f"Removed old logs (>7 days): {', '.join(removed)}")
 
 
