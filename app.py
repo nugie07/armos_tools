@@ -63,7 +63,8 @@ def get_db_connection():
 
 
 app = Flask(__name__)
-app.secret_key = get_env("SECRET_KEY", os.urandom(24).hex())
+# IMPORTANT: use a stable SECRET_KEY from env to avoid session loss across workers
+app.secret_key = get_env("SECRET_KEY")
 
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")

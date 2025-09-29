@@ -12,7 +12,10 @@
   </head>
   <body class="p-4">
     <div class="container">
-      <h4 class="mb-4">Log Viewer</h4>
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="mb-0">Log Viewer</h4>
+        <a href="/" class="btn btn-outline-secondary" title="Home">🏠</a>
+      </div>
 
       <div class="row g-3 mb-3">
         <div class="col-md-4">
@@ -29,8 +32,9 @@
         </div>
       </div>
 
-      <div class="mb-3">
+      <div class="mb-3 d-flex align-items-center gap-2">
         <button id="btnSearch" class="btn btn-primary">Search</button>
+        <div id="loading" class="spinner-border text-primary d-none" role="status" style="width: 1.5rem; height: 1.5rem;"><span class="visually-hidden">Loading...</span></div>
       </div>
 
       <div class="table-responsive mb-4">
@@ -72,6 +76,7 @@
       const searchEvent = document.getElementById('searchEvent');
       const searchRequest = document.getElementById('searchRequest');
       const btnSearch = document.getElementById('btnSearch');
+      const loading = document.getElementById('loading');
       const tblBody = document.querySelector('#tblLogs tbody');
 
       const detailEvent = document.getElementById('detailEvent');
@@ -133,10 +138,15 @@
         }
         const qEvent = searchEvent.value.trim();
         const qReq = searchRequest.value.trim();
-        const res = await fetch(`/api/log/search?file=${encodeURIComponent(file)}&event=${encodeURIComponent(qEvent)}&request=${encodeURIComponent(qReq)}`);
-        const json = await res.json();
-        currentData = (json.data || []).map((x, i) => ({...x, _idx: i}));
-        renderRows(currentData);
+        loading.classList.remove('d-none');
+        try {
+          const res = await fetch(`/api/log/search?file=${encodeURIComponent(file)}&event=${encodeURIComponent(qEvent)}&request=${encodeURIComponent(qReq)}`);
+          const json = await res.json();
+          currentData = (json.data || []).map((x, i) => ({...x, _idx: i}));
+          renderRows(currentData);
+        } finally {
+          loading.classList.add('d-none');
+        }
       }
 
       btnSearch.addEventListener('click', doSearch);

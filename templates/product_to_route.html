@@ -8,7 +8,10 @@
   </head>
   <body class="p-4">
     <div class="container">
-      <h4 class="mb-4">PRODUCT to ROUTE</h4>
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="mb-0">PRODUCT to ROUTE</h4>
+        <a href="/" class="btn btn-outline-secondary" title="Home">🏠</a>
+      </div>
 
       <div class="row g-3 align-items-end mb-3">
         <div class="col-md-4">
@@ -26,6 +29,11 @@
         <div class="col-md-2">
           <button id="btnCari" class="btn btn-primary w-100">Cari</button>
         </div>
+      </div>
+
+      <div class="mb-3 d-flex align-items-center gap-2">
+        <button id="btnCari" class="btn btn-primary">Cari</button>
+        <div id="loading" class="spinner-border text-primary d-none" role="status" style="width: 1.5rem; height: 1.5rem;"><span class="visually-hidden">Loading...</span></div>
       </div>
 
       <div class="table-responsive">
@@ -52,6 +60,7 @@
       const startDate = document.getElementById('startDate');
       const endDate = document.getElementById('endDate');
       const btnCari = document.getElementById('btnCari');
+      const loading = document.getElementById('loading');
       const tblBody = document.querySelector('#tblResult tbody');
 
       function renderRows(rows){
@@ -71,9 +80,14 @@
           alert('Lengkapi SKU dan rentang tanggal');
           return;
         }
-        const res = await fetch(`/api/product-to-route?sku=${encodeURIComponent(s)}&start_date=${encodeURIComponent(sd)}&end_date=${encodeURIComponent(ed)}`);
-        const json = await res.json();
-        renderRows(json.data || []);
+        loading.classList.remove('d-none');
+        try {
+          const res = await fetch(`/api/product-to-route?sku=${encodeURIComponent(s)}&start_date=${encodeURIComponent(sd)}&end_date=${encodeURIComponent(ed)}`);
+          const json = await res.json();
+          renderRows(json.data || []);
+        } finally {
+          loading.classList.add('d-none');
+        }
       });
     </script>
   </body>

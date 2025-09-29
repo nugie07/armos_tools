@@ -8,7 +8,10 @@
   </head>
   <body class="p-4">
     <div class="container">
-      <h3 class="mb-4">Utility Tools</h3>
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h3 class="mb-0">Utility Tools</h3>
+        <a href="/" class="btn btn-outline-secondary" title="Home">🏠</a>
+      </div>
       <div class="list-group">
         <a class="list-group-item list-group-item-action" href="{{ url_for('menu_update_lokasi') }}">1. Update Lokasi Customer</a>
         <a class="list-group-item list-group-item-action" href="{{ url_for('menu_uncheck_reconciliation') }}">2. Update Uncheck Document Reconciliation</a>
