@@ -5,6 +5,7 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for, s
 import json
 from pathlib import Path
 import requests
+import math
 import random
 
 
@@ -342,6 +343,14 @@ def api_log_search():
     file_name = request.args.get("file", "").strip()
     q_event = request.args.get("event", "").strip()
     q_request = request.args.get("request", "").strip()
+    try:
+        page = max(1, int(request.args.get("page", "1")))
+    except Exception:
+        page = 1
+    try:
+        per_page = max(1, int(request.args.get("per_page", "10")))
+    except Exception:
+        per_page = 10
 
     if not file_name:
         return jsonify({"status": 400, "message": "file required"}), 400
@@ -364,7 +373,20 @@ def api_log_search():
         if _match(row.get("event"), q_event) and _match(row.get("request"), q_request):
             results.append(row)
 
-    return jsonify({"status": 200, "data": results})
+    total = len(results)
+    pages = max(1, math.ceil(total / per_page))
+    start = (page - 1) * per_page
+    end = start + per_page
+    paged = results[start:end]
+
+    return jsonify({
+        "status": 200,
+        "data": paged,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "pages": pages
+    })
 
 
 # ---------- Menu 4: PRODUCT to ROUTE ----------
