@@ -85,6 +85,7 @@
       const detailResponse = document.getElementById('detailResponse');
 
       let currentData = [];
+      let selectedRecordId = null;
 
       function renderFileOptions(files){
         ddlFile.innerHTML = '';
@@ -102,6 +103,18 @@
         renderFileOptions(json.data || []);
       }
 
+      function fillDetails(r){
+        if(!r) return;
+        detailEvent.value = r.event ?? '';
+        detailCreated.value = r.created_date ?? '';
+        let reqText = r.request ?? '';
+        try { if (typeof reqText === 'string') { const o = JSON.parse(reqText); reqText = JSON.stringify(o, null, 2); } } catch(e) {}
+        detailRequest.value = reqText;
+        let respText = r.response ?? '';
+        try { if (typeof respText === 'string') { const o = JSON.parse(respText); respText = JSON.stringify(o, null, 2); } } catch(e) {}
+        detailResponse.value = respText;
+      }
+
       function renderRows(rows){
         tblBody.innerHTML = '';
         rows.forEach(r => {
@@ -109,16 +122,8 @@
           tr.dataset.idx = r._idx;
           tr.innerHTML = `<td>${r.api_request_log_id ?? ''}</td><td>${r.event ?? ''}</td><td>${r.created_date ?? ''}</td>`;
           tr.addEventListener('dblclick', () => {
-            detailEvent.value = r.event ?? '';
-            detailCreated.value = r.created_date ?? '';
-            // Request
-            let reqText = r.request ?? '';
-            try { if (typeof reqText === 'string') { const o = JSON.parse(reqText); reqText = JSON.stringify(o, null, 2); } } catch(e) {}
-            detailRequest.value = reqText;
-            // Response (beautify JSON if valid)
-            let respText = r.response ?? '';
-            try { if (typeof respText === 'string') { const o = JSON.parse(respText); respText = JSON.stringify(o, null, 2); } } catch(e) {}
-            detailResponse.value = respText;
+            selectedRecordId = r.api_request_log_id ?? null;
+            fillDetails(r);
           });
           tblBody.appendChild(tr);
         });
@@ -136,12 +141,17 @@
         if(!searchEvent.value.trim()){ alert('Isi kata kunci Event'); return; }
         const qEvent = searchEvent.value.trim();
         const qReq = searchRequest.value.trim();
+        const prevSelected = selectedRecordId;
         loading.classList.remove('d-none');
         try {
           const res = await fetch(`/api/log/search?file=${encodeURIComponent(file)}&event=${encodeURIComponent(qEvent)}&request=${encodeURIComponent(qReq)}`);
           const json = await res.json();
           currentData = (json.data || []).map((x, i) => ({...x, _idx: i}));
           renderRows(currentData);
+          if(prevSelected != null){
+            const found = currentData.find(r => String(r.api_request_log_id) === String(prevSelected));
+            if(found){ fillDetails(found); }
+          }
         } finally {
           loading.classList.add('d-none');
         }
