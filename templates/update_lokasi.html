@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Update Lokasi Customer</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
   </head>
   <body class="p-4">
     <div class="container">
@@ -67,8 +68,7 @@
           </div>
           <div class="modal-body">
             <label class="form-label">Lokasi</label>
-          <input id="searchLokasi" type="text" class="form-control mb-2" placeholder="Ketik untuk mencari (id / code / name)" />
-            <select id="ddlLokasi" class="form-select"></select>
+            <select id="ddlLokasi" class="form-select" style="width:100%"></select>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -79,6 +79,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
       const tblBody = document.querySelector('#tblOrders tbody');
       const btnCari = document.getElementById('btnCari');
@@ -88,7 +90,6 @@
       const modalEl = document.getElementById('modalLokasi');
       const modal = new bootstrap.Modal(modalEl);
       const ddlLokasi = document.getElementById('ddlLokasi');
-      const searchLokasi = document.getElementById('searchLokasi');
 
       let currentFaktur = '';
 
@@ -138,24 +139,16 @@
       }
 
       btnUbah.addEventListener('click', async () => {
-        // load lokasi list (cache per open)
         const res = await fetch('/api/locations');
         const json = await res.json();
         allLocations = json.data || [];
         renderLocationOptions(allLocations);
-        searchLokasi.value = '';
+        const $ddl = window.jQuery ? window.jQuery('#ddlLokasi') : null;
+        if($ddl){
+          if($ddl.hasClass('select2-hidden-accessible')){ $ddl.select2('destroy'); }
+          $ddl.select2({ dropdownParent: window.jQuery('#modalLokasi'), width: '100%', placeholder: 'Pilih lokasi', allowClear: true });
+        }
         modal.show();
-      });
-
-      searchLokasi.addEventListener('input', () => {
-        const q = searchLokasi.value.trim().toLowerCase();
-        if(!q){ renderLocationOptions(allLocations); return; }
-        const filtered = allLocations.filter(x => {
-          return String(x.mst_location_child_id).toLowerCase().includes(q)
-            || String(x.code ?? '').toLowerCase().includes(q)
-            || String(x.name ?? '').toLowerCase().includes(q);
-        });
-        renderLocationOptions(filtered);
       });
 
       document.getElementById('btnSaveLokasi').addEventListener('click', async () => {
