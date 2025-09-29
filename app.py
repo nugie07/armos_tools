@@ -63,8 +63,12 @@ def get_db_connection():
 
 
 app = Flask(__name__)
-# IMPORTANT: use a stable SECRET_KEY from env to avoid session loss across workers
-app.secret_key = get_env("SECRET_KEY")
+# Session signing is required for Flask sessions. Use SECRET_KEY if provided,
+# otherwise fall back to SUPABASE_KEY to avoid a separate var in simple setups.
+_secret = os.getenv("SECRET_KEY") or os.getenv("SUPABASE_KEY")
+if not _secret:
+    raise RuntimeError("Please set SECRET_KEY or SUPABASE_KEY for Flask session signing")
+app.secret_key = _secret
 
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
