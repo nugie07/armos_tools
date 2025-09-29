@@ -107,8 +107,8 @@ def validate_user_supabase(username: str, access_code: str) -> tuple[bool, str]:
 
 @app.before_request
 def _gate_access():
-    # Allow login without session
-    open_paths = {"/login"}
+    # Allow login without session and ignore favicon
+    open_paths = {"/login", "/favicon.ico"}
     if request.path in open_paths or request.path.startswith("/static"):
         return
     if not session.get("authorized"):
@@ -123,9 +123,11 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        # Generate simple 6-digit numeric captcha and store in session
-        code = f"{random.randint(0, 999999):06d}"
-        session["captcha_code"] = code
+        # Keep existing captcha to avoid race with additional GETs (e.g., favicon)
+        code = session.get("captcha_code")
+        if not code:
+            code = f"{random.randint(0, 999999):06d}"
+            session["captcha_code"] = code
         return render_template("login.html", error=None, captcha_code=code)
 
     # POST
