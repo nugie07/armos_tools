@@ -67,6 +67,7 @@
           </div>
           <div class="modal-body">
             <label class="form-label">Lokasi</label>
+          <input id="searchLokasi" type="text" class="form-control mb-2" placeholder="Ketik untuk mencari (id / code / name)" />
             <select id="ddlLokasi" class="form-select"></select>
           </div>
           <div class="modal-footer">
@@ -87,6 +88,7 @@
       const modalEl = document.getElementById('modalLokasi');
       const modal = new bootstrap.Modal(modalEl);
       const ddlLokasi = document.getElementById('ddlLokasi');
+      const searchLokasi = document.getElementById('searchLokasi');
 
       let currentFaktur = '';
 
@@ -124,18 +126,36 @@
         }
       });
 
-      btnUbah.addEventListener('click', async () => {
-        // load lokasi list
-        const res = await fetch('/api/locations');
-        const json = await res.json();
+      let allLocations = [];
+      function renderLocationOptions(list){
         ddlLokasi.innerHTML = '';
-        (json.data || []).forEach(x => {
+        list.forEach(x => {
           const opt = document.createElement('option');
           opt.value = x.mst_location_child_id;
           opt.textContent = `${x.mst_location_child_id} - ${x.code} - ${x.name}`;
           ddlLokasi.appendChild(opt);
         });
+      }
+
+      btnUbah.addEventListener('click', async () => {
+        // load lokasi list (cache per open)
+        const res = await fetch('/api/locations');
+        const json = await res.json();
+        allLocations = json.data || [];
+        renderLocationOptions(allLocations);
+        searchLokasi.value = '';
         modal.show();
+      });
+
+      searchLokasi.addEventListener('input', () => {
+        const q = searchLokasi.value.trim().toLowerCase();
+        if(!q){ renderLocationOptions(allLocations); return; }
+        const filtered = allLocations.filter(x => {
+          return String(x.mst_location_child_id).toLowerCase().includes(q)
+            || String(x.code ?? '').toLowerCase().includes(q)
+            || String(x.name ?? '').toLowerCase().includes(q);
+        });
+        renderLocationOptions(filtered);
       });
 
       document.getElementById('btnSaveLokasi').addEventListener('click', async () => {
