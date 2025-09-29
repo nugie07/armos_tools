@@ -5,6 +5,7 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for, s
 import json
 from pathlib import Path
 import requests
+import random
 
 
 def try_load_dotenv() -> None:
@@ -122,13 +123,25 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html", error=None)
+        # Generate simple 6-digit numeric captcha and store in session
+        code = f"{random.randint(0, 999999):06d}"
+        session["captcha_code"] = code
+        return render_template("login.html", error=None, captcha_code=code)
 
     # POST
     username = str((request.form.get("username") or "").strip())
     access_code = str((request.form.get("access_code") or "").strip())
+    captcha_input = str((request.form.get("captcha") or "").strip())
+    expected_captcha = str(session.get("captcha_code") or "")
     valid = False
     error_msg = None
+    if not captcha_input or captcha_input != expected_captcha:
+        # Regenerate captcha for the next attempt
+        code = f"{random.randint(0, 999999):06d}"
+        session["captcha_code"] = code
+        error = "Captcha salah"
+        return render_template("login.html", error=error, captcha_code=code)
+
     if username and access_code:
         valid, error_msg = validate_user_supabase(username, access_code)
     if valid:
@@ -136,7 +149,10 @@ def login():
         session["username"] = username
         return redirect(url_for("index"))
     error = error_msg or "Username atau access code tidak valid"
-    return render_template("login.html", error=error)
+    # Regenerate captcha on any failure
+    code = f"{random.randint(0, 999999):06d}"
+    session["captcha_code"] = code
+    return render_template("login.html", error=error, captcha_code=code)
 
 
 

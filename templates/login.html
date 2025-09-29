@@ -29,6 +29,14 @@
           <label class="form-label">Access Code</label>
           <input type="password" name="access_code" class="form-control" placeholder="Masukkan access code" required />
         </div>
+        <div class="mb-3">
+          <label class="form-label">Captcha</label>
+          <div class="input-group">
+            <span class="input-group-text" id="captcha-code">{{ captcha_code }}</span>
+            <input type="text" name="captcha" class="form-control" placeholder="Masukkan angka di samping" required />
+          </div>
+          <div class="form-text">Masukkan 6 digit angka yang ditampilkan.</div>
+        </div>
         <button type="submit" class="btn btn-primary w-100">Masuk</button>
       </form>
     </div>
