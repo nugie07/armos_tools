@@ -26,7 +26,7 @@
             <tr>
               <th>order_id</th>
               <th>faktur_id</th>
-              <th>created_at</th>
+              <th>created_date</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -90,7 +90,7 @@
           const tr = document.createElement('tr');
           const orderId = r.order_id ?? r.ORDER_ID ?? null;
           const fakturId = r.faktur_id ?? r.FAKTUR_ID ?? f;
-          tr.innerHTML = `<td>${orderId ?? ''}</td><td>${fakturId ?? ''}</td><td>${r.created_at ?? ''}</td>`;
+          tr.innerHTML = `<td>${orderId ?? ''}</td><td>${fakturId ?? ''}</td><td>${r.created_date ?? ''}</td>`;
           tblBody.appendChild(tr);
           current = { order_id: orderId, faktur_id: fakturId };
         });
