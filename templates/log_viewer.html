@@ -106,8 +106,14 @@
           tr.addEventListener('dblclick', () => {
             detailEvent.value = r.event ?? '';
             detailCreated.value = r.created_date ?? '';
-            detailRequest.value = r.request ?? '';
-            detailResponse.value = r.response ?? '';
+            // Request
+            let reqText = r.request ?? '';
+            try { if (typeof reqText === 'string') { const o = JSON.parse(reqText); reqText = JSON.stringify(o, null, 2); } } catch(e) {}
+            detailRequest.value = reqText;
+            // Response (beautify JSON if valid)
+            let respText = r.response ?? '';
+            try { if (typeof respText === 'string') { const o = JSON.parse(respText); respText = JSON.stringify(o, null, 2); } } catch(e) {}
+            detailResponse.value = respText;
           });
           tblBody.appendChild(tr);
         });
