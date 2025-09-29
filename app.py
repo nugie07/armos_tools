@@ -108,7 +108,7 @@ def validate_user_supabase(username: str, access_code: str) -> tuple[bool, str]:
 @app.before_request
 def _gate_access():
     # Allow login without session and ignore favicon
-    open_paths = {"/login", "/favicon.ico"}
+    open_paths = {"/login", "/favicon.ico", "/logout"}
     if request.path in open_paths or request.path.startswith("/static"):
         return
     if not session.get("authorized"):
@@ -118,6 +118,15 @@ def _gate_access():
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.get("/logout")
+def logout():
+    session.clear()
+    resp = redirect(url_for("login"))
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    resp.headers["Pragma"] = "no-cache"
+    return resp
 
 
 @app.route("/login", methods=["GET", "POST"])
