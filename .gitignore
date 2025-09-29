@@ -7,3 +7,14 @@ file.env
 data_archive_order/
 
 mst_list_of_values.csv
+
+# Virtualenv & caches
+.venv/
+__pycache__/
+*.pyc
+*.log
+
+# Generated data
+data_log/
+inventory_wms.json
+output_order.json

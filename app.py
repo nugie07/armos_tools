@@ -24,13 +24,29 @@ def get_env(name: str, default: Optional[str] = None) -> str:
         raise RuntimeError(f"Missing env var: {name}")
     return value
 
+def _env(primary: str, fallback: Optional[str] = None, default: Optional[str] = None) -> Optional[str]:
+    v = os.getenv(primary)
+    if v is None and fallback is not None:
+        v = os.getenv(fallback)
+    if v is None:
+        v = default
+    return v
 
-DB_HOST = get_env("DATABASE_MAIN_HOST")
-DB_PORT = int(get_env("DATABASE_MAIN_PORT", "5432"))
-DB_NAME = get_env("DATABASE_MAIN_NAME")
-DB_USER = get_env("DATABASE_MAIN_USERNAME")
-DB_PASSWORD = get_env("DATABASE_MAIN_PASS")
-WH_TYPE = int(get_env("WH_TYPE"))
+def get_env_int(name: str, default: Optional[int] = None) -> int:
+    raw = os.getenv(name)
+    if raw is None:
+        if default is None:
+            raise RuntimeError(f"Missing env var: {name}")
+        return int(default)
+    s = str(raw).strip().rstrip(';,')
+    return int(s)
+
+DB_HOST = _env("DATABASE_MAIN_HOST", "DB_HOST")
+DB_PORT = int(_env("DATABASE_MAIN_PORT", "DB_PORT", "5432") or "5432")
+DB_NAME = _env("DATABASE_MAIN_NAME", "DB_NAME")
+DB_USER = _env("DATABASE_MAIN_USERNAME", "DB_USER")
+DB_PASSWORD = _env("DATABASE_MAIN_PASS", "DB_PASSWORD")
+WH_TYPE = get_env_int("WH_TYPE")
 
 
 def get_db_connection():

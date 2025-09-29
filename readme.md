@@ -7,11 +7,11 @@ Dokumentasi singkat untuk utilitas yang ada di repo ini: web app Flask, skrip in
 Buat file `.env` di root project berisi variabel berikut sesuai lingkungan Anda:
 
 ```
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=armos
-DB_USER=armos
-DB_PASSWORD=secret
+DATABASE_MAIN_HOST=localhost
+DATABASE_MAIN_PORT=5432
+DATABASE_MAIN_NAME=armos
+DATABASE_MAIN_USERNAME=armos
+DATABASE_MAIN_PASS=secret
 WH_TYPE=9
 PORT=5000
 

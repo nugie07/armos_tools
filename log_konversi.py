@@ -25,15 +25,35 @@ def try_load_dotenv() -> None:
 try_load_dotenv()
 
 
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = int(os.getenv("DB_PORT", "5432"))
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
+def _env(primary: str, fallback: str | None = None, default: str | None = None) -> str | None:
+    v = os.getenv(primary)
+    if v is None and fallback is not None:
+        v = os.getenv(fallback)
+    if v is None:
+        v = default
+    return v
+
+# Use the same schema as app.py (DATABASE_MAIN_*) with fallback to older names
+DB_HOST = _env("DATABASE_MAIN_HOST", "DB_HOST")
+DB_PORT = int(_env("DATABASE_MAIN_PORT", "DB_PORT", "5432") or "5432")
+DB_NAME = _env("DATABASE_MAIN_NAME", "DB_NAME")
+DB_USER = _env("DATABASE_MAIN_USERNAME", "DB_USER")
+DB_PASSWORD = _env("DATABASE_MAIN_PASS", "DB_PASSWORD")
 
 
 def get_db_connection():
     import psycopg2
+    # Validate required envs early for clearer errors
+    missing = [
+        name for name, val in [
+            ("DB_HOST", DB_HOST),
+            ("DB_NAME", DB_NAME),
+            ("DB_USER", DB_USER),
+            ("DB_PASSWORD", DB_PASSWORD),
+        ] if not val
+    ]
+    if missing:
+        raise RuntimeError(f"Missing database env vars: {', '.join(missing)}. Check your .env")
 
     return psycopg2.connect(
         host=DB_HOST,
