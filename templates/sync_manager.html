@@ -84,6 +84,11 @@
 
       async function loadStatus(){
         const res = await fetch('/api/sync/status?limit=20');
+        const ct = res.headers.get('content-type') || '';
+        if(!ct.includes('application/json')){
+          const text = await res.text();
+          throw new Error('Non-JSON response: ' + text.slice(0, 200));
+        }
         const json = await res.json();
         const rows = json.sync_history || [];
         tblBody.innerHTML = '';
@@ -102,6 +107,13 @@
         try{
           const body = { sync_type: syncType.value, date_from: dateFrom.value || undefined, date_to: dateTo.value || undefined };
           const res = await fetch('/api/sync/run', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+          const ct = res.headers.get('content-type') || '';
+          if(!ct.includes('application/json')){
+            const text = await res.text();
+            modalMessage.textContent = 'Respon bukan JSON (kemungkinan sesi login habis).\n' + text.slice(0, 400);
+            modal.show();
+            return;
+          }
           const json = await res.json();
           if(json.status !== 200){ modalMessage.textContent = 'Gagal menjalankan sync: ' + (json.message || res.status); modal.show(); return; }
           const jobId = json.job_id;
@@ -111,6 +123,8 @@
           while(!done){
             await new Promise(r => setTimeout(r, 1500));
             const s = await fetch('/api/sync/job/' + jobId);
+            const sct = s.headers.get('content-type') || '';
+            if(!sct.includes('application/json')){ break; }
             const sj = await s.json();
             if(sj && sj.job){
               modalMessage.textContent = 'Job: ' + jobId + '\nStatus: ' + sj.job.status + (sj.job.error ? ('\nError: ' + sj.job.error) : '');

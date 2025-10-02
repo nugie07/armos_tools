@@ -15,6 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 import uuid
 from datetime import datetime
 from sync.manager import run_sync as sync_run, get_sync_status as sync_get_status, create_sync_log_table
+from sync.db import DatabaseManager
 
 
 def try_load_dotenv() -> None:
@@ -611,7 +612,7 @@ def api_sync_run():
 
     # Ensure log table exists
     try:
-        create_sync_log_table(DatabaseManager())  # type: ignore[name-defined]
+        create_sync_log_table(DatabaseManager())
     except Exception:
         pass
 
@@ -641,7 +642,7 @@ def api_sync_status():
         limit = max(1, int(request.args.get("limit", "20")))
     except Exception:
         limit = 20
-    rows = sync_get_status(DatabaseManager(), sync_type=sync_type, limit=limit)  # type: ignore[name-defined]
+    rows = sync_get_status(DatabaseManager(), sync_type=sync_type, limit=limit)
     data = []
     for r in rows:
         data.append({

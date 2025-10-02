@@ -51,6 +51,13 @@
 
       async function load(){
         const res = await fetch('/api/sync/status?limit=50');
+        const ct = res.headers.get('content-type') || '';
+        if(!ct.includes('application/json')){
+          const text = await res.text();
+          total.textContent = '-'; ok.textContent = '-'; fail.textContent = '-'; last.textContent = '-';
+          tbody.innerHTML = `<tr><td colspan="6"><div class="text-danger">Non-JSON response (mungkin sesi habis):<br>${text.slice(0,400)}</div></td></tr>`;
+          return;
+        }
         const json = await res.json();
         const s = json.stats || {};
         total.textContent = s.total_syncs ?? '-';
