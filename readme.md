@@ -49,8 +49,7 @@ Buka halaman utama dan gunakan menu:
 - PRODUCT to ROUTE
 - Update WMS Integrasi
  - Upload Order (Convert & Send)
- - Sync Manager
- - Sync Dashboard
+ - Sync Manager (termasuk dashboard ringkas)
 
 ### Menjalankan di background (tanpa systemd) dengan Gunicorn
 
@@ -129,8 +128,7 @@ pip install -r requirements.txt
 
 ### UI
 
-- Menu: `Sync Manager` → jalankan sinkronisasi dengan opsi tipe (`fact_order` / `fact_delivery` / `both`) dan filter tanggal.
-- Menu: `Sync Dashboard` → ringkasan statistik (total/success/failed/last-sync) dan riwayat sinkronisasi terbaru.
+- Menu: `Sync Manager` → jalankan sinkronisasi (`fact_order` / `fact_delivery` / `both`) dan lihat ringkasan statistik (total/success/failed/last-sync) serta riwayat sinkronisasi terbaru dalam satu halaman.
 
 ### API
 

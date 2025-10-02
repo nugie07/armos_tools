@@ -596,9 +596,7 @@ def menu_sync_manager():
     return render_template("sync_manager.html")
 
 
-@app.get("/menu/sync-dashboard")
-def menu_sync_dashboard():
-    return render_template("sync_dashboard.html")
+# Removed separate sync dashboard page; merged into Sync Manager
 
 
 @app.post("/api/sync/run")
