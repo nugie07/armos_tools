@@ -35,7 +35,8 @@ def get_fact_order_query(date_from=None, date_to=None) -> str:
       SUM(od.quantity_faktur)::NUMERIC(15,2) AS faktur_total_quantity,
       SUM(od.quantity_delivery)::NUMERIC(15,2) AS tms_total_quantity,
       (SUM(od.quantity_delivery) - SUM(od.quantity_unloading))::NUMERIC(15,2) AS total_return,
-      SUM(od.net_price)::NUMERIC(15,2) AS total_net_value
+      SUM(od.net_price)::NUMERIC(15,2) AS total_net_value,
+      a.skip_count
     FROM "public"."order" AS a
     LEFT JOIN "public"."route_detail" AS b ON b.order_id = a.order_id
     LEFT JOIN "public"."route" AS c ON c.route_id = b.route_id
@@ -45,7 +46,7 @@ def get_fact_order_query(date_from=None, date_to=None) -> str:
     LEFT JOIN "public"."driver_task_confirmations" AS g ON g.driver_task_id = f.driver_task_id
     LEFT JOIN "public"."order_detail" AS od ON od.order_id = a.order_id
     {where_clause}
-    GROUP BY a.status, c.manifest_reference, a.order_id, c.manifest_integration_id, c.external_expedition_type, d.driver_name, e.code, a.faktur_date, a.created_date, c.created_date, a.delivery_date, c.route_id, a.updated_date, g.location_confirmation_timestamp
+    GROUP BY a.status, c.manifest_reference, a.order_id, c.manifest_integration_id, c.external_expedition_type, d.driver_name, e.code, a.faktur_date, a.created_date, c.created_date, a.delivery_date, c.route_id, a.updated_date, g.location_confirmation_timestamp, a.skip_count
     ORDER BY a.order_id, a.faktur_date DESC
     """
 
@@ -71,12 +72,15 @@ def create_fact_order_table_schema_b(db_manager: DatabaseManager) -> None:
         tms_total_quantity NUMERIC(15,2),
         total_return NUMERIC(15,2),
         total_net_value NUMERIC(15,2),
+        skip_count INTEGER,
         last_synced TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     );
     """
     engine = db_manager.get_db_b_engine()
     with engine.connect() as conn:
         conn.execute(text(create_table_query))
+        # Ensure column exists when upgrading existing deployments
+        conn.execute(text("ALTER TABLE IF EXISTS tms_fact_order ADD COLUMN IF NOT EXISTS skip_count INTEGER"))
         conn.commit()
 
 
