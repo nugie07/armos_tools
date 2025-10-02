@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
 
 import requests
+from dotenv import load_dotenv
 
 
 # Load environment variables from .env if present

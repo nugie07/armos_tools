@@ -7,6 +7,10 @@ from pathlib import Path
 import requests
 import math
 import random
+from werkzeug.datastructures import FileStorage
+
+from konversi import convert_excel_to_json  # type: ignore
+import send_orders as send_orders_module  # type: ignore
 
 
 def try_load_dotenv() -> None:
@@ -476,6 +480,94 @@ def api_wms_integration_update():
         return jsonify({"status": 400, "message": "order_id and order_integration_id required"}), 400
     affected = update_wms_integration(order_id, new_status)
     return jsonify({"status": 200, "affected": affected})
+
+
+# ---------- Menu 6: Upload Order (Convert & Send) ----------
+
+
+@app.get("/menu/convert-send")
+def menu_convert_send():
+    return render_template("convert_send.html")
+
+
+@app.post("/api/convert-send")
+def api_convert_send():
+    steps: List[Dict[str, str]] = []
+    base_dir = Path(__file__).resolve().parent
+    upload_target = base_dir / "template_feed_order.xlsx"
+    output_json = base_dir / "output_order.json"
+    try:
+        f: Optional[FileStorage] = request.files.get("file")  # type: ignore
+        if f is None or f.filename == "":
+            return jsonify({"status": 400, "message": "File .xlsx wajib diunggah."}), 400
+
+        # Simpan file sebagai template_feed_order.xlsx
+        try:
+            f.save(str(upload_target))
+            steps.append({"status": "OK", "message": f"File diupload sebagai {upload_target.name}"})
+        except Exception as exc:
+            steps.append({"status": "ERROR", "message": f"Gagal menyimpan file: {exc}"})
+            return jsonify({"status": 500, "message": "Gagal menyimpan file.", "steps": steps}), 500
+
+        # Jalankan konversi
+        try:
+            convert_excel_to_json(str(upload_target), str(output_json))
+            steps.append({"status": "OK", "message": "Konversi Excel → JSON berhasil."})
+        except Exception as exc:
+            steps.append({"status": "ERROR", "message": f"Gagal konversi: {exc}"})
+            return jsonify({"status": 500, "message": "Konversi gagal.", "steps": steps}), 500
+
+        # Muat hasil JSON untuk ditampilkan di UI
+        converted_json = None
+        try:
+            if output_json.exists():
+                with output_json.open("r", encoding="utf-8") as rf:
+                    converted_json = json.load(rf)
+        except Exception as exc:
+            steps.append({"status": "WARN", "message": f"Gagal membaca output JSON: {exc}"})
+
+        # Jalankan pengiriman order
+        try:
+            orders = send_orders_module.iter_orders_from_json(str(output_json))
+            token = send_orders_module.login_get_token(
+                os.getenv("SEND_ORDER_USERNAME", "integration_sql_x_armos_system"),
+                os.getenv("SEND_ORDER_PASSWORD", "QW5kYWkga3UgdGFodSBLYXBhbiB0aWJhIGFqYWxrdSBLdSBha2FuIG1lbW9ob24gVHVoYW4sIHRvbG9uZyBwYW5qYW5na2FuIHVtdXJrdSBBbmRhaSBrdSB0YWh1IChrdSB0YWh1KSBLYXBhbiB0aWJhIG1hc2FrdQ=="),
+            )
+            ok = 0
+            fail = 0
+            for order in orders:
+                payload = send_orders_module.build_payload(order)
+                ref = payload.get("outbound_reference")
+                try:
+                    resp = send_orders_module.send_order(token, payload)
+                    content = resp.text
+                    if resp.headers.get("content-type", "").startswith("application/json"):
+                        try:
+                            content = json.dumps(resp.json())
+                        except Exception:
+                            pass
+                    if resp.ok:
+                        steps.append({"status": "OK", "message": f"Kirim {ref}: {resp.status_code} -> {content[:500]}"})
+                        ok += 1
+                    else:
+                        steps.append({"status": "ERROR", "message": f"Kirim {ref}: {resp.status_code} -> {content[:500]}"})
+                        fail += 1
+                except Exception as exc:
+                    steps.append({"status": "ERROR", "message": f"Kirim {ref}: {exc}"})
+                    fail += 1
+            overall_msg = f"Selesai kirim. Berhasil: {ok}, Gagal: {fail}"
+            return jsonify({
+                "status": 200,
+                "message": overall_msg,
+                "steps": steps,
+                "converted_json": converted_json,
+            })
+        except Exception as exc:
+            steps.append({"status": "ERROR", "message": f"Gagal proses pengiriman: {exc}"})
+            return jsonify({"status": 500, "message": "Gagal mengirim order.", "steps": steps, "converted_json": converted_json}), 500
+    except Exception as exc:
+        steps.append({"status": "ERROR", "message": f"Kesalahan tak terduga: {exc}"})
+        return jsonify({"status": 500, "message": "Kesalahan tak terduga.", "steps": steps}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
