@@ -57,29 +57,43 @@ def log_sync_complete(db_manager: DatabaseManager, sync_id: int, status: str, re
         conn.commit()
 
 
-def get_sync_status(db_manager: DatabaseManager, sync_type: str | None = None, limit: int = 10):
+def get_sync_status(db_manager: DatabaseManager, sync_type: str | None = None, limit: int = 10, offset: int = 0):
     if sync_type:
         sql = """
         SELECT sync_type, start_time, end_time, status, records_processed, error_message
         FROM tms_sync_log
         WHERE sync_type = :sync_type
         ORDER BY start_time DESC
-        LIMIT :limit
+        LIMIT :limit OFFSET :offset
         """
-        params = {"sync_type": sync_type, "limit": limit}
+        params = {"sync_type": sync_type, "limit": limit, "offset": offset}
     else:
         sql = """
         SELECT sync_type, start_time, end_time, status, records_processed, error_message
         FROM tms_sync_log
         ORDER BY start_time DESC
-        LIMIT :limit
+        LIMIT :limit OFFSET :offset
         """
-        params = {"limit": limit}
+        params = {"limit": limit, "offset": offset}
     engine = db_manager.get_db_b_engine()
     with engine.connect() as conn:
         res = conn.execute(text(sql), params)
         rows = res.fetchall()
     return rows
+
+
+def count_sync_status(db_manager: DatabaseManager, sync_type: str | None = None) -> int:
+    if sync_type:
+        sql = "SELECT COUNT(1) FROM tms_sync_log WHERE sync_type = :sync_type"
+        params = {"sync_type": sync_type}
+    else:
+        sql = "SELECT COUNT(1) FROM tms_sync_log"
+        params = {}
+    engine = db_manager.get_db_b_engine()
+    with engine.connect() as conn:
+        res = conn.execute(text(sql), params)
+        n = res.scalar_one()
+    return int(n)
 
 
 def run_sync(sync_type: str, date_from=None, date_to=None) -> None:

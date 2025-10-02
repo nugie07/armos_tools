@@ -54,7 +54,12 @@
         <div class="card-body">
           <div class="d-flex align-items-center justify-content-between mb-2">
             <h6 class="mb-0">Recent Sync Status</h6>
-            <button id="btnRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+            <div class="d-flex align-items-center gap-2">
+              <button id="btnPrev" class="btn btn-sm btn-outline-secondary">Prev</button>
+              <span id="pageInfo" class="text-muted small"></span>
+              <button id="btnNext" class="btn btn-sm btn-outline-secondary">Next</button>
+              <button id="btnRefresh" class="btn btn-sm btn-outline-secondary">Refresh</button>
+            </div>
           </div>
           <div class="table-responsive">
             <table class="table table-bordered table-striped" id="tblStatus">
@@ -86,6 +91,11 @@
       const loading = document.getElementById('loading');
       const tblBody = document.querySelector('#tblStatus tbody');
       const btnRefresh = document.getElementById('btnRefresh');
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      const pageInfo = document.getElementById('pageInfo');
+      let currentPage = 1;
+      let totalPages = 1;
       const modal = new bootstrap.Modal(document.getElementById('modalInfo'));
       const modalMessage = document.getElementById('modalMessage');
       const metricTotal = document.getElementById('metricTotal');
@@ -94,7 +104,7 @@
       const metricLast = document.getElementById('metricLast');
 
       async function loadStatus(){
-        const res = await fetch('/api/sync/status?limit=20');
+        const res = await fetch(`/api/sync/status?limit=20&page=${currentPage}`);
         const ct = res.headers.get('content-type') || '';
         if(!ct.includes('application/json')){
           const text = await res.text();
@@ -102,6 +112,9 @@
         }
         const json = await res.json();
         const rows = json.sync_history || [];
+        totalPages = json.pages || 1;
+        currentPage = json.page || 1;
+        pageInfo.textContent = `Page ${currentPage} / ${totalPages}`;
         const s = json.stats || {};
         metricTotal.textContent = s.total_syncs ?? '-';
         metricOk.textContent = s.successful_syncs ?? '-';
@@ -114,6 +127,12 @@
           tblBody.appendChild(tr);
         });
       }
+      btnPrev.addEventListener('click', async () => {
+        if(currentPage > 1){ currentPage -= 1; await loadStatus(); }
+      });
+      btnNext.addEventListener('click', async () => {
+        if(currentPage < totalPages){ currentPage += 1; await loadStatus(); }
+      });
 
       btnRefresh.addEventListener('click', loadStatus);
 

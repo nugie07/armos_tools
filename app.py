@@ -14,7 +14,7 @@ import send_orders as send_orders_module  # type: ignore
 from concurrent.futures import ThreadPoolExecutor
 import uuid
 from datetime import datetime
-from sync.manager import run_sync as sync_run, get_sync_status as sync_get_status, create_sync_log_table
+from sync.manager import run_sync as sync_run, get_sync_status as sync_get_status, create_sync_log_table, count_sync_status as sync_count_status
 from sync.db import DatabaseManager
 
 
@@ -640,7 +640,13 @@ def api_sync_status():
         limit = max(1, int(request.args.get("limit", "20")))
     except Exception:
         limit = 20
-    rows = sync_get_status(DatabaseManager(), sync_type=sync_type, limit=limit)
+    try:
+        page = max(1, int(request.args.get("page", "1")))
+    except Exception:
+        page = 1
+    offset = (page - 1) * limit
+    rows = sync_get_status(DatabaseManager(), sync_type=sync_type, limit=limit, offset=offset)
+    total = sync_count_status(DatabaseManager(), sync_type=sync_type)
     data = []
     for r in rows:
         data.append({
@@ -652,11 +658,19 @@ def api_sync_status():
             "error_message": r[5],
         })
     # Build stats
-    total = len(rows)
     success = len([1 for r in rows if r[3] == "SUCCESS"])
     failed = len([1 for r in rows if r[3] == "FAILED"])
     last_sync = data[0]["start_time"] if data else None
-    return jsonify({"status": 200, "stats": {"total_syncs": total, "successful_syncs": success, "failed_syncs": failed, "last_sync": last_sync}, "sync_history": data})
+    pages = max(1, (total + limit - 1) // limit)
+    return jsonify({
+        "status": 200,
+        "stats": {"total_syncs": total, "successful_syncs": success, "failed_syncs": failed, "last_sync": last_sync},
+        "sync_history": data,
+        "page": page,
+        "per_page": limit,
+        "pages": pages,
+        "total": total
+    })
 
 
 @app.get("/api/sync/job/<job_id>")
