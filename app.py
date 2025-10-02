@@ -11,6 +11,10 @@ from werkzeug.datastructures import FileStorage
 
 from konversi import convert_excel_to_json  # type: ignore
 import send_orders as send_orders_module  # type: ignore
+from concurrent.futures import ThreadPoolExecutor
+import uuid
+from datetime import datetime
+from sync.manager import run_sync as sync_run, get_sync_status as sync_get_status, create_sync_log_table
 
 
 def try_load_dotenv() -> None:
@@ -79,6 +83,10 @@ app.secret_key = _secret
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+# Background executor for sync jobs
+_executor = ThreadPoolExecutor(max_workers=2)
+_jobs: dict[str, dict[str, Any]] = {}
 
 def validate_user_supabase(username: str, access_code: str) -> tuple[bool, str]:
     if not SUPABASE_URL or not SUPABASE_KEY:
@@ -568,6 +576,96 @@ def api_convert_send():
     except Exception as exc:
         steps.append({"status": "ERROR", "message": f"Kesalahan tak terduga: {exc}"})
         return jsonify({"status": 500, "message": "Kesalahan tak terduga.", "steps": steps}), 500
+
+
+# ---------- Menu 7: Sync Manager & Dashboard ----------
+
+
+def _parse_date(s: Optional[str]):
+    if not s:
+        return None
+    try:
+        return datetime.strptime(s, "%Y-%m-%d").date()
+    except Exception:
+        return None
+
+
+@app.get("/menu/sync-manager")
+def menu_sync_manager():
+    return render_template("sync_manager.html")
+
+
+@app.get("/menu/sync-dashboard")
+def menu_sync_dashboard():
+    return render_template("sync_dashboard.html")
+
+
+@app.post("/api/sync/run")
+def api_sync_run():
+    payload = request.get_json(silent=True) or {}
+    sync_type = str(payload.get("sync_type", "")).strip()
+    date_from = _parse_date(str(payload.get("date_from", "")).strip())
+    date_to = _parse_date(str(payload.get("date_to", "")).strip())
+    if sync_type not in {"fact_order", "fact_delivery", "both"}:
+        return jsonify({"status": 400, "message": "sync_type must be fact_order|fact_delivery|both"}), 400
+
+    # Ensure log table exists
+    try:
+        create_sync_log_table(DatabaseManager())  # type: ignore[name-defined]
+    except Exception:
+        pass
+
+    job_id = str(uuid.uuid4())
+    _jobs[job_id] = {"status": "PENDING", "sync_type": sync_type, "date_from": str(date_from or ""), "date_to": str(date_to or ""), "started_at": None, "finished_at": None, "error": None}
+
+    def _task():
+        _jobs[job_id]["status"] = "RUNNING"
+        _jobs[job_id]["started_at"] = datetime.utcnow().isoformat()
+        try:
+            sync_run(sync_type, date_from=date_from, date_to=date_to)
+            _jobs[job_id]["status"] = "SUCCESS"
+        except Exception as exc:
+            _jobs[job_id]["status"] = "FAILED"
+            _jobs[job_id]["error"] = str(exc)
+        finally:
+            _jobs[job_id]["finished_at"] = datetime.utcnow().isoformat()
+
+    _executor.submit(_task)
+    return jsonify({"status": 200, "job_id": job_id})
+
+
+@app.get("/api/sync/status")
+def api_sync_status():
+    sync_type = request.args.get("sync_type", "").strip() or None
+    try:
+        limit = max(1, int(request.args.get("limit", "20")))
+    except Exception:
+        limit = 20
+    rows = sync_get_status(DatabaseManager(), sync_type=sync_type, limit=limit)  # type: ignore[name-defined]
+    data = []
+    for r in rows:
+        data.append({
+            "sync_type": r[0],
+            "start_time": r[1].isoformat() if r[1] else None,
+            "end_time": r[2].isoformat() if r[2] else None,
+            "status": r[3],
+            "records_processed": r[4],
+            "error_message": r[5],
+        })
+    # Build stats
+    total = len(rows)
+    success = len([1 for r in rows if r[3] == "SUCCESS"])
+    failed = len([1 for r in rows if r[3] == "FAILED"])
+    last_sync = data[0]["start_time"] if data else None
+    return jsonify({"status": 200, "stats": {"total_syncs": total, "successful_syncs": success, "failed_syncs": failed, "last_sync": last_sync}, "sync_history": data})
+
+
+@app.get("/api/sync/job/<job_id>")
+def api_sync_job(job_id: str):
+    job = _jobs.get(job_id)
+    if not job:
+        return jsonify({"status": 404, "message": "job not found"}), 404
+    return jsonify({"status": 200, "job": job})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)

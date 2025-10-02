@@ -48,6 +48,9 @@ Buka halaman utama dan gunakan menu:
 - Log Viewer
 - PRODUCT to ROUTE
 - Update WMS Integrasi
+ - Upload Order (Convert & Send)
+ - Sync Manager
+ - Sync Dashboard
 
 ### Menjalankan di background (tanpa systemd) dengan Gunicorn
 
@@ -92,6 +95,58 @@ Jalankan:
 ```bash
 python3 konversi.py
 ```
+
+## Sync Manager & Dashboard (TMS Data Warehouse)
+
+Fitur ini melakukan sinkronisasi data dari Database A (sumber) ke Database B (target) untuk dua fakta: `fact_order` dan `fact_delivery`, sekaligus menyediakan monitoring.
+
+### Konfigurasi ENV Tambahan
+
+Tambahkan ke `.env`:
+
+```
+# Database A (sumber)
+DB_A_HOST=...
+DB_A_PORT=5432
+DB_A_NAME=...
+DB_A_USER=...
+DB_A_PASSWORD=...
+DB_A_SCHEMA=public
+
+# Database B (target)
+DB_B_HOST=...
+DB_B_PORT=5432
+DB_B_NAME=...
+DB_B_USER=...
+DB_B_PASSWORD=...
+DB_B_SCHEMA=public
+```
+
+Install deps tambahan (sudah di requirements.txt):
+```
+pip install -r requirements.txt
+```
+
+### UI
+
+- Menu: `Sync Manager` → jalankan sinkronisasi dengan opsi tipe (`fact_order` / `fact_delivery` / `both`) dan filter tanggal.
+- Menu: `Sync Dashboard` → ringkasan statistik (total/success/failed/last-sync) dan riwayat sinkronisasi terbaru.
+
+### API
+
+- `POST /api/sync/run`
+  - Body: `{ "sync_type": "fact_order|fact_delivery|both", "date_from?": "YYYY-MM-DD", "date_to?": "YYYY-MM-DD" }`
+  - Response: `{ "status": 200, "job_id": "..." }`
+
+- `GET /api/sync/job/<job_id>` → status job in-memory (RUNNING/SUCCESS/FAILED)
+
+- `GET /api/sync/status?sync_type?=&limit=20` → data riwayat dari tabel `tms_sync_log`
+
+### Catatan Teknis
+
+- Tabel `tms_sync_log` dibuat otomatis di Database B.
+- Tabel target: `tms_fact_order`, `tms_fact_delivery` akan dibuat otomatis jika belum ada.
+- Upsert dilakukan via SQLAlchemy engine dengan table sementara.
 
 ## Ekspor Log API ke JSON
 
