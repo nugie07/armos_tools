@@ -765,6 +765,60 @@ def api_qty_unloading_update():
     affected = update_order_detail_unloading(order_detail_id, new_unloading)
     return jsonify({"status": 200, "affected": affected})
 
+
+# ---------- Menu 9: Hapus Driver Cost ----------
+
+
+@app.get("/menu/hapus-driver-cost")
+def menu_hapus_driver_cost():
+    return render_template("hapus_driver_cost.html")
+
+
+def find_driver_costs(manifest_reference: str) -> List[Dict[str, Any]]:
+    sql = (
+        'SELECT oc.order_cost_id, o.faktur_id, r.manifest_reference, oc.nominal, dd.driver_name, oc.receipt_picture '\
+        'FROM order_cost oc '\
+        'LEFT JOIN "order" o ON o.order_id = oc.order_id '\
+        'LEFT JOIN route r on r.route_id = oc."routeIdRouteId" '\
+        'LEFT JOIN dma_driver dd on dd.driver_id = oc."driverIdDriverId" '\
+        'WHERE r.manifest_reference = %s'
+    )
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (manifest_reference,))
+            rows = cur.fetchall()
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in rows]
+
+
+@app.get("/api/driver-cost/list")
+def api_driver_cost_list():
+    mr = request.args.get("manifest_reference", "").strip()
+    if not mr:
+        return jsonify({"status": 400, "message": "manifest_reference wajib diisi"}), 400
+    rows = find_driver_costs(mr)
+    return jsonify({"status": 200, "data": rows})
+
+
+def delete_driver_cost(order_cost_id: int) -> int:
+    sql = "DELETE FROM order_cost WHERE order_cost_id = %s"
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (order_cost_id,))
+            affected = cur.rowcount
+        conn.commit()
+        return affected
+
+
+@app.post("/api/driver-cost/delete")
+def api_driver_cost_delete():
+    payload = request.get_json(silent=True) or {}
+    order_cost_id = payload.get("order_cost_id")
+    if not isinstance(order_cost_id, int):
+        return jsonify({"status": 400, "message": "order_cost_id invalid"}), 400
+    affected = delete_driver_cost(order_cost_id)
+    return jsonify({"status": 200, "affected": affected})
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
 

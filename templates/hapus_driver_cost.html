@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hapus Driver Cost</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="mb-0">Hapus Driver Cost</h4>
+        <div class="d-flex gap-2">
+          <a href="/" class="btn btn-outline-secondary">🏠</a>
+          <a href="/logout" class="btn btn-outline-danger">⎋</a>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <form id="frmCari" class="row g-3 align-items-end">
+            <div class="col-md-10">
+              <label class="form-label">Manifest Reference</label>
+              <input id="manifest" type="text" class="form-control" placeholder="Contoh: RMR-INT-20241218#966314661" required />
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+              <button id="btnCari" type="submit" class="btn btn-primary w-100">Cari</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped" id="tbl">
+              <thead>
+                <tr>
+                  <th>order_cost_id</th>
+                  <th>faktur_id</th>
+                  <th>manifest_reference</th>
+                  <th>nominal</th>
+                  <th>driver_name</th>
+                  <th>receipt_picture</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="detailCard" class="card d-none">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">order_cost_id</label>
+              <input id="ocId" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">faktur_id</label>
+              <input id="fakturId" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">manifest_reference</label>
+              <input id="manifestRef" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">nominal</label>
+              <input id="nominal" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">driver_name</label>
+              <input id="driverName" type="text" class="form-control" readonly />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">receipt_picture</label>
+              <div>
+                <img id="receiptImg" src="" alt="receipt" class="img-thumbnail" style="max-height: 200px" />
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 text-end">
+            <button id="btnDelete" class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="modalInfo">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Informasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body"><pre id="modalMessage" class="mb-0" style="white-space: pre-wrap"></pre></div>
+          <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" tabindex="-1" id="modalConfirm">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body"><div id="confirmMessage" class="mb-0"></div></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
+            <button type="button" class="btn btn-danger" id="btnConfirm">Ya, Hapus</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const frmCari = document.getElementById('frmCari');
+      const manifest = document.getElementById('manifest');
+      const tblBody = document.querySelector('#tbl tbody');
+      const detailCard = document.getElementById('detailCard');
+      const ocId = document.getElementById('ocId');
+      const fakturId = document.getElementById('fakturId');
+      const manifestRef = document.getElementById('manifestRef');
+      const nominal = document.getElementById('nominal');
+      const driverName = document.getElementById('driverName');
+      const receiptImg = document.getElementById('receiptImg');
+      const modal = new bootstrap.Modal(document.getElementById('modalInfo'));
+      const modalMessage = document.getElementById('modalMessage');
+      const confirmModal = new bootstrap.Modal(document.getElementById('modalConfirm'));
+      const confirmMessage = document.getElementById('confirmMessage');
+      const btnConfirm = document.getElementById('btnConfirm');
+      const btnDelete = document.getElementById('btnDelete');
+
+      let current = null;
+
+      frmCari.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const mr = manifest.value.trim();
+        if(!mr){ modalMessage.textContent = 'Manifest Reference wajib diisi'; modal.show(); return; }
+        const res = await fetch(`/api/driver-cost/list?manifest_reference=${encodeURIComponent(mr)}`);
+        const ct = res.headers.get('content-type') || '';
+        if(!ct.includes('application/json')){ modalMessage.textContent = 'Respon bukan JSON'; modal.show(); return; }
+        const json = await res.json();
+        const rows = json.data || [];
+        tblBody.innerHTML = '';
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${r.order_cost_id}</td><td>${r.faktur_id ?? ''}</td><td>${r.manifest_reference ?? ''}</td><td>${r.nominal ?? ''}</td><td>${r.driver_name ?? ''}</td><td>${r.receipt_picture ?? ''}</td>`;
+          tr.addEventListener('click', () => {
+            current = r;
+            ocId.value = r.order_cost_id;
+            fakturId.value = r.faktur_id ?? '';
+            manifestRef.value = r.manifest_reference ?? '';
+            nominal.value = r.nominal ?? '';
+            driverName.value = r.driver_name ?? '';
+            receiptImg.src = r.receipt_picture || '';
+            detailCard.classList.remove('d-none');
+          });
+          tblBody.appendChild(tr);
+        });
+        if(rows.length === 0){ detailCard.classList.add('d-none'); }
+      });
+
+      btnDelete.addEventListener('click', () => {
+        if(!current){ modalMessage.textContent = 'Pilih data terlebih dahulu'; modal.show(); return; }
+        confirmMessage.textContent = `Hapus driver cost dengan order_cost_id ${current.order_cost_id}?`;
+        confirmModal.show();
+      });
+
+      btnConfirm.addEventListener('click', async () => {
+        if(!current){ return; }
+        btnConfirm.disabled = true;
+        try{
+          const res = await fetch('/api/driver-cost/delete', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ order_cost_id: current.order_cost_id }) });
+          const ct = res.headers.get('content-type') || '';
+          confirmModal.hide();
+          if(!ct.includes('application/json')){ modalMessage.textContent = 'Respon bukan JSON'; modal.show(); return; }
+          const json = await res.json();
+          if(json.status === 200){ modalMessage.textContent = 'Berhasil dihapus'; }
+          else { modalMessage.textContent = 'Gagal menghapus'; }
+          modal.show();
+          // Refresh table after delete
+          frmCari.dispatchEvent(new Event('submit'));
+          detailCard.classList.add('d-none');
+        }catch(err){
+          confirmModal.hide();
+          modalMessage.textContent = 'Terjadi error saat menghapus: ' + (err && err.message ? err.message : String(err));
+          modal.show();
+        } finally {
+          btnConfirm.disabled = false;
+        }
+      });
+    </script>
+  </body>
+  </html>
+
+
