@@ -32,6 +32,13 @@
 
       <div class="card mb-3">
         <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="d-flex align-items-center gap-2">
+              <button id="btnPrev" class="btn btn-sm btn-outline-secondary">Prev</button>
+              <span id="pageInfo" class="text-muted small"></span>
+              <button id="btnNext" class="btn btn-sm btn-outline-secondary">Next</button>
+            </div>
+          </div>
           <div class="table-responsive">
             <table class="table table-bordered table-striped" id="tbl">
               <thead>
@@ -128,18 +135,25 @@
       const confirmMessage = document.getElementById('confirmMessage');
       const btnConfirm = document.getElementById('btnConfirm');
       const btnDelete = document.getElementById('btnDelete');
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      const pageInfo = document.getElementById('pageInfo');
 
       let current = null;
+      let currentPage = 1;
+      let totalPages = 1;
 
-      frmCari.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      async function loadList(){
         const mr = manifest.value.trim();
         if(!mr){ modalMessage.textContent = 'Manifest Reference wajib diisi'; modal.show(); return; }
-        const res = await fetch(`/api/driver-cost/list?manifest_reference=${encodeURIComponent(mr)}`);
+        const res = await fetch(`/api/driver-cost/list?manifest_reference=${encodeURIComponent(mr)}&page=${currentPage}`);
         const ct = res.headers.get('content-type') || '';
         if(!ct.includes('application/json')){ modalMessage.textContent = 'Respon bukan JSON'; modal.show(); return; }
         const json = await res.json();
         const rows = json.data || [];
+        totalPages = json.pages || 1;
+        currentPage = json.page || 1;
+        pageInfo.textContent = `Page ${currentPage} / ${totalPages}`;
         tblBody.innerHTML = '';
         rows.forEach(r => {
           const tr = document.createElement('tr');
@@ -157,6 +171,12 @@
           tblBody.appendChild(tr);
         });
         if(rows.length === 0){ detailCard.classList.add('d-none'); }
+      }
+
+      frmCari.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        currentPage = 1;
+        await loadList();
       });
 
       btnDelete.addEventListener('click', () => {
@@ -178,7 +198,7 @@
           else { modalMessage.textContent = 'Gagal menghapus'; }
           modal.show();
           // Refresh table after delete
-          frmCari.dispatchEvent(new Event('submit'));
+          await loadList();
           detailCard.classList.add('d-none');
         }catch(err){
           confirmModal.hide();
@@ -188,6 +208,9 @@
           btnConfirm.disabled = false;
         }
       });
+
+      btnPrev.addEventListener('click', async () => { if(currentPage > 1){ currentPage -= 1; await loadList(); } });
+      btnNext.addEventListener('click', async () => { if(currentPage < totalPages){ currentPage += 1; await loadList(); } });
     </script>
   </body>
   </html>

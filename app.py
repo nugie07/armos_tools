@@ -774,21 +774,26 @@ def menu_hapus_driver_cost():
     return render_template("hapus_driver_cost.html")
 
 
-def find_driver_costs(manifest_reference: str) -> List[Dict[str, Any]]:
+def find_driver_costs(manifest_reference: str, limit: int, offset: int) -> Tuple[List[Dict[str, Any]], int]:
     sql = (
         'SELECT oc.order_cost_id, o.faktur_id, r.manifest_reference, oc.nominal, dd.driver_name, oc.receipt_picture '\
         'FROM order_cost oc '\
         'LEFT JOIN "order" o ON o.order_id = oc.order_id '\
         'LEFT JOIN route r on r.route_id = oc."routeIdRouteId" '\
         'LEFT JOIN dma_driver dd on dd.driver_id = oc."driverIdDriverId" '\
-        'WHERE r.manifest_reference = %s'
+        'WHERE r.manifest_reference = %s '
+        'ORDER BY oc.order_cost_id DESC '
+        'LIMIT %s OFFSET %s'
     )
+    sql_count = 'SELECT COUNT(1) FROM order_cost oc LEFT JOIN route r on r.route_id = oc."routeIdRouteId" WHERE r.manifest_reference = %s'
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute(sql, (manifest_reference,))
+            cur.execute(sql_count, (manifest_reference,))
+            total = int(cur.fetchone()[0])
+            cur.execute(sql, (manifest_reference, limit, offset))
             rows = cur.fetchall()
             cols = [c[0] for c in cur.description]
-            return [dict(zip(cols, r)) for r in rows]
+            return [dict(zip(cols, r)) for r in rows], total
 
 
 @app.get("/api/driver-cost/list")
@@ -796,8 +801,15 @@ def api_driver_cost_list():
     mr = request.args.get("manifest_reference", "").strip()
     if not mr:
         return jsonify({"status": 400, "message": "manifest_reference wajib diisi"}), 400
-    rows = find_driver_costs(mr)
-    return jsonify({"status": 200, "data": rows})
+    try:
+        page = max(1, int(request.args.get("page", "1")))
+    except Exception:
+        page = 1
+    per_page = 10
+    offset = (page - 1) * per_page
+    rows, total = find_driver_costs(mr, per_page, offset)
+    pages = max(1, (total + per_page - 1) // per_page)
+    return jsonify({"status": 200, "data": rows, "page": page, "per_page": per_page, "pages": pages, "total": total})
 
 
 def delete_driver_cost(order_cost_id: int) -> int:
