@@ -50,6 +50,8 @@ def get_fact_delivery_query(date_from=None, date_to=None) -> str:
         SUM(j.net_price)::NUMERIC(15,2) as net_price,
         SUM(j.quantity_delivery)::NUMERIC(15,2) as quantity_delivery,
         SUM(j.quantity_faktur)::NUMERIC(15,2) as quantity_faktur,
+        SUM(j.quantity_unloading)::NUMERIC(15,2) as quantity_unloading,
+        c.divisi,
         c.skip_count
     FROM PUBLIC.route AS a
     LEFT JOIN PUBLIC.route_detail AS b ON b.route_id = a.route_id
@@ -62,7 +64,7 @@ def get_fact_delivery_query(date_from=None, date_to=None) -> str:
     LEFT JOIN PUBLIC.driver_tasks as i on i.order_id = b.order_id
     LEFT JOIN PUBLIC.order_detail as j on j.order_id = b.order_id
     {where_clause}
-    GROUP BY a.route_id, a.manifest_reference, b.route_detail_id, b.order_id, c.do_number, c.faktur_date, a.created_date, a.status, c.client_id, c.warehouse_id, c.origin_name, c.origin_city, c.customer_id, e.code, e."name", d.address, d.address_text, a.external_expedition_type, a.vehicle_id, a.driver_id, f.plate_number, g.driver_name, a.kenek_id, h.kenek_name, a.driver_status, a.manifest_integration_id, i.complete_time, c.delivery_date, c.skip_count
+    GROUP BY a.route_id, a.manifest_reference, b.route_detail_id, b.order_id, c.do_number, c.faktur_date, a.created_date, a.status, c.client_id, c.warehouse_id, c.origin_name, c.origin_city, c.customer_id, e.code, e."name", d.address, d.address_text, a.external_expedition_type, a.vehicle_id, a.driver_id, f.plate_number, g.driver_name, a.kenek_id, h.kenek_name, a.driver_status, a.manifest_integration_id, i.complete_time, c.delivery_date, c.divisi, c.skip_count
     """
 
 
@@ -101,6 +103,8 @@ def create_fact_delivery_table_schema_b(db_manager: DatabaseManager) -> None:
         net_price NUMERIC(15,2),
         quantity_delivery NUMERIC(15,2),
         quantity_faktur NUMERIC(15,2),
+        quantity_unloading NUMERIC(15,2),
+        divisi VARCHAR(100),
         skip_count INTEGER,
         last_synced TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         PRIMARY KEY (route_id, route_detail_id, order_id)
@@ -109,6 +113,8 @@ def create_fact_delivery_table_schema_b(db_manager: DatabaseManager) -> None:
     engine = db_manager.get_db_b_engine()
     with engine.connect() as conn:
         conn.execute(text(create_table_query))
+        conn.execute(text("ALTER TABLE IF EXISTS tms_fact_delivery ADD COLUMN IF NOT EXISTS quantity_unloading NUMERIC(15,2)"))
+        conn.execute(text("ALTER TABLE IF EXISTS tms_fact_delivery ADD COLUMN IF NOT EXISTS divisi VARCHAR(100)"))
         conn.execute(text("ALTER TABLE IF EXISTS tms_fact_delivery ADD COLUMN IF NOT EXISTS skip_count INTEGER"))
         conn.commit()
 
