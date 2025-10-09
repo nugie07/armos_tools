@@ -680,6 +680,91 @@ def api_sync_job(job_id: str):
         return jsonify({"status": 404, "message": "job not found"}), 404
     return jsonify({"status": 200, "job": job})
 
+
+# ---------- Menu 8: Update Quantity Delivery / Unloading ----------
+
+
+def fetch_warehouses_for_type() -> List[Tuple[int, str]]:
+    sql = (
+        "SELECT mlc.mst_location_child_id, mlc.name FROM mst_location_child mlc "
+        "LEFT JOIN mst_location_parent mlp ON mlc.mst_location_parent_id = mlp.mst_location_parent_id "
+        "WHERE mlp.type_id = %s"
+    )
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (WH_TYPE,))
+            rows = cur.fetchall()
+            return [(int(r[0]), str(r[1])) for r in rows]
+
+
+@app.get("/menu/update-qty-unloading")
+def menu_update_qty_unloading():
+    warehouses = fetch_warehouses_for_type()
+    return render_template("update_qty_unloading.html", warehouses=warehouses)
+
+
+def find_order_detail_for_update(warehouse_id: int, faktur_id: str, sku: str):
+    sql = (
+        'SELECT od.order_detail_id, mp.sku, od.quantity_faktur, od.quantity_unloading '\
+        'FROM order_detail od '\
+        'LEFT JOIN "order" o ON o.order_id = od.order_id '\
+        'LEFT JOIN mst_product mp on mp.mst_product_id = od.product_id '\
+        'WHERE o.warehouse_id = %s AND o.faktur_id = %s AND mp.sku = %s'
+    )
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (warehouse_id, faktur_id, sku))
+            row = cur.fetchone()
+            if not row:
+                return None
+            return {
+                "order_detail_id": int(row[0]),
+                "sku": str(row[1]),
+                "quantity_faktur": float(row[2]) if row[2] is not None else 0,
+                "quantity_unloading": float(row[3]) if row[3] is not None else 0,
+            }
+
+
+@app.get("/api/qty-unloading/find")
+def api_qty_unloading_find():
+    try:
+        warehouse_id = int(request.args.get("warehouse_id", "0"))
+    except Exception:
+        return jsonify({"status": 400, "message": "warehouse_id invalid"}), 400
+    faktur_id = request.args.get("faktur_id", "").strip()
+    sku = request.args.get("sku", "").strip()
+    if not warehouse_id or not faktur_id or not sku:
+        return jsonify({"status": 400, "message": "warehouse_id, faktur_id, sku wajib diisi"}), 400
+    row = find_order_detail_for_update(warehouse_id, faktur_id, sku)
+    if not row:
+        return jsonify({"status": 404, "message": "Data tidak ditemukan"}), 404
+    return jsonify({"status": 200, "data": row})
+
+
+def update_order_detail_unloading(order_detail_id: int, new_unloading: float) -> int:
+    sql = "UPDATE order_detail SET quantity_unloading = %s WHERE order_detail_id = %s"
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (new_unloading, order_detail_id))
+            affected = cur.rowcount
+        conn.commit()
+        return affected
+
+
+@app.post("/api/qty-unloading/update")
+def api_qty_unloading_update():
+    payload = request.get_json(silent=True) or {}
+    order_detail_id = payload.get("order_detail_id")
+    new_val = payload.get("quantity_unloading")
+    if not isinstance(order_detail_id, int):
+        return jsonify({"status": 400, "message": "order_detail_id invalid"}), 400
+    try:
+        new_unloading = float(new_val)
+    except Exception:
+        return jsonify({"status": 400, "message": "quantity_unloading invalid"}), 400
+    affected = update_order_detail_unloading(order_detail_id, new_unloading)
+    return jsonify({"status": 200, "affected": affected})
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
 
