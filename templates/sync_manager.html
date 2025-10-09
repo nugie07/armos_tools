@@ -167,6 +167,8 @@
             } else { done = true; }
           }
           await loadStatus();
+          // Auto close modal when job finished
+          try { modal.hide(); } catch (e) {}
         }catch(err){
           modalMessage.textContent = 'Error: ' + (err && err.message ? err.message : String(err));
           modal.show();
