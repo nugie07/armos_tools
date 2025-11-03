@@ -301,7 +301,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         required_cols = ["is_parent", "code", "name"]
         missing_cols = [col for col in required_cols if col not in df.columns]
         if missing_cols:
-            return False, [f"Kolom wajib tidak ditemukan: {', '.join(missing_cols)}"]
+            return False, [f"Kolom wajib tidak ditemukan: {', '.join(missing_cols)}"], {"parent_results": [], "child_results": []}
         
         # Koneksi database dengan validasi
         env_lower = env.lower()
@@ -331,7 +331,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 f"- {prefix}_NAME",
                 f"- {prefix}_USERNAME",
                 f"- {prefix}_PASS"
-            ]
+            ], {"parent_results": [], "child_results": []}
         
         created_date = datetime.now().date()
         # Set created_by dengan UUID
