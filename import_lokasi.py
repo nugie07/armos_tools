@@ -214,96 +214,134 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         success_count = 0
         error_count = 0
         
-        # Proses setiap baris
+        # Pisahkan baris menjadi parent dan child
+        parent_rows = []
+        child_rows = []
+        
         for idx in df.index:
+            is_parent_val = safe_get(df, idx, "is_parent", "")
+            is_parent = str(is_parent_val).strip().upper() == "Y"
+            code = safe_get(df, idx, "code", "")
+            name = safe_get(df, idx, "name", "")
+            
+            if not code or not name:
+                error_count += 1
+                messages.append(f"Baris {idx + 1}: code atau name kosong, dilewati")
+                continue
+            
+            if is_parent:
+                parent_rows.append(idx)
+            else:
+                child_rows.append(idx)
+        
+        messages.append(f"Baris Parent (IS_PARENT=Y): {len(parent_rows)} baris")
+        messages.append(f"Baris Child (IS_PARENT!=Y): {len(child_rows)} baris")
+        
+        # STEP 1: Insert semua parent terlebih dahulu
+        messages.append("\n=== STEP 1: Insert Parent (IS_PARENT=Y) ===")
+        parent_success = 0
+        parent_error = 0
+        for idx in parent_rows:
             try:
-                is_parent_val = safe_get(df, idx, "is_parent", "")
-                is_parent = str(is_parent_val).strip().upper() == "Y"
-                
                 code = safe_get(df, idx, "code", "")
                 name = safe_get(df, idx, "name", "")
                 
-                if not code or not name:
-                    error_count += 1
-                    messages.append(f"Baris {idx + 1}: code atau name kosong, dilewati")
-                    continue
-                
-                if is_parent:
-                    # Insert ke mst_location_parent
-                    with conn.cursor() as cur:
-                        sql = """
-                            INSERT INTO mst_location_parent (code, name, created_date)
-                            VALUES (%s, %s, %s)
-                        """
-                        cur.execute(sql, (str(code), str(name), created_date))
-                        success_count += 1
-                        messages.append(f"Baris {idx + 1}: Insert ke mst_location_parent: {code}")
-                else:
-                    # Insert ke mst_location_child
-                    tipe_child = safe_get(df, idx, "tipe_child", "")
-                    channel = safe_get(df, idx, "channel", "")
-                    availability = safe_get(df, idx, "availability")
-                    alamat = safe_get(df, idx, "alamat")
-                    longitude = safe_get(df, idx, "longitude")
-                    latitude = safe_get(df, idx, "latitude")
-                    unloading_duration = safe_get(df, idx, "unloading_duration")
-                    frequency_drop = safe_get(df, idx, "frequency_drop", "")
-                    available_drop_days = safe_get(df, idx, "available_drop_days", "")
-                    loading_dock = safe_get(df, idx, "loading_dock")
-                    priority = safe_get(df, idx, "priority", "")
-                    open_hour = safe_get(df, idx, "open_hour")
-                    closed_hour = safe_get(df, idx, "closed_hour")
-                    
-                    # Lookup LOV IDs
-                    location_type_id = lookup_lov_id(conn, tipe_child) if tipe_child else None
-                    channel_id = lookup_lov_id(conn, channel) if channel else None
-                    frequency_drop_id = lookup_lov_id(conn, frequency_drop) if frequency_drop else None
-                    priority_id = lookup_lov_id(conn, priority) if priority else None
-                    
-                    # Format available_drop_days
-                    available_drop_days_formatted = format_available_drop_days(available_drop_days)
-                    
-                    # Format waktu
-                    open_hour_formatted = format_time_to_hhmmss(open_hour)
-                    closed_hour_formatted = format_time_to_hhmmss(closed_hour)
-                    
-                    # Cari parent_id berdasarkan code
-                    parent_id = get_parent_id_by_code(conn, code)
-                    
-                    # Insert ke mst_location_child
-                    with conn.cursor() as cur:
-                        sql = """
-                            INSERT INTO mst_location_child (
-                                code, name, location_type_id, channel_id, availability,
-                                address_text, longitude, latitude, unloading_duration,
-                                frequency_drop_id, available_drop_days, loading_dock,
-                                priority, open_hour, closed_hour, created_date, mst_location_parent_id
-                            ) VALUES (
-                                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-                            )
-                        """
-                        cur.execute(sql, (
-                            str(code), str(name), location_type_id, channel_id, availability,
-                            str(alamat) if alamat else None,
-                            float(longitude) if longitude and not pd.isna(longitude) else None,
-                            float(latitude) if latitude and not pd.isna(latitude) else None,
-                            int(unloading_duration) if unloading_duration and not pd.isna(unloading_duration) else None,
-                            frequency_drop_id, available_drop_days_formatted,
-                            str(loading_dock) if loading_dock else None,
-                            priority_id, open_hour_formatted, closed_hour_formatted,
-                            created_date, parent_id
-                        ))
-                        success_count += 1
-                        messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
-                
+                # Insert ke mst_location_parent
+                with conn.cursor() as cur:
+                    sql = """
+                        INSERT INTO mst_location_parent (code, name, created_date)
+                        VALUES (%s, %s, %s)
+                    """
+                    cur.execute(sql, (str(code), str(name), created_date))
+                    parent_success += 1
+                    messages.append(f"Baris {idx + 1}: Insert ke mst_location_parent: {code}")
             except Exception as e:
-                error_count += 1
-                messages.append(f"Baris {idx + 1}: Error - {str(e)}")
+                parent_error += 1
+                messages.append(f"Baris {idx + 1}: Error insert parent - {str(e)}")
+        
+        # Commit parent terlebih dahulu agar child bisa menemukan parent_id
+        conn.commit()
+        success_count += parent_success
+        error_count += parent_error
+        messages.append(f"✓ Parent: Berhasil {parent_success} baris, Gagal {parent_error} baris")
+        
+        # STEP 2: Insert semua child setelah parent sudah diinsert
+        messages.append("\n=== STEP 2: Insert Child (IS_PARENT!=Y) ===")
+        child_success = 0
+        child_error = 0
+        for idx in child_rows:
+            try:
+                code = safe_get(df, idx, "code", "")
+                name = safe_get(df, idx, "name", "")
+                
+                # Insert ke mst_location_child
+                tipe_child = safe_get(df, idx, "tipe_child", "")
+                channel = safe_get(df, idx, "channel", "")
+                availability = safe_get(df, idx, "availability")
+                alamat = safe_get(df, idx, "alamat")
+                longitude = safe_get(df, idx, "longitude")
+                latitude = safe_get(df, idx, "latitude")
+                unloading_duration = safe_get(df, idx, "unloading_duration")
+                frequency_drop = safe_get(df, idx, "frequency_drop", "")
+                available_drop_days = safe_get(df, idx, "available_drop_days", "")
+                loading_dock = safe_get(df, idx, "loading_dock")
+                priority = safe_get(df, idx, "priority", "")
+                open_hour = safe_get(df, idx, "open_hour")
+                closed_hour = safe_get(df, idx, "closed_hour")
+                
+                # Lookup LOV IDs
+                location_type_id = lookup_lov_id(conn, tipe_child) if tipe_child else None
+                channel_id = lookup_lov_id(conn, channel) if channel else None
+                frequency_drop_id = lookup_lov_id(conn, frequency_drop) if frequency_drop else None
+                priority_id = lookup_lov_id(conn, priority) if priority else None
+                
+                # Format available_drop_days
+                available_drop_days_formatted = format_available_drop_days(available_drop_days)
+                
+                # Format waktu
+                open_hour_formatted = format_time_to_hhmmss(open_hour)
+                closed_hour_formatted = format_time_to_hhmmss(closed_hour)
+                
+                # Cari parent_id berdasarkan code (sekarang parent sudah diinsert)
+                parent_id = get_parent_id_by_code(conn, code)
+                
+                # Insert ke mst_location_child
+                with conn.cursor() as cur:
+                    sql = """
+                        INSERT INTO mst_location_child (
+                            code, name, location_type_id, channel_id, availability,
+                            address_text, longitude, latitude, unloading_duration,
+                            frequency_drop_id, available_drop_days, loading_dock,
+                            priority, open_hour, closed_hour, created_date, mst_location_parent_id
+                        ) VALUES (
+                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                        )
+                    """
+                    cur.execute(sql, (
+                        str(code), str(name), location_type_id, channel_id, availability,
+                        str(alamat) if alamat else None,
+                        float(longitude) if longitude and not pd.isna(longitude) else None,
+                        float(latitude) if latitude and not pd.isna(latitude) else None,
+                        int(unloading_duration) if unloading_duration and not pd.isna(unloading_duration) else None,
+                        frequency_drop_id, available_drop_days_formatted,
+                        str(loading_dock) if loading_dock else None,
+                        priority_id, open_hour_formatted, closed_hour_formatted,
+                        created_date, parent_id
+                    ))
+                    child_success += 1
+                    messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
+            except Exception as e:
+                child_error += 1
+                messages.append(f"Baris {idx + 1}: Error insert child - {str(e)}")
         
         conn.commit()
         conn.close()
         
-        messages.append(f"\nSelesai: Berhasil {success_count} baris, Gagal {error_count} baris")
+        success_count += child_success
+        error_count += child_error
+        messages.append(f"\n✓ Child: Berhasil {child_success} baris, Gagal {child_error} baris")
+        messages.append(f"\n=== RINGKASAN TOTAL ===")
+        messages.append(f"Selesai: Total Berhasil {success_count} baris, Total Gagal {error_count} baris")
         return True, messages
         
     except Exception as e:
