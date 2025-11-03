@@ -281,8 +281,8 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
             ]
         
         created_date = datetime.now().date()
-        # Set created_by dengan value systemTools
-        created_by = "systemTools"
+        # Set created_by dengan UUID
+        created_by = "d6208eb3-bd20-4550-8fa3-6c3277763916"
         
         success_count = 0
         error_count = 0
