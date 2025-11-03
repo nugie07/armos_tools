@@ -281,6 +281,9 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
             ]
         
         created_date = datetime.now().date()
+        # Set created_by dengan value systemTools
+        created_by = "systemTools"
+        
         success_count = 0
         error_count = 0
         
@@ -319,10 +322,10 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 # Insert ke mst_location_parent
                 with conn.cursor() as cur:
                     sql = """
-                        INSERT INTO mst_location_parent (code, name, created_date)
-                        VALUES (%s, %s, %s)
+                        INSERT INTO mst_location_parent (code, name, created_by, created_date)
+                        VALUES (%s, %s, %s, %s)
                     """
-                    cur.execute(sql, (str(code), str(name), created_date))
+                    cur.execute(sql, (str(code), str(name), created_by, created_date))
                     parent_success += 1
                     messages.append(f"Baris {idx + 1}: Insert ke mst_location_parent: {code}")
             except Exception as e:
@@ -382,9 +385,9 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                             code, name, location_type_id, channel_id, availability,
                             address_text, longitude, latitude, unloading_duration,
                             frequency_drop_id, available_drop_days, loading_dock,
-                            priority, open_hour, closed_hour, created_date, mst_location_parent_id
+                            priority, open_hour, closed_hour, created_by, created_date, mst_location_parent_id
                         ) VALUES (
-                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                         )
                     """
                     cur.execute(sql, (
@@ -396,7 +399,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                         frequency_drop_id, available_drop_days_formatted,
                         str(loading_dock) if loading_dock else None,
                         priority_id, open_hour_formatted, closed_hour_formatted,
-                        created_date, parent_id
+                        created_by, created_date, parent_id
                     ))
                     child_success += 1
                     messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
