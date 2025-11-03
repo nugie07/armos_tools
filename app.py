@@ -1,7 +1,7 @@
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
-from flask import Flask, jsonify, redirect, render_template, request, url_for, session
+from flask import Flask, jsonify, redirect, render_template, request, url_for, session, send_file, make_response
 import json
 from pathlib import Path
 import requests
@@ -875,13 +875,22 @@ def api_import_lokasi():
         
         # Jalankan import
         try:
-            success, messages = import_lokasi.import_location_from_excel(str(saved_path), env)
+            success, messages, result_data = import_lokasi.import_location_from_excel(str(saved_path), env)
+            
+            # Simpan result_data ke file JSON untuk download log nanti
+            import json as json_module
+            log_data_filename = f"log_{filename_without_ext}_{timestamp}.json"
+            log_data_path = import_dir / log_data_filename
+            with open(log_data_path, 'w', encoding='utf-8') as f:
+                json_module.dump(result_data, f, ensure_ascii=False, indent=2)
+            
             return jsonify({
                 "status": 200 if success else 500,
                 "message": "Import selesai" if success else "Import gagal",
                 "success": success,
                 "messages": messages,
-                "filename": saved_filename
+                "filename": saved_filename,
+                "log_data_filename": log_data_filename
             })
         except Exception as exc:
             return jsonify({
@@ -893,6 +902,66 @@ def api_import_lokasi():
             })
     except Exception as exc:
         return jsonify({"status": 500, "message": f"Kesalahan tak terduga: {exc}"}), 500
+
+
+@app.get("/api/import-lokasi/download-log")
+def api_import_lokasi_download_log():
+    """Download log hasil import dalam format Excel dengan 2 sheet (parent dan child)"""
+    try:
+        log_data_filename = request.args.get("filename")
+        if not log_data_filename:
+            return jsonify({"status": 400, "message": "Parameter filename diperlukan"}), 400
+        
+        import_dir = import_lokasi_dir()
+        log_data_path = import_dir / log_data_filename
+        
+        if not log_data_path.exists():
+            return jsonify({"status": 404, "message": "File log tidak ditemukan"}), 404
+        
+        # Baca JSON data
+        import json as json_module
+        with open(log_data_path, 'r', encoding='utf-8') as f:
+            result_data = json_module.load(f)
+        
+        # Buat Excel dengan 2 sheet menggunakan pandas
+        import pandas as pd
+        from io import BytesIO
+        
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            # Sheet Parent
+            parent_df = pd.DataFrame(result_data.get("parent_results", []))
+            if not parent_df.empty:
+                # Reorder columns: row_num, code, name, status, remark
+                parent_df = parent_df[["row_num", "code", "name", "status", "remark"]]
+            else:
+                parent_df = pd.DataFrame(columns=["row_num", "code", "name", "status", "remark"])
+            parent_df.to_excel(writer, sheet_name="Parent", index=False)
+            
+            # Sheet Child
+            child_df = pd.DataFrame(result_data.get("child_results", []))
+            if not child_df.empty:
+                # Reorder columns: row_num, code, name, status, remark
+                child_df = child_df[["row_num", "code", "name", "status", "remark"]]
+            else:
+                child_df = pd.DataFrame(columns=["row_num", "code", "name", "status", "remark"])
+            child_df.to_excel(writer, sheet_name="Child", index=False)
+        
+        output.seek(0)
+        
+        # Generate filename untuk download
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        download_filename = f"log_import_lokasi_{timestamp}.xlsx"
+        
+        return send_file(
+            output,
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            as_attachment=True,
+            download_name=download_filename
+        )
+        
+    except Exception as exc:
+        return jsonify({"status": 500, "message": f"Gagal generate log: {exc}"}), 500
 
 
 if __name__ == "__main__":

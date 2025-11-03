@@ -260,14 +260,19 @@ def safe_get(df: pd.DataFrame, row_idx: int, col_name: str, default: Any = None)
         return default
 
 
-def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bool, List[str]]:
+def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bool, List[str], Dict[str, Any]]:
     """
     Import lokasi dari file Excel.
     
     Returns:
-        (success: bool, messages: List[str])
+        (success: bool, messages: List[str], result_data: Dict[str, Any])
+        result_data berisi:
+        - parent_results: List[Dict] dengan keys: row_num, code, name, status, remark
+        - child_results: List[Dict] dengan keys: row_num, code, name, status, remark
     """
     messages = []
+    parent_results = []
+    child_results = []
     
     try:
         # Baca Excel
@@ -351,14 +356,24 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         parent_error = 0
         parent_skipped = 0
         for idx in parent_rows:
+            code = safe_get(df, idx, "code", "")
+            name = safe_get(df, idx, "name", "")
+            row_data = {
+                "row_num": idx + 1,
+                "code": str(code) if code else "",
+                "name": str(name) if name else "",
+                "status": "",
+                "remark": ""
+            }
+            
             try:
-                code = safe_get(df, idx, "code", "")
-                name = safe_get(df, idx, "name", "")
-                
                 # Cek apakah parent dengan code ini sudah ada
                 if check_parent_exists(conn, code):
                     parent_skipped += 1
+                    row_data["status"] = "SKIP"
+                    row_data["remark"] = f"Parent dengan code '{code}' sudah ada di database"
                     messages.append(f"Baris {idx + 1}: Skip - Parent dengan code '{code}' sudah ada di database")
+                    parent_results.append(row_data)
                     continue
                 
                 # Insert ke mst_location_parent
@@ -369,10 +384,16 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                     """
                     cur.execute(sql, (str(code), str(name), created_by, created_date))
                     parent_success += 1
+                    row_data["status"] = "SUKSES"
+                    row_data["remark"] = "Berhasil insert ke mst_location_parent"
                     messages.append(f"Baris {idx + 1}: Insert ke mst_location_parent: {code}")
+                    parent_results.append(row_data)
             except Exception as e:
                 parent_error += 1
+                row_data["status"] = "GAGAL"
+                row_data["remark"] = str(e)
                 messages.append(f"Baris {idx + 1}: Error insert parent - {str(e)}")
+                parent_results.append(row_data)
         
         # Commit parent terlebih dahulu agar child bisa menemukan parent_id
         conn.commit()
@@ -390,10 +411,17 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         child_success = 0
         child_error = 0
         for idx in child_rows:
+            code = safe_get(df, idx, "code", "")
+            name = safe_get(df, idx, "name", "")
+            row_data = {
+                "row_num": idx + 1,
+                "code": str(code) if code else "",
+                "name": str(name) if name else "",
+                "status": "",
+                "remark": ""
+            }
+            
             try:
-                code = safe_get(df, idx, "code", "")
-                name = safe_get(df, idx, "name", "")
-                
                 # Insert ke mst_location_child
                 tipe_child = safe_get(df, idx, "tipe_child", "")
                 channel = safe_get(df, idx, "channel", "")
@@ -432,7 +460,10 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 
                 if not parent_id:
                     child_error += 1
+                    row_data["status"] = "GAGAL"
+                    row_data["remark"] = f"Parent dengan code '{code}' tidak ditemukan"
                     messages.append(f"Baris {idx + 1}: Error insert child - Parent dengan code '{code}' tidak ditemukan")
+                    child_results.append(row_data)
                     continue
                 
                 # Insert ke mst_location_child
@@ -463,10 +494,16 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                         created_by, created_date, parent_id
                     ))
                     child_success += 1
+                    row_data["status"] = "SUKSES"
+                    row_data["remark"] = "Berhasil insert ke mst_location_child"
                     messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
+                    child_results.append(row_data)
             except Exception as e:
                 child_error += 1
+                row_data["status"] = "GAGAL"
+                row_data["remark"] = str(e)
                 messages.append(f"Baris {idx + 1}: Error insert child - {str(e)}")
+                child_results.append(row_data)
         
         conn.commit()
         conn.close()
@@ -476,10 +513,15 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         messages.append(f"\n✓ Child: Berhasil {child_success} baris, Gagal {child_error} baris")
         messages.append(f"\n=== RINGKASAN TOTAL ===")
         messages.append(f"Selesai: Total Berhasil {success_count} baris, Total Gagal {error_count} baris")
-        return True, messages
+        
+        result_data = {
+            "parent_results": parent_results,
+            "child_results": child_results
+        }
+        return True, messages, result_data
         
     except Exception as e:
-        return False, [f"Error: {str(e)}"]
+        return False, [f"Error: {str(e)}"], {"parent_results": [], "child_results": []}
 
 
 if __name__ == "__main__":
@@ -488,7 +530,7 @@ if __name__ == "__main__":
     if len(sys.argv) >= 2:
         file_path = sys.argv[1]
         env = sys.argv[2] if len(sys.argv) >= 3 else "preprod"
-        success, messages = import_location_from_excel(file_path, env)
+        success, messages, result_data = import_location_from_excel(file_path, env)
         print("\n".join(messages))
         sys.exit(0 if success else 1)
     else:

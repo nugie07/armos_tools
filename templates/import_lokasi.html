@@ -60,6 +60,15 @@
 
           <div id="resultMessage" class="d-none"></div>
 
+          <div id="downloadSection" class="mb-3 d-none">
+            <button id="btnDownloadLog" type="button" class="btn btn-success">
+              <span>📥</span> Download Log Excel
+            </button>
+            <div class="form-text mt-1">
+              Download log hasil import dalam format Excel dengan 2 sheet (Parent dan Child)
+            </div>
+          </div>
+
           <div class="mb-3">
             <label class="form-label">Detail Proses Import</label>
             <textarea id="txtMessages" class="form-control" rows="15" readonly placeholder="Detail proses import akan muncul di sini..."></textarea>
@@ -86,6 +95,10 @@
       const loading = document.getElementById('loading');
       const txtMessages = document.getElementById('txtMessages');
       const resultMessage = document.getElementById('resultMessage');
+      const downloadSection = document.getElementById('downloadSection');
+      const btnDownloadLog = document.getElementById('btnDownloadLog');
+      
+      let currentLogFilename = null;
 
       frmUpload.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -101,6 +114,8 @@
         txtMessages.value = '';
         resultMessage.className = 'd-none';
         resultMessage.innerHTML = '';
+        downloadSection.classList.add('d-none');
+        currentLogFilename = null;
 
         try {
           const fd = new FormData();
@@ -126,6 +141,12 @@
               ${data.message || 'Import selesai tanpa error.'}
               ${data.filename ? `<br><small>File: ${data.filename}</small>` : ''}
             `;
+            
+            // Tampilkan tombol download jika ada log_data_filename
+            if (data.log_data_filename) {
+              currentLogFilename = data.log_data_filename;
+              downloadSection.classList.remove('d-none');
+            }
           } else {
             resultMessage.classList.add('alert-danger');
             resultMessage.innerHTML = `
@@ -133,6 +154,12 @@
               ${data.message || 'Import gagal. Lihat detail di bawah.'}
               ${data.filename ? `<br><small>File: ${data.filename}</small>` : ''}
             `;
+            
+            // Tampilkan tombol download jika ada log_data_filename (meskipun gagal, tetap ada log)
+            if (data.log_data_filename) {
+              currentLogFilename = data.log_data_filename;
+              downloadSection.classList.remove('d-none');
+            }
           }
           resultMessage.classList.remove('d-none');
 
@@ -151,6 +178,18 @@
           // Reset radio button ke preprod
           document.getElementById('envPreprod').checked = true;
         }
+      });
+
+      // Handle download log
+      btnDownloadLog.addEventListener('click', () => {
+        if (!currentLogFilename) {
+          alert('Tidak ada log yang tersedia untuk didownload');
+          return;
+        }
+        
+        // Download log Excel
+        const url = `/api/import-lokasi/download-log?filename=${encodeURIComponent(currentLogFilename)}`;
+        window.open(url, '_blank');
       });
     </script>
   </body>
