@@ -266,8 +266,20 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         env_lower = env.lower()
         prefix = "DATABASE_PREPROD" if env_lower == "preprod" else "DATABASE_PROD"
         try:
+            # Ambil konfigurasi database untuk ditampilkan
+            db_config = get_db_config(env)
             conn = get_db_connection(env)
-            messages.append(f"Terhubung ke database ({env.upper()})")
+            
+            # Tampilkan informasi database yang akan digunakan
+            messages.append("\n" + "="*60)
+            messages.append(f"INFORMASI DATABASE YANG AKAN DIGUNAKAN:")
+            messages.append(f"  Environment: {env.upper()}")
+            messages.append(f"  Host: {db_config['host']}")
+            messages.append(f"  Port: {db_config['port']}")
+            messages.append(f"  Database: {db_config['dbname']}")
+            messages.append(f"  User: {db_config['user']}")
+            messages.append("="*60)
+            messages.append("")
         except RuntimeError as e:
             return False, [
                 f"Error konfigurasi database untuk {env.upper()}:",
@@ -311,7 +323,12 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         messages.append(f"Baris Child (IS_PARENT!=Y): {len(child_rows)} baris")
         
         # STEP 1: Insert semua parent terlebih dahulu
-        messages.append("\n=== STEP 1: Insert Parent (IS_PARENT=Y) ===")
+        messages.append("\n" + "="*60)
+        messages.append(f"=== STEP 1: Insert Parent (IS_PARENT=Y) ===")
+        messages.append(f"  Environment: {env.upper()}")
+        messages.append(f"  Host: {db_config['host']}")
+        messages.append(f"  Database: {db_config['dbname']}")
+        messages.append("="*60)
         parent_success = 0
         parent_error = 0
         for idx in parent_rows:
@@ -339,7 +356,12 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         messages.append(f"✓ Parent: Berhasil {parent_success} baris, Gagal {parent_error} baris")
         
         # STEP 2: Insert semua child setelah parent sudah diinsert
-        messages.append("\n=== STEP 2: Insert Child (IS_PARENT!=Y) ===")
+        messages.append("\n" + "="*60)
+        messages.append(f"=== STEP 2: Insert Child (IS_PARENT!=Y) ===")
+        messages.append(f"  Environment: {env.upper()}")
+        messages.append(f"  Host: {db_config['host']}")
+        messages.append(f"  Database: {db_config['dbname']}")
+        messages.append("="*60)
         child_success = 0
         child_error = 0
         for idx in child_rows:
@@ -379,20 +401,24 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 parent_id = get_parent_id_by_code(conn, code)
                 
                 # Insert ke mst_location_child
+                # Handle alamat: jika kosong, gunakan empty string untuk memenuhi NOT NULL constraint
+                alamat_str = str(alamat) if alamat and not pd.isna(alamat) else ""
+                
                 with conn.cursor() as cur:
                     sql = """
                         INSERT INTO mst_location_child (
                             code, name, location_type_id, channel_id, availability,
-                            address_text, longitude, latitude, unloading_duration,
+                            address, address_text, longitude, latitude, unloading_duration,
                             frequency_drop_id, available_drop_days, loading_dock,
                             priority, open_hour, closed_hour, created_by, created_date, mst_location_parent_id
                         ) VALUES (
-                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                         )
                     """
                     cur.execute(sql, (
                         str(code), str(name), location_type_id, channel_id, availability,
-                        str(alamat) if alamat else None,
+                        alamat_str,  # address (NOT NULL)
+                        alamat_str if alamat_str else None,  # address_text (nullable)
                         float(longitude) if longitude and not pd.isna(longitude) else None,
                         float(latitude) if latitude and not pd.isna(latitude) else None,
                         int(unloading_duration) if unloading_duration and not pd.isna(unloading_duration) else None,
