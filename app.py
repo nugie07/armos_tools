@@ -16,6 +16,7 @@ import uuid
 from datetime import datetime
 from sync.manager import run_sync as sync_run, get_sync_status as sync_get_status, create_sync_log_table, count_sync_status as sync_count_status
 from sync.db import DatabaseManager
+import import_lokasi
 
 
 def try_load_dotenv() -> None:
@@ -830,6 +831,69 @@ def api_driver_cost_delete():
         return jsonify({"status": 400, "message": "order_cost_id invalid"}), 400
     affected = delete_driver_cost(order_cost_id)
     return jsonify({"status": 200, "affected": affected})
+
+
+# ---------- Menu 10: Import Lokasi ----------
+
+
+def import_lokasi_dir() -> Path:
+    base = Path(__file__).resolve().parent
+    d = base / "import_lokasi"
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+@app.get("/menu/import-lokasi")
+def menu_import_lokasi():
+    return render_template("import_lokasi.html")
+
+
+@app.post("/api/import-lokasi")
+def api_import_lokasi():
+    try:
+        f: Optional[FileStorage] = request.files.get("file")  # type: ignore
+        env = str(request.form.get("env", "preprod")).strip().lower()
+        
+        if f is None or f.filename == "":
+            return jsonify({"status": 400, "message": "File .xlsx wajib diunggah."}), 400
+        
+        if env not in ["preprod", "prod"]:
+            return jsonify({"status": 400, "message": "Environment harus preprod atau prod."}), 400
+        
+        # Simpan file ke folder import_lokasi
+        import_dir = import_lokasi_dir()
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        original_filename = f.filename or "import.xlsx"
+        filename_without_ext = Path(original_filename).stem
+        saved_filename = f"{filename_without_ext}_{timestamp}.xlsx"
+        saved_path = import_dir / saved_filename
+        
+        try:
+            f.save(str(saved_path))
+        except Exception as exc:
+            return jsonify({"status": 500, "message": f"Gagal menyimpan file: {exc}"}), 500
+        
+        # Jalankan import
+        try:
+            success, messages = import_lokasi.import_location_from_excel(str(saved_path), env)
+            return jsonify({
+                "status": 200 if success else 500,
+                "message": "Import selesai" if success else "Import gagal",
+                "success": success,
+                "messages": messages,
+                "filename": saved_filename
+            })
+        except Exception as exc:
+            return jsonify({
+                "status": 500,
+                "message": f"Gagal proses import: {exc}",
+                "success": False,
+                "messages": [f"Error: {str(exc)}"],
+                "filename": saved_filename
+            })
+    except Exception as exc:
+        return jsonify({"status": 500, "message": f"Kesalahan tak terduga: {exc}"}), 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)

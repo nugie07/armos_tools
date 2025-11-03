@@ -1,0 +1,325 @@
+"""
+Script untuk import lokasi dari file Excel ke database.
+Mendukung import ke mst_location_parent dan mst_location_child.
+"""
+import os
+import pandas as pd
+import psycopg2
+from datetime import datetime
+from pathlib import Path
+from typing import Optional, Dict, Any, List, Tuple
+import re
+
+
+def get_db_config(env: str = "preprod") -> Dict[str, Any]:
+    """
+    Ambil konfigurasi database berdasarkan environment.
+    env: 'preprod' atau 'prod'
+    """
+    prefix = "DATABASE_PREPROD" if env.lower() == "preprod" else "DATABASE_PROD"
+    
+    def _env(name: str, fallback: Optional[str] = None, default: Optional[str] = None) -> Optional[str]:
+        v = os.getenv(name)
+        if v is None and fallback is not None:
+            v = os.getenv(fallback)
+        if v is None:
+            v = default
+        return v
+    
+    return {
+        "host": _env(f"{prefix}_HOST", "DB_HOST"),
+        "port": int(_env(f"{prefix}_PORT", "DB_PORT", "5432") or "5432"),
+        "dbname": _env(f"{prefix}_NAME", "DB_NAME"),
+        "user": _env(f"{prefix}_USERNAME", "DB_USER"),
+        "password": _env(f"{prefix}_PASS", "DB_PASSWORD"),
+    }
+
+
+def get_db_connection(env: str = "preprod"):
+    """Buat koneksi database berdasarkan environment."""
+    config = get_db_config(env)
+    return psycopg2.connect(
+        host=config["host"],
+        port=config["port"],
+        dbname=config["dbname"],
+        user=config["user"],
+        password=config["password"],
+    )
+
+
+def lookup_lov_id(conn: psycopg2.extensions.connection, value: str) -> Optional[int]:
+    """
+    Cari lov_id dari mst_list_of_values berdasarkan value.
+    Returns None jika tidak ditemukan.
+    """
+    if not value or pd.isna(value):
+        return None
+    
+    value_str = str(value).strip()
+    if not value_str:
+        return None
+    
+    with conn.cursor() as cur:
+        sql = "SELECT lov_id FROM mst_list_of_values WHERE value = %s LIMIT 1"
+        cur.execute(sql, (value_str,))
+        row = cur.fetchone()
+        if row:
+            return int(row[0])
+    return None
+
+
+def get_parent_id_by_code(conn: psycopg2.extensions.connection, code: str) -> Optional[int]:
+    """
+    Cari mst_location_parent_id berdasarkan code.
+    Query sesuai requirement: SELECT mlp.mst_location_parent_id, mlp.code FROM mst_location_parent mlp
+           LEFT JOIN mst_location_child mlc ON mlc.code = mlp.code 
+           WHERE mlc.code = %s
+    Jika tidak ditemukan di join, cari langsung di parent dengan code yang sama.
+    """
+    if not code or pd.isna(code):
+        return None
+    
+    code_str = str(code).strip()
+    if not code_str:
+        return None
+    
+    with conn.cursor() as cur:
+        # Query sesuai requirement: cari parent yang punya child dengan code ini
+        sql = """
+            SELECT mlp.mst_location_parent_id 
+            FROM mst_location_parent mlp
+            LEFT JOIN mst_location_child mlc ON mlc.code = mlp.code 
+            WHERE mlc.code = %s
+            LIMIT 1
+        """
+        cur.execute(sql, (code_str,))
+        row = cur.fetchone()
+        if row:
+            return int(row[0])
+        
+        # Jika tidak ditemukan di join (tidak ada child dengan code ini), 
+        # cari parent yang punya code sama dengan code di excel
+        sql = "SELECT mst_location_parent_id FROM mst_location_parent WHERE code = %s LIMIT 1"
+        cur.execute(sql, (code_str,))
+        row = cur.fetchone()
+        if row:
+            return int(row[0])
+    
+    return None
+
+
+def format_available_drop_days(days_str: str) -> Optional[str]:
+    """
+    Format available_drop_days ke format {senin,selasa,...}
+    """
+    if not days_str or pd.isna(days_str):
+        return None
+    
+    days_str = str(days_str).strip()
+    if not days_str:
+        return None
+    
+    # Jika sudah dalam format {senin,selasa,...}, return as is
+    if days_str.startswith("{") and days_str.endswith("}"):
+        return days_str
+    
+    # Split by comma atau space, kemudian format
+    days = [d.strip().lower() for d in re.split(r'[,;\s]+', days_str) if d.strip()]
+    if not days:
+        return None
+    
+    return "{" + ",".join(days) + "}"
+
+
+def format_time_to_hhmmss(time_str: Any) -> Optional[str]:
+    """
+    Format waktu ke format HH:MM:SS.
+    Mendukung berbagai format input.
+    """
+    if not time_str or pd.isna(time_str):
+        return None
+    
+    time_str = str(time_str).strip()
+    if not time_str:
+        return None
+    
+    # Jika sudah dalam format HH:MM:SS, return as is
+    if re.match(r'^\d{2}:\d{2}:\d{2}$', time_str):
+        return time_str
+    
+    # Coba parse berbagai format
+    formats = [
+        '%H:%M:%S',
+        '%H:%M',
+        '%I:%M:%S %p',
+        '%I:%M %p',
+        '%H.%M.%S',
+        '%H.%M',
+    ]
+    
+    for fmt in formats:
+        try:
+            dt = datetime.strptime(time_str, fmt)
+            return dt.strftime('%H:%M:%S')
+        except ValueError:
+            continue
+    
+    # Jika gagal parse, coba extract angka
+    numbers = re.findall(r'\d+', time_str)
+    if len(numbers) >= 2:
+        h = numbers[0].zfill(2)
+        m = numbers[1].zfill(2)
+        s = numbers[2].zfill(2) if len(numbers) >= 3 else "00"
+        return f"{h}:{m}:{s}"
+    
+    return None
+
+
+def safe_get(df: pd.DataFrame, row_idx: int, col_name: str, default: Any = None) -> Any:
+    """Safe get value dari DataFrame dengan handling NaN."""
+    try:
+        val = df.at[row_idx, col_name]
+        if pd.isna(val):
+            return default
+        return val
+    except (KeyError, IndexError):
+        return default
+
+
+def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bool, List[str]]:
+    """
+    Import lokasi dari file Excel.
+    
+    Returns:
+        (success: bool, messages: List[str])
+    """
+    messages = []
+    
+    try:
+        # Baca Excel
+        df = pd.read_excel(file_path)
+        messages.append(f"File berhasil dibaca: {len(df)} baris")
+        
+        # Validasi kolom minimal
+        required_cols = ["is_parent", "code", "name"]
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            return False, [f"Kolom wajib tidak ditemukan: {', '.join(missing_cols)}"]
+        
+        # Koneksi database
+        conn = get_db_connection(env)
+        messages.append(f"Terhubung ke database ({env})")
+        
+        created_date = datetime.now().date()
+        success_count = 0
+        error_count = 0
+        
+        # Proses setiap baris
+        for idx in df.index:
+            try:
+                is_parent_val = safe_get(df, idx, "is_parent", "")
+                is_parent = str(is_parent_val).strip().upper() == "Y"
+                
+                code = safe_get(df, idx, "code", "")
+                name = safe_get(df, idx, "name", "")
+                
+                if not code or not name:
+                    error_count += 1
+                    messages.append(f"Baris {idx + 1}: code atau name kosong, dilewati")
+                    continue
+                
+                if is_parent:
+                    # Insert ke mst_location_parent
+                    with conn.cursor() as cur:
+                        sql = """
+                            INSERT INTO mst_location_parent (code, name, created_date)
+                            VALUES (%s, %s, %s)
+                        """
+                        cur.execute(sql, (str(code), str(name), created_date))
+                        success_count += 1
+                        messages.append(f"Baris {idx + 1}: Insert ke mst_location_parent: {code}")
+                else:
+                    # Insert ke mst_location_child
+                    tipe_child = safe_get(df, idx, "tipe_child", "")
+                    channel = safe_get(df, idx, "channel", "")
+                    availability = safe_get(df, idx, "availability")
+                    alamat = safe_get(df, idx, "alamat")
+                    longitude = safe_get(df, idx, "longitude")
+                    latitude = safe_get(df, idx, "latitude")
+                    unloading_duration = safe_get(df, idx, "unloading_duration")
+                    frequency_drop = safe_get(df, idx, "frequency_drop", "")
+                    available_drop_days = safe_get(df, idx, "available_drop_days", "")
+                    loading_dock = safe_get(df, idx, "loading_dock")
+                    priority = safe_get(df, idx, "priority", "")
+                    open_hour = safe_get(df, idx, "open_hour")
+                    closed_hour = safe_get(df, idx, "closed_hour")
+                    
+                    # Lookup LOV IDs
+                    location_type_id = lookup_lov_id(conn, tipe_child) if tipe_child else None
+                    channel_id = lookup_lov_id(conn, channel) if channel else None
+                    frequency_drop_id = lookup_lov_id(conn, frequency_drop) if frequency_drop else None
+                    priority_id = lookup_lov_id(conn, priority) if priority else None
+                    
+                    # Format available_drop_days
+                    available_drop_days_formatted = format_available_drop_days(available_drop_days)
+                    
+                    # Format waktu
+                    open_hour_formatted = format_time_to_hhmmss(open_hour)
+                    closed_hour_formatted = format_time_to_hhmmss(closed_hour)
+                    
+                    # Cari parent_id berdasarkan code
+                    parent_id = get_parent_id_by_code(conn, code)
+                    
+                    # Insert ke mst_location_child
+                    with conn.cursor() as cur:
+                        sql = """
+                            INSERT INTO mst_location_child (
+                                code, name, location_type_id, channel_id, availability,
+                                address_text, longitude, latitude, unloading_duration,
+                                frequency_drop_id, available_drop_days, loading_dock,
+                                priority, open_hour, closed_hour, created_date, mst_location_parent_id
+                            ) VALUES (
+                                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                            )
+                        """
+                        cur.execute(sql, (
+                            str(code), str(name), location_type_id, channel_id, availability,
+                            str(alamat) if alamat else None,
+                            float(longitude) if longitude and not pd.isna(longitude) else None,
+                            float(latitude) if latitude and not pd.isna(latitude) else None,
+                            int(unloading_duration) if unloading_duration and not pd.isna(unloading_duration) else None,
+                            frequency_drop_id, available_drop_days_formatted,
+                            str(loading_dock) if loading_dock else None,
+                            priority_id, open_hour_formatted, closed_hour_formatted,
+                            created_date, parent_id
+                        ))
+                        success_count += 1
+                        messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
+                
+            except Exception as e:
+                error_count += 1
+                messages.append(f"Baris {idx + 1}: Error - {str(e)}")
+        
+        conn.commit()
+        conn.close()
+        
+        messages.append(f"\nSelesai: Berhasil {success_count} baris, Gagal {error_count} baris")
+        return True, messages
+        
+    except Exception as e:
+        return False, [f"Error: {str(e)}"]
+
+
+if __name__ == "__main__":
+    # Test
+    import sys
+    if len(sys.argv) >= 2:
+        file_path = sys.argv[1]
+        env = sys.argv[2] if len(sys.argv) >= 3 else "preprod"
+        success, messages = import_location_from_excel(file_path, env)
+        print("\n".join(messages))
+        sys.exit(0 if success else 1)
+    else:
+        print("Usage: python import_lokasi.py <file_path> [env=preprod|prod]")
+        sys.exit(1)
+
