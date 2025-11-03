@@ -15,8 +15,15 @@ def get_db_config(env: str = "preprod") -> Dict[str, Any]:
     """
     Ambil konfigurasi database berdasarkan environment.
     env: 'preprod' atau 'prod'
+    
+    Raises:
+        RuntimeError: Jika konfigurasi database tidak lengkap
     """
-    prefix = "DATABASE_PREPROD" if env.lower() == "preprod" else "DATABASE_PROD"
+    env_lower = env.lower()
+    if env_lower not in ["preprod", "prod"]:
+        raise ValueError(f"Environment harus 'preprod' atau 'prod', mendapat: {env}")
+    
+    prefix = "DATABASE_PREPROD" if env_lower == "preprod" else "DATABASE_PROD"
     
     def _env(name: str, fallback: Optional[str] = None, default: Optional[str] = None) -> Optional[str]:
         v = os.getenv(name)
@@ -26,25 +33,74 @@ def get_db_config(env: str = "preprod") -> Dict[str, Any]:
             v = default
         return v
     
-    return {
-        "host": _env(f"{prefix}_HOST", "DB_HOST"),
-        "port": int(_env(f"{prefix}_PORT", "DB_PORT", "5432") or "5432"),
-        "dbname": _env(f"{prefix}_NAME", "DB_NAME"),
-        "user": _env(f"{prefix}_USERNAME", "DB_USER"),
-        "password": _env(f"{prefix}_PASS", "DB_PASSWORD"),
+    # Ambil konfigurasi dengan prefix khusus untuk env ini
+    config = {
+        "host": _env(f"{prefix}_HOST"),
+        "port": _env(f"{prefix}_PORT", default="5432"),
+        "dbname": _env(f"{prefix}_NAME"),
+        "user": _env(f"{prefix}_USERNAME"),
+        "password": _env(f"{prefix}_PASS"),
     }
+    
+    # Validasi konfigurasi lengkap
+    missing = []
+    if not config["host"]:
+        missing.append(f"{prefix}_HOST")
+    if not config["dbname"]:
+        missing.append(f"{prefix}_NAME")
+    if not config["user"]:
+        missing.append(f"{prefix}_USERNAME")
+    if not config["password"]:
+        missing.append(f"{prefix}_PASS")
+    
+    if missing:
+        raise RuntimeError(
+            f"Konfigurasi database untuk {env.upper()} tidak lengkap. "
+            f"Variabel environment yang diperlukan: {', '.join(missing)}. "
+            f"Pastikan variabel tersebut sudah di-set di file .env"
+        )
+    
+    # Convert port ke int
+    try:
+        config["port"] = int(config["port"] or "5432")
+    except (ValueError, TypeError):
+        config["port"] = 5432
+    
+    return config
 
 
 def get_db_connection(env: str = "preprod"):
-    """Buat koneksi database berdasarkan environment."""
+    """
+    Buat koneksi database berdasarkan environment.
+    
+    Args:
+        env: 'preprod' atau 'prod'
+    
+    Returns:
+        psycopg2.connection: Koneksi database
+    
+    Raises:
+        RuntimeError: Jika konfigurasi database tidak lengkap
+        psycopg2.Error: Jika gagal koneksi ke database
+    """
     config = get_db_config(env)
-    return psycopg2.connect(
-        host=config["host"],
-        port=config["port"],
-        dbname=config["dbname"],
-        user=config["user"],
-        password=config["password"],
-    )
+    
+    try:
+        return psycopg2.connect(
+            host=config["host"],
+            port=config["port"],
+            dbname=config["dbname"],
+            user=config["user"],
+            password=config["password"],
+        )
+    except psycopg2.Error as e:
+        # Tambahkan informasi konfigurasi yang digunakan (tanpa password)
+        config_safe = {k: v for k, v in config.items() if k != "password"}
+        config_safe["password"] = "***"
+        raise RuntimeError(
+            f"Gagal koneksi ke database {env.upper()}: {str(e)}\n"
+            f"Konfigurasi yang digunakan: {config_safe}"
+        ) from e
 
 
 def lookup_lov_id(conn: psycopg2.extensions.connection, value: str) -> Optional[int]:
@@ -206,9 +262,23 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         if missing_cols:
             return False, [f"Kolom wajib tidak ditemukan: {', '.join(missing_cols)}"]
         
-        # Koneksi database
-        conn = get_db_connection(env)
-        messages.append(f"Terhubung ke database ({env})")
+        # Koneksi database dengan validasi
+        env_lower = env.lower()
+        prefix = "DATABASE_PREPROD" if env_lower == "preprod" else "DATABASE_PROD"
+        try:
+            conn = get_db_connection(env)
+            messages.append(f"Terhubung ke database ({env.upper()})")
+        except RuntimeError as e:
+            return False, [
+                f"Error konfigurasi database untuk {env.upper()}:",
+                str(e),
+                f"\nPastikan variabel environment berikut sudah di-set di file .env:",
+                f"- {prefix}_HOST",
+                f"- {prefix}_PORT (opsional, default: 5432)",
+                f"- {prefix}_NAME",
+                f"- {prefix}_USERNAME",
+                f"- {prefix}_PASS"
+            ]
         
         created_date = datetime.now().date()
         success_count = 0
