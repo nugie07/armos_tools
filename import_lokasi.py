@@ -142,6 +142,24 @@ def check_parent_exists(conn: psycopg2.extensions.connection, code: str) -> bool
         return row[0] > 0 if row else False
 
 
+def check_child_exists(conn: psycopg2.extensions.connection, code: str) -> bool:
+    """
+    Cek apakah child dengan code tertentu sudah ada.
+    """
+    if not code or pd.isna(code):
+        return False
+    
+    code_str = str(code).strip()
+    if not code_str:
+        return False
+    
+    with conn.cursor() as cur:
+        sql = "SELECT COUNT(*) FROM mst_location_child WHERE code = %s"
+        cur.execute(sql, (code_str,))
+        row = cur.fetchone()
+        return row[0] > 0 if row else False
+
+
 def get_parent_id_by_code(conn: psycopg2.extensions.connection, code: str) -> Optional[int]:
     """
     Cari mst_location_parent_id berdasarkan code.
@@ -410,6 +428,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         messages.append("="*60)
         child_success = 0
         child_error = 0
+        child_skipped = 0
         for idx in child_rows:
             code = safe_get(df, idx, "code", "")
             name = safe_get(df, idx, "name", "")
@@ -422,6 +441,15 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
             }
             
             try:
+                # Cek apakah child dengan code ini sudah ada
+                if check_child_exists(conn, code):
+                    child_skipped += 1
+                    row_data["status"] = "SKIP"
+                    row_data["remark"] = f"Child dengan code '{code}' sudah ada di database"
+                    messages.append(f"Baris {idx + 1}: Skip - Child dengan code '{code}' sudah ada di database")
+                    child_results.append(row_data)
+                    continue
+                
                 # Insert ke mst_location_child
                 tipe_child = safe_get(df, idx, "tipe_child", "")
                 channel = safe_get(df, idx, "channel", "")
@@ -470,34 +498,48 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 # Handle alamat: jika kosong, gunakan empty string untuk memenuhi NOT NULL constraint
                 alamat_str = str(alamat) if alamat and not pd.isna(alamat) else ""
                 
+                # Gunakan savepoint untuk setiap row agar error di satu row tidak menghentikan row berikutnya
                 with conn.cursor() as cur:
-                    sql = """
-                        INSERT INTO mst_location_child (
-                            code, name, location_type_id, channel_id, availability,
-                            address, address_text, longitude, latitude, unloading_duration,
-                            frequency_drop_id, available_drop_days, loading_dock,
-                            priority, open_hour, closed_hour, created_by, created_date, mst_location_parent_id
-                        ) VALUES (
-                            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-                        )
-                    """
-                    cur.execute(sql, (
-                        str(code), str(name), location_type_id, channel_id, availability,
-                        alamat_str,  # address (NOT NULL)
-                        alamat_str if alamat_str else None,  # address_text (nullable)
-                        longitude_val,  # longitude (NOT NULL, default 0.0 jika kosong)
-                        latitude_val,  # latitude (NOT NULL, default 0.0 jika kosong)
-                        int(unloading_duration) if unloading_duration and not pd.isna(unloading_duration) else None,
-                        frequency_drop_id, available_drop_days_formatted,
-                        str(loading_dock) if loading_dock else None,
-                        priority_id, open_hour_formatted, closed_hour_formatted,
-                        created_by, created_date, parent_id
-                    ))
-                    child_success += 1
-                    row_data["status"] = "SUKSES"
-                    row_data["remark"] = "Berhasil insert ke mst_location_child"
-                    messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
-                    child_results.append(row_data)
+                    # Buat savepoint untuk row ini
+                    savepoint_name = f"sp_child_{idx}"
+                    cur.execute(f"SAVEPOINT {savepoint_name}")
+                    
+                    try:
+                        sql = """
+                            INSERT INTO mst_location_child (
+                                code, name, location_type_id, channel_id, availability,
+                                address, address_text, longitude, latitude, unloading_duration,
+                                frequency_drop_id, available_drop_days, loading_dock,
+                                priority, open_hour, closed_hour, created_by, created_date, mst_location_parent_id
+                            ) VALUES (
+                                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                            )
+                        """
+                        cur.execute(sql, (
+                            str(code), str(name), location_type_id, channel_id, availability,
+                            alamat_str,  # address (NOT NULL)
+                            alamat_str if alamat_str else None,  # address_text (nullable)
+                            longitude_val,  # longitude (NOT NULL, default 0.0 jika kosong)
+                            latitude_val,  # latitude (NOT NULL, default 0.0 jika kosong)
+                            int(unloading_duration) if unloading_duration and not pd.isna(unloading_duration) else None,
+                            frequency_drop_id, available_drop_days_formatted,
+                            str(loading_dock) if loading_dock else None,
+                            priority_id, open_hour_formatted, closed_hour_formatted,
+                            created_by, created_date, parent_id
+                        ))
+                        # Release savepoint jika sukses
+                        cur.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+                        child_success += 1
+                        row_data["status"] = "SUKSES"
+                        row_data["remark"] = "Berhasil insert ke mst_location_child"
+                        messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
+                        child_results.append(row_data)
+                    except Exception as e:
+                        # Rollback ke savepoint untuk row ini saja, agar row lain bisa lanjut
+                        cur.execute(f"ROLLBACK TO SAVEPOINT {savepoint_name}")
+                        cur.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+                        # Re-raise exception untuk ditangkap di except luar
+                        raise
             except Exception as e:
                 child_error += 1
                 row_data["status"] = "GAGAL"
@@ -510,7 +552,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         
         success_count += child_success
         error_count += child_error
-        messages.append(f"\n✓ Child: Berhasil {child_success} baris, Gagal {child_error} baris")
+        messages.append(f"\n✓ Child: Berhasil {child_success} baris, Gagal {child_error} baris, Skip {child_skipped} baris (sudah ada)")
         messages.append(f"\n=== RINGKASAN TOTAL ===")
         messages.append(f"Selesai: Total Berhasil {success_count} baris, Total Gagal {error_count} baris")
         
