@@ -124,6 +124,24 @@ def lookup_lov_id(conn: psycopg2.extensions.connection, value: str) -> Optional[
     return None
 
 
+def check_parent_exists(conn: psycopg2.extensions.connection, code: str) -> bool:
+    """
+    Cek apakah parent dengan code tertentu sudah ada.
+    """
+    if not code or pd.isna(code):
+        return False
+    
+    code_str = str(code).strip()
+    if not code_str:
+        return False
+    
+    with conn.cursor() as cur:
+        sql = "SELECT COUNT(*) FROM mst_location_parent WHERE code = %s"
+        cur.execute(sql, (code_str,))
+        row = cur.fetchone()
+        return row[0] > 0 if row else False
+
+
 def get_parent_id_by_code(conn: psycopg2.extensions.connection, code: str) -> Optional[int]:
     """
     Cari mst_location_parent_id berdasarkan code.
@@ -331,10 +349,17 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         messages.append("="*60)
         parent_success = 0
         parent_error = 0
+        parent_skipped = 0
         for idx in parent_rows:
             try:
                 code = safe_get(df, idx, "code", "")
                 name = safe_get(df, idx, "name", "")
+                
+                # Cek apakah parent dengan code ini sudah ada
+                if check_parent_exists(conn, code):
+                    parent_skipped += 1
+                    messages.append(f"Baris {idx + 1}: Skip - Parent dengan code '{code}' sudah ada di database")
+                    continue
                 
                 # Insert ke mst_location_parent
                 with conn.cursor() as cur:
@@ -353,7 +378,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         conn.commit()
         success_count += parent_success
         error_count += parent_error
-        messages.append(f"✓ Parent: Berhasil {parent_success} baris, Gagal {parent_error} baris")
+        messages.append(f"✓ Parent: Berhasil {parent_success} baris, Gagal {parent_error} baris, Skip {parent_skipped} baris (sudah ada)")
         
         # STEP 2: Insert semua child setelah parent sudah diinsert
         messages.append("\n" + "="*60)
@@ -397,8 +422,18 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 open_hour_formatted = format_time_to_hhmmss(open_hour)
                 closed_hour_formatted = format_time_to_hhmmss(closed_hour)
                 
+                # Validasi longitude dan latitude (NOT NULL constraint)
+                # Jika kosong, gunakan default 0.0
+                longitude_val = float(longitude) if longitude and not pd.isna(longitude) else 0.0
+                latitude_val = float(latitude) if latitude and not pd.isna(latitude) else 0.0
+                
                 # Cari parent_id berdasarkan code (sekarang parent sudah diinsert)
                 parent_id = get_parent_id_by_code(conn, code)
+                
+                if not parent_id:
+                    child_error += 1
+                    messages.append(f"Baris {idx + 1}: Error insert child - Parent dengan code '{code}' tidak ditemukan")
+                    continue
                 
                 # Insert ke mst_location_child
                 # Handle alamat: jika kosong, gunakan empty string untuk memenuhi NOT NULL constraint
@@ -419,8 +454,8 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                         str(code), str(name), location_type_id, channel_id, availability,
                         alamat_str,  # address (NOT NULL)
                         alamat_str if alamat_str else None,  # address_text (nullable)
-                        float(longitude) if longitude and not pd.isna(longitude) else None,
-                        float(latitude) if latitude and not pd.isna(latitude) else None,
+                        longitude_val,  # longitude (NOT NULL, default 0.0 jika kosong)
+                        latitude_val,  # latitude (NOT NULL, default 0.0 jika kosong)
                         int(unloading_duration) if unloading_duration and not pd.isna(unloading_duration) else None,
                         frequency_drop_id, available_drop_days_formatted,
                         str(loading_dock) if loading_dock else None,
