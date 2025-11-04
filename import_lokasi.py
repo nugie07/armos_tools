@@ -545,8 +545,10 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                     lov_missing_info.append(f"priority='{priority}'")
                 
                 # Log LOV yang tidak ditemukan
+                lov_missing_message = ""
                 if lov_missing_info:
-                    messages.append(f"Baris {idx + 1}: ⚠️ LOV tidak ditemukan di mst_list_of_values: {', '.join(lov_missing_info)}")
+                    lov_missing_message = f"⚠️ LOV tidak ditemukan di mst_list_of_values: {', '.join(lov_missing_info)}"
+                    messages.append(f"Baris {idx + 1}: {lov_missing_message}")
                 
                 # Format available_drop_days
                 available_drop_days_formatted = format_available_drop_days(available_drop_days)
@@ -607,7 +609,11 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                         cur.execute(f"RELEASE SAVEPOINT {savepoint_name}")
                         child_success += 1
                         row_data["status"] = "SUKSES"
-                        row_data["remark"] = "Berhasil insert ke mst_location_child"
+                        # Tambahkan info LOV yang tidak ditemukan ke remark jika ada
+                        if lov_missing_message:
+                            row_data["remark"] = f"Berhasil insert ke mst_location_child. {lov_missing_message}"
+                        else:
+                            row_data["remark"] = "Berhasil insert ke mst_location_child"
                         messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
                         child_results.append(row_data)
                     except Exception as e:
