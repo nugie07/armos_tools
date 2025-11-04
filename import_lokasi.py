@@ -142,6 +142,24 @@ def check_parent_exists(conn: psycopg2.extensions.connection, code: str) -> bool
         return row[0] > 0 if row else False
 
 
+def delete_parent_by_code(conn: psycopg2.extensions.connection, code: str) -> bool:
+    """
+    Hapus parent dengan code tertentu.
+    Returns True jika berhasil dihapus, False jika tidak ada.
+    """
+    if not code or pd.isna(code):
+        return False
+    
+    code_str = str(code).strip()
+    if not code_str:
+        return False
+    
+    with conn.cursor() as cur:
+        sql = "DELETE FROM mst_location_parent WHERE code = %s"
+        cur.execute(sql, (code_str,))
+        return cur.rowcount > 0
+
+
 def check_child_exists(conn: psycopg2.extensions.connection, code: str) -> bool:
     """
     Cek apakah child dengan code tertentu sudah ada.
@@ -158,6 +176,30 @@ def check_child_exists(conn: psycopg2.extensions.connection, code: str) -> bool:
         cur.execute(sql, (code_str,))
         row = cur.fetchone()
         return row[0] > 0 if row else False
+
+
+def get_child_existing_data(conn: psycopg2.extensions.connection, code: str) -> Optional[Dict[str, Any]]:
+    """
+    Ambil data existing child (name, address) berdasarkan code.
+    Returns dict dengan keys: name, address, atau None jika tidak ditemukan.
+    """
+    if not code or pd.isna(code):
+        return None
+    
+    code_str = str(code).strip()
+    if not code_str:
+        return None
+    
+    with conn.cursor() as cur:
+        sql = "SELECT name, address FROM mst_location_child WHERE code = %s LIMIT 1"
+        cur.execute(sql, (code_str,))
+        row = cur.fetchone()
+        if row:
+            return {
+                "name": str(row[0]) if row[0] else "",
+                "address": str(row[1]) if row[1] else ""
+            }
+    return None
 
 
 def get_parent_id_by_code(conn: psycopg2.extensions.connection, code: str) -> Optional[int]:
@@ -386,6 +428,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
             
             try:
                 # Cek apakah parent dengan code ini sudah ada
+                # Jika sudah ada, skip (karena ada relasi ke data order)
                 if check_parent_exists(conn, code):
                     parent_skipped += 1
                     row_data["status"] = "SKIP"
@@ -441,16 +484,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
             }
             
             try:
-                # Cek apakah child dengan code ini sudah ada
-                if check_child_exists(conn, code):
-                    child_skipped += 1
-                    row_data["status"] = "SKIP"
-                    row_data["remark"] = f"Child dengan code '{code}' sudah ada di database"
-                    messages.append(f"Baris {idx + 1}: Skip - Child dengan code '{code}' sudah ada di database")
-                    child_results.append(row_data)
-                    continue
-                
-                # Insert ke mst_location_child
+                # Ambil data dari Excel
                 tipe_child = safe_get(df, idx, "tipe_child", "")
                 channel = safe_get(df, idx, "channel", "")
                 availability = safe_get(df, idx, "availability")
@@ -464,12 +498,55 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 priority = safe_get(df, idx, "priority", "")
                 open_hour = safe_get(df, idx, "open_hour")
                 closed_hour = safe_get(df, idx, "closed_hour")
+                pickup_location = safe_get(df, idx, "pickup_location")
                 
-                # Lookup LOV IDs
+                # Handle alamat: jika kosong, gunakan empty string untuk memenuhi NOT NULL constraint
+                alamat_str = str(alamat) if alamat and not pd.isna(alamat) else ""
+                name_str = str(name) if name else ""
+                
+                # Handle pickup_location: convert ke string untuk pickup_location_id
+                pickup_location_id = str(pickup_location).strip() if pickup_location and not pd.isna(pickup_location) else None
+                
+                # Cek apakah child dengan code ini sudah ada
+                # Jika sudah ada, cek apakah name dan address sama
+                if check_child_exists(conn, code):
+                    existing_data = get_child_existing_data(conn, code)
+                    if existing_data:
+                        existing_name = str(existing_data.get("name", "")).strip()
+                        existing_address = str(existing_data.get("address", "")).strip()
+                        
+                        # Jika name dan address sama, skip
+                        if existing_name == name_str.strip() and existing_address == alamat_str.strip():
+                            child_skipped += 1
+                            row_data["status"] = "SKIP"
+                            row_data["remark"] = f"Child dengan code '{code}' sudah ada dengan name dan address yang sama"
+                            messages.append(f"Baris {idx + 1}: Skip - Child dengan code '{code}' sudah ada dengan name dan address yang sama")
+                            child_results.append(row_data)
+                            continue
+                        # Jika berbeda, lanjut insert (akan insert record baru)
+                        messages.append(f"Baris {idx + 1}: Child dengan code '{code}' sudah ada tapi name/address berbeda, akan insert record baru")
+                
+                # Lookup LOV IDs dengan logging
+                lov_missing_info = []
                 location_type_id = lookup_lov_id(conn, tipe_child) if tipe_child else None
+                if tipe_child and location_type_id is None:
+                    lov_missing_info.append(f"tipe_child='{tipe_child}'")
+                
                 channel_id = lookup_lov_id(conn, channel) if channel else None
+                if channel and channel_id is None:
+                    lov_missing_info.append(f"channel='{channel}'")
+                
                 frequency_drop_id = lookup_lov_id(conn, frequency_drop) if frequency_drop else None
+                if frequency_drop and frequency_drop_id is None:
+                    lov_missing_info.append(f"frequency_drop='{frequency_drop}'")
+                
                 priority_id = lookup_lov_id(conn, priority) if priority else None
+                if priority and priority_id is None:
+                    lov_missing_info.append(f"priority='{priority}'")
+                
+                # Log LOV yang tidak ditemukan
+                if lov_missing_info:
+                    messages.append(f"Baris {idx + 1}: ⚠️ LOV tidak ditemukan di mst_list_of_values: {', '.join(lov_missing_info)}")
                 
                 # Format available_drop_days
                 available_drop_days_formatted = format_available_drop_days(available_drop_days)
@@ -495,8 +572,6 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                     continue
                 
                 # Insert ke mst_location_child
-                # Handle alamat: jika kosong, gunakan empty string untuk memenuhi NOT NULL constraint
-                alamat_str = str(alamat) if alamat and not pd.isna(alamat) else ""
                 
                 # Gunakan savepoint untuk setiap row agar error di satu row tidak menghentikan row berikutnya
                 with conn.cursor() as cur:
@@ -510,9 +585,9 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                                 code, name, location_type_id, channel_id, availability,
                                 address, address_text, longitude, latitude, unloading_duration,
                                 frequency_drop_id, available_drop_days, loading_dock,
-                                priority, open_hour, closed_hour, created_by, created_date, mst_location_parent_id
+                                priority, open_hour, closed_hour, pickup_location_id, created_by, created_date, mst_location_parent_id
                             ) VALUES (
-                                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                             )
                         """
                         cur.execute(sql, (
@@ -525,6 +600,7 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                             frequency_drop_id, available_drop_days_formatted,
                             str(loading_dock) if loading_dock else None,
                             priority_id, open_hour_formatted, closed_hour_formatted,
+                            pickup_location_id,  # pickup_location_id (VARCHAR, converted from number)
                             created_by, created_date, parent_id
                         ))
                         # Release savepoint jika sukses
