@@ -473,6 +473,23 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
         child_error = 0
         child_skipped = 0
         for idx in child_rows:
+            # Validasi: pastikan row ini benar-benar bukan is_parent=Y
+            is_parent_val = safe_get(df, idx, "is_parent", "")
+            is_parent = str(is_parent_val).strip().upper() == "Y"
+            if is_parent:
+                # Jika ternyata is_parent=Y, skip (seharusnya tidak masuk ke child_rows)
+                child_skipped += 1
+                row_data = {
+                    "row_num": idx + 1,
+                    "code": str(safe_get(df, idx, "code", "")),
+                    "name": str(safe_get(df, idx, "name", "")),
+                    "status": "SKIP",
+                    "remark": f"Baris ini is_parent=Y, seharusnya insert ke mst_location_parent, bukan mst_location_child"
+                }
+                messages.append(f"Baris {idx + 1}: Warning - is_parent=Y terdeteksi di loop child, dilewati")
+                child_results.append(row_data)
+                continue
+            
             code = safe_get(df, idx, "code", "")
             name = safe_get(df, idx, "name", "")
             row_data = {
@@ -504,8 +521,40 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                 alamat_str = str(alamat) if alamat and not pd.isna(alamat) else ""
                 name_str = str(name) if name else ""
                 
-                # Handle pickup_location: convert ke string untuk pickup_location_id
-                pickup_location_id = str(pickup_location).strip() if pickup_location and not pd.isna(pickup_location) else None
+                # Handle pickup_location: convert dari General (Excel) ke string untuk pickup_location_id (text)
+                # Kolom di Excel bertipe General (bisa angka atau string), kolom di DB bertipe text/VARCHAR
+                pickup_location_id = None
+                try:
+                    # Handle None/NaN
+                    if pickup_location is None or pd.isna(pickup_location):
+                        pickup_location_id = None
+                    else:
+                        # Handle berbagai tipe dari kolom General di Excel
+                        # Bisa int, float, atau string
+                        if isinstance(pickup_location, (int, float)):
+                            # Jika int atau float, convert ke int dulu (hilangkan desimal), lalu ke string
+                            # Contoh: 63341 -> "63341", 63341.0 -> "63341", 0 -> "0"
+                            pickup_location_id = str(int(float(pickup_location)))
+                        elif isinstance(pickup_location, str):
+                            # Jika sudah string, strip whitespace
+                            pickup_location_id = pickup_location.strip()
+                            # Jika hasilnya empty string setelah strip, set ke None
+                            if not pickup_location_id:
+                                pickup_location_id = None
+                        else:
+                            # Tipe lain, coba convert ke string
+                            pickup_location_str = str(pickup_location).strip()
+                            # Coba parse sebagai angka jika bisa
+                            try:
+                                # Jika bisa di-parse sebagai angka, convert ke int lalu string
+                                pickup_location_id = str(int(float(pickup_location_str)))
+                            except (ValueError, TypeError):
+                                # Jika tidak bisa di-parse sebagai angka, gunakan string asli
+                                pickup_location_id = pickup_location_str if pickup_location_str else None
+                except Exception as e:
+                    # Jika ada error, set ke None dan log warning
+                    pickup_location_id = None
+                    messages.append(f"Baris {idx + 1}: Warning - Gagal convert pickup_location '{pickup_location}' (tipe: {type(pickup_location).__name__}) ke string: {str(e)}")
                 
                 # Cek apakah child dengan code ini sudah ada
                 # Jika sudah ada, cek apakah name dan address sama
@@ -610,11 +659,13 @@ def import_location_from_excel(file_path: str, env: str = "preprod") -> Tuple[bo
                         child_success += 1
                         row_data["status"] = "SUKSES"
                         # Tambahkan info LOV yang tidak ditemukan ke remark jika ada
+                        remark_parts = ["Berhasil insert ke mst_location_child"]
                         if lov_missing_message:
-                            row_data["remark"] = f"Berhasil insert ke mst_location_child. {lov_missing_message}"
-                        else:
-                            row_data["remark"] = "Berhasil insert ke mst_location_child"
-                        messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code}")
+                            remark_parts.append(lov_missing_message)
+                        if pickup_location_id:
+                            remark_parts.append(f"pickup_location_id={pickup_location_id}")
+                        row_data["remark"] = ". ".join(remark_parts)
+                        messages.append(f"Baris {idx + 1}: Insert ke mst_location_child: {code} (pickup_location_id={pickup_location_id or 'NULL'})")
                         child_results.append(row_data)
                     except Exception as e:
                         # Rollback ke savepoint untuk row ini saja, agar row lain bisa lanjut
