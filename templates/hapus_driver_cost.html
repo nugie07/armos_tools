@@ -44,7 +44,6 @@
               <thead>
                 <tr>
                   <th>order_cost_id</th>
-                  <th>faktur_id</th>
                   <th>manifest_reference</th>
                   <th>nominal</th>
                   <th>driver_name</th>
@@ -63,10 +62,6 @@
             <div class="col-md-6">
               <label class="form-label">order_cost_id</label>
               <input id="ocId" type="text" class="form-control" readonly />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">faktur_id</label>
-              <input id="fakturId" type="text" class="form-control" readonly />
             </div>
             <div class="col-md-6">
               <label class="form-label">manifest_reference</label>
@@ -139,7 +134,6 @@
       const tblBody = document.querySelector('#tbl tbody');
       const detailCard = document.getElementById('detailCard');
       const ocId = document.getElementById('ocId');
-      const fakturId = document.getElementById('fakturId');
       const manifestRef = document.getElementById('manifestRef');
       const nominal = document.getElementById('nominal');
       const driverName = document.getElementById('driverName');
@@ -175,11 +169,10 @@
         tblBody.innerHTML = '';
         rows.forEach(r => {
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${r.order_cost_id}</td><td>${r.faktur_id ?? ''}</td><td>${r.manifest_reference ?? ''}</td><td>${r.nominal ?? ''}</td><td>${r.driver_name ?? ''}</td><td>${r.receipt_picture ?? ''}</td>`;
+          tr.innerHTML = `<td>${r.order_cost_id}</td><td>${r.manifest_reference ?? ''}</td><td>${r.nominal ?? ''}</td><td>${r.driver_name ?? ''}</td><td>${r.receipt_picture ?? ''}</td>`;
           tr.addEventListener('click', () => {
             current = r;
             ocId.value = r.order_cost_id;
-            fakturId.value = r.faktur_id ?? '';
             manifestRef.value = r.manifest_reference ?? '';
             nominal.value = r.nominal ?? '';
             driverName.value = r.driver_name ?? '';

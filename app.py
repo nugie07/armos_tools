@@ -823,16 +823,16 @@ def menu_hapus_driver_cost():
 
 def find_driver_costs(manifest_reference: str, limit: int, offset: int) -> Tuple[List[Dict[str, Any]], int]:
     sql = (
-        'SELECT oc.order_cost_id, o.faktur_id, r.manifest_reference, oc.nominal, dd.driver_name, oc.receipt_picture '\
-        'FROM order_cost oc '\
-        'LEFT JOIN "order" o ON o.order_id = oc.order_id '\
-        'LEFT JOIN route r on r.route_id = oc."routeIdRouteId" '\
-        'LEFT JOIN dma_driver dd on dd.driver_id = oc."driverIdDriverId" '\
-        'WHERE r.manifest_reference = %s '
+        'SELECT oc.order_cost_id, rt.manifest_reference, oc.nominal, dd.driver_name, oc.receipt_picture '
+        'FROM order_cost oc '
+        'LEFT JOIN route_detail rd ON rd.order_id = oc.order_id '
+        'LEFT JOIN route rt ON rt.route_id = rd.route_id '
+        'LEFT JOIN dma_driver dd ON dd.driver_id = oc."driverIdDriverId" '
+        'WHERE rt.manifest_reference = %s '
         'ORDER BY oc.order_cost_id DESC '
         'LIMIT %s OFFSET %s'
     )
-    sql_count = 'SELECT COUNT(1) FROM order_cost oc LEFT JOIN route r on r.route_id = oc."routeIdRouteId" WHERE r.manifest_reference = %s'
+    sql_count = 'SELECT COUNT(1) FROM order_cost oc LEFT JOIN route_detail rd ON rd.order_id = oc.order_id LEFT JOIN route rt ON rt.route_id = rd.route_id WHERE rt.manifest_reference = %s'
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql_count, (manifest_reference,))
@@ -1008,6 +1008,66 @@ def api_import_lokasi_download_log():
         
     except Exception as exc:
         return jsonify({"status": 500, "message": f"Gagal generate log: {exc}"}), 500
+
+
+# ---------- Menu 11: Check Order Status ----------
+
+
+@app.get("/menu/check-order-status")
+def menu_check_order_status():
+    return render_template("check_order_status.html")
+
+
+def find_orders_by_faktur_id(faktur_id: str) -> List[Dict[str, Any]]:
+    """Cari semua order berdasarkan faktur_id."""
+    sql = 'SELECT * FROM "order" WHERE faktur_id = %s ORDER BY order_id DESC'
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (faktur_id,))
+            rows = cur.fetchall()
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in rows]
+
+
+@app.get("/api/check-order-status/orders")
+def api_check_order_status_orders():
+    faktur_id = request.args.get("faktur_id", "").strip()
+    if not faktur_id:
+        return jsonify({"status": 400, "message": "faktur_id wajib diisi"}), 400
+    
+    try:
+        rows = find_orders_by_faktur_id(faktur_id)
+        return jsonify({"status": 200, "data": rows})
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
+def find_order_details_by_order_id(order_id: int) -> List[Dict[str, Any]]:
+    """Cari semua order_detail berdasarkan order_id."""
+    sql = 'SELECT * FROM order_detail WHERE order_id = %s ORDER BY order_detail_id'
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (order_id,))
+            rows = cur.fetchall()
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in rows]
+
+
+@app.get("/api/check-order-status/order-details")
+def api_check_order_status_order_details():
+    try:
+        order_id = int(request.args.get("order_id", "0"))
+    except (ValueError, TypeError):
+        return jsonify({"status": 400, "message": "order_id invalid"}), 400
+    
+    if not order_id:
+        return jsonify({"status": 400, "message": "order_id wajib diisi"}), 400
+    
+    try:
+        rows = find_order_details_by_order_id(order_id)
+        return jsonify({"status": 200, "data": rows})
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
