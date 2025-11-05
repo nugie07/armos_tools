@@ -357,6 +357,7 @@ def api_log_search():
     file_name = request.args.get("file", "").strip()
     q_event = request.args.get("event", "").strip()
     q_request = request.args.get("request", "").strip()
+    search_field = request.args.get("search_field", "").strip()  # Field spesifik yang akan dicari di request JSON
     try:
         page = max(1, int(request.args.get("page", "1")))
     except Exception:
@@ -380,11 +381,56 @@ def api_log_search():
             return False
         return needle.lower() in str(val).lower()
 
+    def _match_request_field(request_data: str, search_field: str, search_value: str) -> bool:
+        """
+        Cari field spesifik di request JSON.
+        Jika search_field diberikan, parse request JSON dan cari field tersebut.
+        Jika tidak, gunakan substring search seperti sebelumnya.
+        """
+        if not search_field or not search_value:
+            # Jika tidak ada search_field, gunakan substring search
+            return _match(request_data, search_value)
+        
+        if not request_data:
+            return False
+        
+        try:
+            # Parse request JSON
+            if isinstance(request_data, str):
+                request_obj = json.loads(request_data)
+            else:
+                request_obj = request_data
+            
+            if not isinstance(request_obj, dict):
+                return False
+            
+            # Cari field di request JSON
+            field_value = request_obj.get(search_field)
+            if field_value is None:
+                return False
+            
+            # Match case-insensitive
+            return search_value.lower() in str(field_value).lower()
+        except (json.JSONDecodeError, TypeError, AttributeError):
+            # Jika gagal parse, fallback ke substring search
+            return _match(request_data, search_value)
+
     results = []
     for row in data:
         if not isinstance(row, dict):
             continue
-        if _match(row.get("event"), q_event) and _match(row.get("request"), q_request):
+        
+        # Match event (harus exact match untuk event dropdown)
+        event_match = row.get("event", "").strip() == q_event
+        
+        # Match request berdasarkan search_field atau substring
+        # Jika search_field kosong dan q_request kosong (field disabled), match semua
+        if not search_field and not q_request:
+            request_match = True  # Field disabled, match semua
+        else:
+            request_match = _match_request_field(row.get("request"), search_field, q_request)
+        
+        if event_match and request_match:
             results.append(row)
 
     total = len(results)
