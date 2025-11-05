@@ -1019,8 +1019,48 @@ def menu_check_order_status():
 
 
 def find_orders_by_faktur_id(faktur_id: str) -> List[Dict[str, Any]]:
-    """Cari semua order berdasarkan faktur_id."""
-    sql = 'SELECT * FROM "order" WHERE faktur_id = %s ORDER BY order_id DESC'
+    """Cari semua order berdasarkan faktur_id dengan urutan kolom yang spesifik."""
+    sql = '''SELECT 
+        order_id,
+        faktur_id,
+        faktur_date,
+        delivery_date,
+        do_number,
+        status,
+        skip_count,
+        created_date,
+        created_by,
+        updated_date,
+        updated_by,
+        notes,
+        customer_id,
+        warehouse_id,
+        delivery_type_id,
+        order_integration_id,
+        origin_name,
+        origin_address_1,
+        origin_address_2,
+        origin_city,
+        origin_zipcode,
+        origin_phone,
+        origin_email,
+        destination_name,
+        destination_address_1,
+        destination_address_2,
+        destination_city,
+        destination_zip_code,
+        destination_phone,
+        destination_email,
+        client_id,
+        cancel_reason,
+        rdo_integration_id,
+        address_change,
+        divisi,
+        pre_status,
+        atena_sorting_code
+    FROM "order" 
+    WHERE faktur_id = %s 
+    ORDER BY order_id DESC'''
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, (faktur_id,))
@@ -1043,8 +1083,32 @@ def api_check_order_status_orders():
 
 
 def find_order_details_by_order_id(order_id: int) -> List[Dict[str, Any]]:
-    """Cari semua order_detail berdasarkan order_id."""
-    sql = 'SELECT * FROM order_detail WHERE order_id = %s ORDER BY order_detail_id'
+    """Cari semua order_detail berdasarkan order_id dengan urutan kolom yang spesifik."""
+    sql = '''SELECT 
+        order_detail_id,
+        quantity_faktur,
+        net_price,
+        quantity_wms,
+        quantity_delivery,
+        quantity_loading,
+        quantity_unloading,
+        status,
+        cancel_reason,
+        notes,
+        order_id,
+        product_id,
+        unit_id,
+        pack_id,
+        line_id,
+        unloading_latitude,
+        unloading_longitude,
+        origin_uom,
+        origin_qty,
+        total_ctn,
+        total_pcs
+    FROM order_detail 
+    WHERE order_id = %s 
+    ORDER BY order_detail_id'''
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, (order_id,))
