@@ -1172,6 +1172,44 @@ def api_check_order_status_order_details():
         return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
 
 
+def find_product_vs_inventory_by_faktur_id(faktur_id: str) -> List[Dict[str, Any]]:
+    """Cari data Product VS Inventory berdasarkan faktur_id."""
+    sql = '''SELECT
+        mp.sku,
+        od.product_id,
+        mp.mst_product_id AS mp_product,
+        od.quantity_faktur AS faktur_qty,
+        mp.available_qty AS avail_qty,
+        CASE
+            WHEN mp.available_qty > od.quantity_faktur THEN 'Full Fill'
+            ELSE 'Not Full Fill'
+        END AS check_status
+    FROM order_detail od
+    LEFT JOIN "order" o ON o.order_id = od.order_id
+    LEFT JOIN mst_product mp ON mp.mst_product_id = od.product_id
+    WHERE o.faktur_id = %s
+    ORDER BY od.product_id'''
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (faktur_id,))
+            rows = cur.fetchall()
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in rows]
+
+
+@app.get("/api/check-order-status/product-vs-inventory")
+def api_check_order_status_product_vs_inventory():
+    faktur_id = request.args.get("faktur_id", "").strip()
+    if not faktur_id:
+        return jsonify({"status": 400, "message": "faktur_id wajib diisi"}), 400
+    
+    try:
+        rows = find_product_vs_inventory_by_faktur_id(faktur_id)
+        return jsonify({"status": 200, "data": rows})
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
 

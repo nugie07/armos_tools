@@ -117,6 +117,34 @@
           </div>
         </div>
       </div>
+
+      <!-- Data Product VS Inventory Table -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0">Data Product VS Inventory</h5>
+        </div>
+        <div class="card-body table-container">
+          <div id="loadingProductVsInventoryTable" class="loading-overlay d-none">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tblProductVsInventory">
+              <thead class="table-dark sticky-top">
+                <tr id="productVsInventoryTableHeader">
+                  <!-- Headers will be generated dynamically -->
+                </tr>
+              </thead>
+              <tbody id="productVsInventoryTableBody">
+                <tr>
+                  <td colspan="100%" class="text-center text-muted">Data akan muncul setelah memasukan DO Number dan klik Cari</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Modal for Error Messages -->
@@ -145,10 +173,13 @@
       const loadingSearch = document.getElementById('loadingSearch');
       const loadingOrderTable = document.getElementById('loadingOrderTable');
       const loadingDetailTable = document.getElementById('loadingDetailTable');
+      const loadingProductVsInventoryTable = document.getElementById('loadingProductVsInventoryTable');
       const orderTableHeader = document.getElementById('orderTableHeader');
       const orderTableBody = document.getElementById('orderTableBody');
       const detailTableHeader = document.getElementById('detailTableHeader');
       const detailTableBody = document.getElementById('detailTableBody');
+      const productVsInventoryTableHeader = document.getElementById('productVsInventoryTableHeader');
+      const productVsInventoryTableBody = document.getElementById('productVsInventoryTableBody');
       const errorModal = new bootstrap.Modal(document.getElementById('modalError'));
       const errorMessage = document.getElementById('errorMessage');
 
@@ -251,6 +282,9 @@
             detailTableHeader.innerHTML = '';
             detailTableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Double klik pada data di LIST Order untuk melihat Detail Order</td></tr>';
             currentOrderId = null;
+            
+            // Load Product VS Inventory data
+            loadProductVsInventory(fakturId);
           } else {
             showError(json.message || 'Error saat mengambil data');
           }
@@ -292,6 +326,46 @@
           showError('Error: ' + error.message);
         } finally {
           loadingDetailTable.classList.add('d-none');
+        }
+      }
+
+      // Load Product VS Inventory by faktur_id
+      async function loadProductVsInventory(fakturId) {
+        if (!fakturId) {
+          productVsInventoryTableHeader.innerHTML = '';
+          productVsInventoryTableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Data akan muncul setelah memasukan DO Number dan klik Cari</td></tr>';
+          return;
+        }
+
+        loadingProductVsInventoryTable.classList.remove('d-none');
+        
+        try {
+          const res = await fetch(`/api/check-order-status/product-vs-inventory?faktur_id=${encodeURIComponent(fakturId)}`);
+          const json = await res.json();
+          
+          if (json.status === 200) {
+            const data = json.data || [];
+            
+            if (data.length > 0) {
+              // Render Product VS Inventory table
+              const headers = Object.keys(data[0]);
+              renderTableHeaders(productVsInventoryTableHeader, data);
+              renderTableRows(productVsInventoryTableBody, data, headers);
+            } else {
+              productVsInventoryTableHeader.innerHTML = '';
+              productVsInventoryTableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Tidak ada data Product VS Inventory ditemukan</td></tr>';
+            }
+          } else {
+            // Don't show error modal for Product VS Inventory, just show message in table
+            productVsInventoryTableHeader.innerHTML = '';
+            productVsInventoryTableBody.innerHTML = `<tr><td colspan="100%" class="text-center text-warning">${json.message || 'Error saat mengambil data Product VS Inventory'}</td></tr>`;
+          }
+        } catch (error) {
+          // Don't show error modal for Product VS Inventory, just show message in table
+          productVsInventoryTableHeader.innerHTML = '';
+          productVsInventoryTableBody.innerHTML = `<tr><td colspan="100%" class="text-center text-danger">Error: ${error.message}</td></tr>`;
+        } finally {
+          loadingProductVsInventoryTable.classList.add('d-none');
         }
       }
 
