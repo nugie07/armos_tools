@@ -1,4 +1,6 @@
 import os
+import logging
+import traceback
 from typing import Any, Dict, List, Optional, Tuple
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session, send_file, make_response
@@ -75,12 +77,48 @@ def get_db_connection():
 
 
 app = Flask(__name__)
+
+# Configure logging
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=getattr(logging, log_level, logging.INFO),
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('app.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
 # Session signing is required for Flask sessions. Use SECRET_KEY if provided,
 # otherwise fall back to SUPABASE_KEY to avoid a separate var in simple setups.
 _secret = os.getenv("SECRET_KEY") or os.getenv("SUPABASE_KEY")
 if not _secret:
     raise RuntimeError("Please set SECRET_KEY or SUPABASE_KEY for Flask session signing")
 app.secret_key = _secret
+
+# Global error handlers
+@app.errorhandler(404)
+def not_found(error):
+    logger.warning(f"404 Not Found: {request.url}")
+    return render_template("error.html", error_code=404, error_message="Halaman tidak ditemukan"), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    error_trace = traceback.format_exc()
+    logger.error(f"500 Internal Server Error: {error_trace}")
+    logger.error(f"Request URL: {request.url}")
+    logger.error(f"Request Method: {request.method}")
+    return render_template("error.html", error_code=500, error_message="Terjadi kesalahan server"), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    error_trace = traceback.format_exc()
+    logger.error(f"Unhandled Exception: {str(e)}")
+    logger.error(f"Traceback: {error_trace}")
+    logger.error(f"Request URL: {request.url}")
+    logger.error(f"Request Method: {request.method}")
+    return render_template("error.html", error_code=500, error_message=f"Error: {str(e)}"), 500
 
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
