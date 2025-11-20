@@ -37,6 +37,7 @@
             <option value="[ARMOS -> SQL] Picklist Route">[ARMOS -> SQL] Picklist Route</option>
             <option value="[FEED ORDER V2 SQL -> TMS]">[FEED ORDER V2 SQL -> TMS]</option>
             <option value="[FEED ORDER V2 ATENA -> TMS]">[FEED ORDER V2 ATENA -> TMS]</option>
+            <option value="[WMS -> ARMOS] WEBHOOK_GOOD_ISSUE_RESULTS">Webhook Good Issue</option>
           </select>
         </div>
         <div class="col-md-4">
@@ -161,6 +162,12 @@
           label: 'Masukan outbound reference',
           placeholder: 'contoh Outbound Reference "C10SI2509-0041"',
           searchField: 'outbound_reference'
+        },
+        '[WMS -> ARMOS] WEBHOOK_GOOD_ISSUE_RESULTS': {
+          disabled: false,
+          label: 'Masukan manifest reference',
+          placeholder: 'contoh manifest_reference":"RMSDA0120251118#196"',
+          searchField: 'manifest_reference'
         }
       };
 
