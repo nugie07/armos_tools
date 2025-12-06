@@ -423,6 +423,7 @@ def api_log_search():
         """
         Cari field spesifik di request JSON.
         Jika search_field diberikan, parse request JSON dan cari field tersebut.
+        Mendukung nested path seperti "header.route_id" atau "route_id".
         Jika tidak, gunakan substring search seperti sebelumnya.
         """
         if not search_field or not search_value:
@@ -442,8 +443,25 @@ def api_log_search():
             if not isinstance(request_obj, dict):
                 return False
             
-            # Cari field di request JSON
-            field_value = request_obj.get(search_field)
+            # Support nested path seperti "header.route_id"
+            field_value = None
+            if '.' in search_field:
+                # Nested path: "header.route_id"
+                parts = search_field.split('.')
+                current = request_obj
+                for part in parts:
+                    if isinstance(current, dict):
+                        current = current.get(part)
+                        if current is None:
+                            break
+                    else:
+                        current = None
+                        break
+                field_value = current
+            else:
+                # Root level: "route_id"
+                field_value = request_obj.get(search_field)
+            
             if field_value is None:
                 return False
             
@@ -458,8 +476,15 @@ def api_log_search():
         if not isinstance(row, dict):
             continue
         
-        # Match event (harus exact match untuk event dropdown)
-        event_match = row.get("event", "").strip() == q_event
+        # Match event
+        # Untuk "[ARMOS -> SQL] Picklist Route", gunakan startswith karena di JSON ada "ID" di akhir
+        # Contoh: "[ARMOS -> SQL] Picklist Route ID 33846"
+        event_str = row.get("event", "").strip()
+        if q_event == "[ARMOS -> SQL] Picklist Route":
+            event_match = event_str.startswith("[ARMOS -> SQL] Picklist Route")
+        else:
+            # Untuk event lain, gunakan exact match
+            event_match = event_str == q_event
         
         # Match request berdasarkan search_field atau substring
         # Jika search_field kosong dan q_request kosong (field disabled), match semua
