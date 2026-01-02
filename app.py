@@ -1452,29 +1452,29 @@ def export_data_product(env: str) -> List[Dict[str, Any]]:
     env_lower = env.lower()
     
     if env_lower == "preprod":
-        # Kolom untuk Preprod
+        # Query untuk Preprod dengan JOIN mst_product_stock
         sql = '''SELECT 
-            mst_product_id,
-            sku,
-            height,
-            width,
-            length,
-            name,
-            price,
-            type_product_id,
-            qty,
-            volume,
-            weight,
-            base_uom,
-            pack_id,
-            warehouse_id,
-            synced_at,
-            allocated_qty,
-            available_qty,
-            expired_date,
-            batch
-        FROM mst_product
-        ORDER BY mst_product_id'''
+            mp.mst_product_id,
+            mp.sku,
+            mp.height,
+            mp.width,
+            mp.length,
+            mp.name,
+            mp.price,
+            mp.type_product_id,
+            mp.qty,
+            mp.volume,
+            mp.weight,
+            mp.base_uom,
+            mp.pack_id,
+            mp.warehouse_id,
+            mp.synced_at,
+            mp.allocated_qty,
+            mp.available_qty,
+            mps.expired_date
+        FROM mst_product mp
+        LEFT JOIN mst_product_stock mps ON mps.product_id = mp.mst_product_id
+        ORDER BY mp.mst_product_id'''
     else:
         # Kolom untuk Production (default - sama seperti sebelumnya)
         sql = '''SELECT 
