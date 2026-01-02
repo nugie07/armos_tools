@@ -1448,29 +1448,57 @@ def menu_export_data_csv():
 
 
 def export_data_product(env: str) -> List[Dict[str, Any]]:
-    """Export data dari mst_product"""
-    sql = '''SELECT 
-        mst_product_id,
-        sku,
-        height,
-        width,
-        length,
-        name,
-        price,
-        type_product_id,
-        qty,
-        volume,
-        weight,
-        base_uom,
-        pack_id,
-        warehouse_id,
-        synced_at,
-        allocated_qty,
-        available_qty,
-        expired_date,
-        batch
-    FROM mst_product
-    ORDER BY mst_product_id'''
+    """Export data dari mst_product dengan kolom berbeda untuk preprod dan prod"""
+    env_lower = env.lower()
+    
+    if env_lower == "preprod":
+        # Kolom untuk Preprod
+        sql = '''SELECT 
+            mst_product_id,
+            sku,
+            height,
+            width,
+            length,
+            name,
+            price,
+            type_product_id,
+            qty,
+            volume,
+            weight,
+            base_uom,
+            pack_id,
+            warehouse_id,
+            synced_at,
+            allocated_qty,
+            available_qty,
+            expired_date,
+            batch
+        FROM mst_product
+        ORDER BY mst_product_id'''
+    else:
+        # Kolom untuk Production (default - sama seperti sebelumnya)
+        sql = '''SELECT 
+            mst_product_id,
+            sku,
+            height,
+            width,
+            length,
+            name,
+            price,
+            type_product_id,
+            qty,
+            volume,
+            weight,
+            base_uom,
+            pack_id,
+            warehouse_id,
+            synced_at,
+            allocated_qty,
+            available_qty,
+            expired_date,
+            batch
+        FROM mst_product
+        ORDER BY mst_product_id'''
     
     with get_db_connection_by_env(env) as conn:
         with conn.cursor() as cur:
