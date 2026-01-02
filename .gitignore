@@ -10,9 +10,26 @@ mst_list_of_values.csv
 
 # Virtualenv & caches
 .venv/
+.venv/**
 __pycache__/
 *.pyc
 *.log
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Excel files (temporary)
+*.xlsx
+!template_*.xlsx
+
+# JSON log files
+*_log.json
 
 # Generated data
 data_log/

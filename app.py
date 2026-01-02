@@ -76,6 +76,61 @@ def get_db_connection():
     )
 
 
+def get_db_config_by_env(env: str = "preprod") -> Dict[str, Any]:
+    """
+    Ambil konfigurasi database berdasarkan environment.
+    env: 'preprod' atau 'prod'
+    """
+    env_lower = env.lower()
+    if env_lower not in ["preprod", "prod"]:
+        raise ValueError(f"Environment harus 'preprod' atau 'prod', mendapat: {env}")
+    
+    prefix = "DATABASE_PREPROD" if env_lower == "preprod" else "DATABASE_PROD"
+    
+    config = {
+        "host": _env(f"{prefix}_HOST"),
+        "port": int(_env(f"{prefix}_PORT", default="5432") or "5432"),
+        "dbname": _env(f"{prefix}_NAME"),
+        "user": _env(f"{prefix}_USERNAME"),
+        "password": _env(f"{prefix}_PASS"),
+    }
+    
+    missing = []
+    if not config["host"]:
+        missing.append(f"{prefix}_HOST")
+    if not config["dbname"]:
+        missing.append(f"{prefix}_NAME")
+    if not config["user"]:
+        missing.append(f"{prefix}_USERNAME")
+    if not config["password"]:
+        missing.append(f"{prefix}_PASS")
+    
+    if missing:
+        raise RuntimeError(
+            f"Konfigurasi database untuk {env.upper()} tidak lengkap. "
+            f"Variabel environment yang diperlukan: {', '.join(missing)}"
+        )
+    
+    return config
+
+
+def get_db_connection_by_env(env: str = "preprod"):
+    """
+    Buat koneksi database berdasarkan environment.
+    env: 'preprod' atau 'prod'
+    """
+    import psycopg2
+    config = get_db_config_by_env(env)
+    
+    return psycopg2.connect(
+        host=config["host"],
+        port=config["port"],
+        dbname=config["dbname"],
+        user=config["user"],
+        password=config["password"],
+    )
+
+
 app = Flask(__name__)
 
 # Configure logging
@@ -1231,6 +1286,339 @@ def api_check_order_status_product_vs_inventory():
     try:
         rows = find_product_vs_inventory_by_faktur_id(faktur_id)
         return jsonify({"status": 200, "data": rows})
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
+# ---------- Menu 12: Ubah Order Status ----------
+
+
+@app.get("/menu/ubah-order-status")
+def menu_ubah_order_status():
+    return render_template("ubah_order_status.html")
+
+
+def find_order_by_order_number(env: str, order_number: str) -> Optional[Dict[str, Any]]:
+    """
+    Cari order berdasarkan order_number (do_number atau faktur_id) di environment tertentu.
+    Returns None jika tidak ditemukan.
+    """
+    sql = '''SELECT 
+        order_id,
+        faktur_id,
+        faktur_date,
+        delivery_date,
+        do_number,
+        status,
+        skip_count,
+        created_date,
+        created_by,
+        updated_date,
+        updated_by,
+        notes,
+        customer_id,
+        warehouse_id,
+        delivery_type_id,
+        order_integration_id,
+        origin_name,
+        origin_address_1,
+        origin_address_2,
+        origin_city,
+        origin_zipcode,
+        origin_phone,
+        origin_email,
+        destination_name,
+        destination_address_1,
+        destination_address_2,
+        destination_city,
+        destination_zip_code,
+        destination_phone,
+        destination_email,
+        client_id,
+        cancel_reason,
+        rdo_integration_id,
+        address_change,
+        divisi,
+        pre_status,
+        atena_sorting_code
+    FROM "order" 
+    WHERE do_number = %s OR faktur_id = %s
+    ORDER BY order_id DESC
+    LIMIT 1'''
+    
+    try:
+        with get_db_connection_by_env(env) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (order_number, order_number))
+                row = cur.fetchone()
+                if not row:
+                    return None
+                cols = [c[0] for c in cur.description]
+                return dict(zip(cols, row))
+    except Exception as e:
+        logger.error(f"Error finding order: {str(e)}")
+        raise
+
+
+@app.get("/api/ubah-order-status/search")
+def api_ubah_order_status_search():
+    env = request.args.get("env", "").strip().lower()
+    order_number = request.args.get("order_number", "").strip()
+    
+    if not env:
+        return jsonify({"status": 400, "message": "Environment wajib dipilih"}), 400
+    if env not in ["preprod", "prod"]:
+        return jsonify({"status": 400, "message": "Environment harus preprod atau prod"}), 400
+    if not order_number:
+        return jsonify({"status": 400, "message": "Order Number wajib diisi"}), 400
+    
+    try:
+        order = find_order_by_order_number(env, order_number)
+        if not order:
+            return jsonify({"status": 404, "message": f"Order Number {order_number} tidak ditemukan"}), 404
+        return jsonify({"status": 200, "data": order})
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
+def update_order_status(env: str, order_id: int, new_status: str, username: str = "system") -> int:
+    """
+    Update status order di environment tertentu.
+    Returns jumlah baris yang terpengaruh.
+    """
+    valid_statuses = ['new', 'loading', 'ready_to_deliver', 'in_delivery', 'completed', 
+                     'skip', 'rejected', 'hold', 'failed', 'return_to_wms', 'inactive', 'in_optimization']
+    
+    if new_status not in valid_statuses:
+        raise ValueError(f"Status tidak valid. Harus salah satu dari: {', '.join(valid_statuses)}")
+    
+    sql = '''UPDATE "order" 
+             SET status = %s, updated_date = CURRENT_TIMESTAMP, updated_by = %s 
+             WHERE order_id = %s'''
+    
+    with get_db_connection_by_env(env) as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, (new_status, username, order_id))
+            affected = cur.rowcount
+        conn.commit()
+        return affected
+
+
+@app.post("/api/ubah-order-status/update")
+def api_ubah_order_status_update():
+    payload = request.get_json(silent=True) or {}
+    env = str(payload.get("env", "")).strip().lower()
+    order_id = payload.get("order_id")
+    new_status = str(payload.get("status", "")).strip()
+    username = session.get("username", "system")
+    
+    if not env:
+        return jsonify({"status": 400, "message": "Environment wajib dipilih"}), 400
+    if env not in ["preprod", "prod"]:
+        return jsonify({"status": 400, "message": "Environment harus preprod atau prod"}), 400
+    if not isinstance(order_id, int):
+        return jsonify({"status": 400, "message": "order_id invalid"}), 400
+    if not new_status:
+        return jsonify({"status": 400, "message": "Status wajib dipilih"}), 400
+    
+    try:
+        affected = update_order_status(env, order_id, new_status, username)
+        if affected == 0:
+            return jsonify({"status": 404, "message": "Order tidak ditemukan"}), 404
+        return jsonify({"status": 200, "message": "Status berhasil diubah", "affected": affected})
+    except ValueError as e:
+        return jsonify({"status": 400, "message": str(e)}), 400
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
+# ---------- Menu 13: Export Data to CSV ----------
+
+
+def data_archive_order_dir() -> Path:
+    base = Path(__file__).resolve().parent
+    d = base / "data_archive_order"
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+@app.get("/menu/export-data-csv")
+def menu_export_data_csv():
+    return render_template("export_data_csv.html")
+
+
+def export_data_product(env: str) -> List[Dict[str, Any]]:
+    """Export data dari mst_product"""
+    sql = '''SELECT 
+        mst_product_id,
+        sku,
+        height,
+        width,
+        length,
+        name,
+        price,
+        type_product_id,
+        qty,
+        volume,
+        weight,
+        base_uom,
+        pack_id,
+        warehouse_id,
+        synced_at,
+        allocated_qty,
+        available_qty,
+        expired_date,
+        batch
+    FROM mst_product
+    ORDER BY mst_product_id'''
+    
+    with get_db_connection_by_env(env) as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql)
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in cur.fetchall()]
+
+
+def export_data_vehicle(env: str) -> List[Dict[str, Any]]:
+    """Export data dari mst_vehicle"""
+    sql = '''SELECT 
+        mst_vehicle_id,
+        plate_number,
+        tax_expired,
+        stnk_number,
+        fuel_efficiency_km,
+        opening_time,
+        closing_time,
+        status,
+        created_date,
+        created_by,
+        updated_by,
+        type,
+        kir_expired,
+        product_restriction_id,
+        region_restriction_id,
+        customer_type_restriction_id,
+        specific_customer_restriction_id,
+        pickup_location,
+        max_trip_duration,
+        updated_date,
+        driver_id,
+        co_driver_id,
+        zona_restriction_id,
+        code,
+        route4me_vehicle_id
+    FROM mst_vehicle
+    ORDER BY mst_vehicle_id'''
+    
+    with get_db_connection_by_env(env) as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql)
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in cur.fetchall()]
+
+
+def export_data_lov_config(env: str) -> List[Dict[str, Any]]:
+    """Export data dari mst_list_of_values"""
+    sql = '''SELECT 
+        lov_id,
+        code,
+        value,
+        status,
+        lov_parent_id
+    FROM mst_list_of_values
+    ORDER BY lov_id'''
+    
+    with get_db_connection_by_env(env) as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql)
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in cur.fetchall()]
+
+
+@app.post("/api/export-data-csv/generate")
+def api_export_data_csv_generate():
+    payload = request.get_json(silent=True) or {}
+    env = str(payload.get("env", "")).strip().lower()
+    data_type = str(payload.get("data_type", "")).strip().lower()
+    
+    if not env:
+        return jsonify({"status": 400, "message": "Environment wajib dipilih"}), 400
+    if env not in ["preprod", "prod"]:
+        return jsonify({"status": 400, "message": "Environment harus preprod atau prod"}), 400
+    
+    # Validasi environment config
+    try:
+        get_db_config_by_env(env)
+    except (RuntimeError, ValueError) as e:
+        return jsonify({"status": 400, "message": f"Konfigurasi environment {env.upper()} tidak valid: {str(e)}"}), 400
+    
+    if not data_type:
+        return jsonify({"status": 400, "message": "Tipe data wajib dipilih"}), 400
+    
+    valid_data_types = {
+        "dataproduct": ("Data Product", export_data_product),
+        "datavehicle": ("Data Vehicle", export_data_vehicle),
+        "lovconfig": ("Lov Config", export_data_lov_config)
+    }
+    
+    if data_type not in valid_data_types:
+        return jsonify({"status": 400, "message": f"Tipe data tidak valid. Harus salah satu dari: {', '.join(valid_data_types.keys())}"}), 400
+    
+    try:
+        # Get data
+        data_label, export_func = valid_data_types[data_type]
+        data = export_func(env)
+        
+        if not data:
+            return jsonify({"status": 404, "message": "Tidak ada data ditemukan"}), 404
+        
+        # Generate CSV using pandas
+        import pandas as pd
+        
+        df = pd.DataFrame(data)
+        
+        # Generate filename dengan format: data_dataproduct_020120251300.csv
+        timestamp = datetime.now().strftime("%d%m%Y%H%M")
+        filename = f"data_{data_type}_{timestamp}.csv"
+        
+        # Save to folder
+        archive_dir = data_archive_order_dir()
+        filepath = archive_dir / filename
+        
+        # Write CSV
+        df.to_csv(filepath, index=False, encoding='utf-8-sig')
+        
+        return jsonify({
+            "status": 200,
+            "message": f"Data berhasil di-export",
+            "filename": filename,
+            "row_count": len(data)
+        })
+    except Exception as e:
+        logger.error(f"Error exporting data: {str(e)}")
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
+@app.get("/api/export-data-csv/download")
+def api_export_data_csv_download():
+    """Download CSV file"""
+    try:
+        filename = request.args.get("filename")
+        if not filename:
+            return jsonify({"status": 400, "message": "Parameter filename diperlukan"}), 400
+        
+        archive_dir = data_archive_order_dir()
+        filepath = archive_dir / filename
+        
+        if not filepath.exists():
+            return jsonify({"status": 404, "message": "File tidak ditemukan"}), 404
+        
+        return send_file(
+            str(filepath),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=filename
+        )
     except Exception as e:
         return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
 

@@ -1,0 +1,216 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Export Data to CSV</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <style>
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+      .loading-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="mb-0">Export Data to CSV</h4>
+        <div class="d-flex gap-2">
+          <a href="/" class="btn btn-outline-secondary" title="Home">🏠</a>
+          <a href="/logout" class="btn btn-outline-danger" title="Logout">⎋</a>
+        </div>
+      </div>
+
+      <!-- Export Form -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <form id="frmExport" class="row g-3 align-items-end">
+            <div class="col-md-4">
+              <label class="form-label">Environment <span class="text-danger">*</span></label>
+              <select id="selectEnv" class="form-select" required>
+                <option value="">-- Pilih Environment --</option>
+                <option value="preprod">Preprod</option>
+                <option value="prod">Production</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tipe Data <span class="text-danger">*</span></label>
+              <select id="selectDataType" class="form-select" required>
+                <option value="">-- Pilih Tipe Data --</option>
+                <option value="dataproduct">Data Product</option>
+                <option value="datavehicle">Data Vehicle</option>
+                <option value="lovconfig">Lov Config</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+              <button id="btnGenerate" type="submit" class="btn btn-primary w-100">Generate</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Result Section -->
+      <div id="resultSection" class="card mb-3" style="display: none;">
+        <div class="card-body">
+          <div id="resultMessage"></div>
+          <div id="downloadSection" class="mt-3" style="display: none;">
+            <a id="downloadLink" href="#" class="btn btn-success" download>
+              <span>⬇</span> Download CSV
+            </a>
+            <span id="fileInfo" class="ms-3 text-muted"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay d-none">
+      <div class="loading-content">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <div class="fw-bold">Sedang generate data...</div>
+        <div class="text-muted mt-2">Mohon tunggu</div>
+      </div>
+    </div>
+
+    <!-- Modal for Error Messages -->
+    <div class="modal" tabindex="-1" id="modalError">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p id="errorMessage"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const frmExport = document.getElementById('frmExport');
+      const selectEnv = document.getElementById('selectEnv');
+      const selectDataType = document.getElementById('selectDataType');
+      const btnGenerate = document.getElementById('btnGenerate');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      const resultSection = document.getElementById('resultSection');
+      const resultMessage = document.getElementById('resultMessage');
+      const downloadSection = document.getElementById('downloadSection');
+      const downloadLink = document.getElementById('downloadLink');
+      const fileInfo = document.getElementById('fileInfo');
+      
+      const errorModal = new bootstrap.Modal(document.getElementById('modalError'));
+      const errorMessage = document.getElementById('errorMessage');
+
+      // Function to show error
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorModal.show();
+      }
+
+      // Function to show result
+      function showResult(message, isSuccess, filename, rowCount) {
+        resultSection.style.display = 'block';
+        
+        if (isSuccess) {
+          resultMessage.className = 'alert alert-success';
+          resultMessage.innerHTML = `<strong>✓ Berhasil!</strong><br>${message}`;
+          
+          if (filename) {
+            downloadSection.style.display = 'block';
+            downloadLink.href = `/api/export-data-csv/download?filename=${encodeURIComponent(filename)}`;
+            fileInfo.textContent = `File: ${filename} (${rowCount || 0} baris)`;
+          }
+        } else {
+          resultMessage.className = 'alert alert-danger';
+          resultMessage.innerHTML = `<strong>✗ Error!</strong><br>${message}`;
+          downloadSection.style.display = 'none';
+        }
+      }
+
+      // Generate CSV
+      async function generateCSV() {
+        const env = selectEnv.value.trim();
+        const dataType = selectDataType.value.trim();
+        
+        if (!env) {
+          showError('Environment wajib dipilih');
+          return;
+        }
+        if (!dataType) {
+          showError('Tipe data wajib dipilih');
+          return;
+        }
+
+        // Show loading
+        loadingOverlay.classList.remove('d-none');
+        btnGenerate.disabled = true;
+        resultSection.style.display = 'none';
+        
+        try {
+          const res = await fetch('/api/export-data-csv/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              env: env,
+              data_type: dataType
+            })
+          });
+          
+          const json = await res.json();
+          
+          if (json.status === 200) {
+            showResult(
+              json.message || 'Data berhasil di-export',
+              true,
+              json.filename,
+              json.row_count
+            );
+          } else {
+            showResult(json.message || 'Error saat generate data', false);
+            if (json.status === 400 || json.status === 404) {
+              // Don't show modal for validation errors, already shown in result
+            } else {
+              showError(json.message || 'Error saat generate data');
+            }
+          }
+        } catch (error) {
+          showResult('Error: ' + error.message, false);
+          showError('Error: ' + error.message);
+        } finally {
+          loadingOverlay.classList.add('d-none');
+          btnGenerate.disabled = false;
+        }
+      }
+
+      // Event listeners
+      frmExport.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await generateCSV();
+      });
+    </script>
+  </body>
+</html>
