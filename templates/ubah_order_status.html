@@ -211,6 +211,26 @@
 
       let currentOrderData = null;
 
+      // Function to reset form
+      function resetForm() {
+        // Reset search form
+        selectEnv.value = '';
+        orderNumber.value = '';
+        
+        // Reset status update form
+        selectStatus.value = '';
+        
+        // Hide status update card
+        statusUpdateCard.style.display = 'none';
+        
+        // Clear order table
+        orderTableHeader.innerHTML = '';
+        orderTableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Pilih Environment, masukan Order Number dan klik Cari untuk melihat data</td></tr>';
+        
+        // Clear current order data
+        currentOrderData = null;
+      }
+
       // Function to show error
       function showError(message) {
         errorMessage.textContent = message;
@@ -370,8 +390,8 @@
           
           if (json.status === 200) {
             showSuccess(json.message || 'Status berhasil diubah');
-            // Reload order data to show updated status
-            await loadOrder();
+            // Reset form setelah sukses
+            resetForm();
           } else {
             showError(json.message || 'Error saat mengubah status');
           }
