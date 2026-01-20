@@ -1381,36 +1381,76 @@ def api_ubah_order_status_search():
         return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
 
 
-def update_order_status(env: str, order_id: int, new_status: str, username: str = "system") -> int:
+def update_order_data(env: str, order_id: int, username: str = "system", 
+                      status: str = None, order_integration_id: str = None, delivery_date: str = None) -> int:
     """
-    Update status order di environment tertentu.
+    Update data order di environment tertentu.
+    Hanya field yang tidak None yang akan diupdate.
     Returns jumlah baris yang terpengaruh.
     """
     valid_statuses = ['new', 'loading', 'ready_to_deliver', 'in_delivery', 'completed', 
                      'skip', 'rejected', 'hold', 'failed', 'return_to_wms', 'inactive', 'in_optimization']
     
-    if new_status not in valid_statuses:
-        raise ValueError(f"Status tidak valid. Harus salah satu dari: {', '.join(valid_statuses)}")
+    # Build dynamic SET clause
+    set_parts = []
+    params = []
     
-    sql = '''UPDATE "order" 
-             SET status = %s, updated_date = CURRENT_TIMESTAMP, updated_by = %s 
+    if status is not None:
+        if status not in valid_statuses:
+            raise ValueError(f"Status tidak valid. Harus salah satu dari: {', '.join(valid_statuses)}")
+        set_parts.append("status = %s")
+        params.append(status)
+    
+    if order_integration_id is not None:
+        set_parts.append("order_integration_id = %s")
+        params.append(order_integration_id)
+    
+    if delivery_date is not None:
+        set_parts.append("delivery_date = %s")
+        params.append(delivery_date)
+    
+    if not set_parts:
+        raise ValueError("Minimal satu field harus diisi untuk melakukan perubahan")
+    
+    # Always update updated_date and updated_by
+    set_parts.append("updated_date = CURRENT_TIMESTAMP")
+    set_parts.append("updated_by = %s")
+    params.append(username)
+    
+    # Add order_id to params
+    params.append(order_id)
+    
+    sql = f'''UPDATE "order" 
+             SET {", ".join(set_parts)}
              WHERE order_id = %s'''
     
     with get_db_connection_by_env(env) as conn:
         with conn.cursor() as cur:
-            cur.execute(sql, (new_status, username, order_id))
+            cur.execute(sql, tuple(params))
             affected = cur.rowcount
         conn.commit()
         return affected
 
 
-@app.post("/api/ubah-order-status/update")
-def api_ubah_order_status_update():
+@app.post("/api/ubah-order-data/update")
+def api_ubah_order_data_update():
     payload = request.get_json(silent=True) or {}
     env = str(payload.get("env", "")).strip().lower()
     order_id = payload.get("order_id")
-    new_status = str(payload.get("status", "")).strip()
     username = session.get("username", "system")
+    
+    # Optional fields
+    new_status = payload.get("status")
+    if new_status is not None:
+        new_status = str(new_status).strip() or None
+    
+    new_order_integration_id = payload.get("order_integration_id")
+    if new_order_integration_id is not None:
+        new_order_integration_id = str(new_order_integration_id).strip() or None
+    
+    new_delivery_date = payload.get("delivery_date")
+    if new_delivery_date is not None:
+        new_delivery_date = str(new_delivery_date).strip() or None
     
     if not env:
         return jsonify({"status": 400, "message": "Environment wajib dipilih"}), 400
@@ -1418,14 +1458,37 @@ def api_ubah_order_status_update():
         return jsonify({"status": 400, "message": "Environment harus preprod atau prod"}), 400
     if not isinstance(order_id, int):
         return jsonify({"status": 400, "message": "order_id invalid"}), 400
-    if not new_status:
-        return jsonify({"status": 400, "message": "Status wajib dipilih"}), 400
+    
+    # Check if at least one field is provided
+    if new_status is None and new_order_integration_id is None and new_delivery_date is None:
+        return jsonify({"status": 400, "message": "Minimal satu field harus diisi untuk melakukan perubahan"}), 400
     
     try:
-        affected = update_order_status(env, order_id, new_status, username)
+        affected = update_order_data(
+            env=env, 
+            order_id=order_id, 
+            username=username,
+            status=new_status,
+            order_integration_id=new_order_integration_id,
+            delivery_date=new_delivery_date
+        )
         if affected == 0:
             return jsonify({"status": 404, "message": "Order tidak ditemukan"}), 404
-        return jsonify({"status": 200, "message": "Status berhasil diubah", "affected": affected})
+        
+        # Build success message
+        changed_fields = []
+        if new_status:
+            changed_fields.append("Status")
+        if new_order_integration_id:
+            changed_fields.append("Order Integration ID")
+        if new_delivery_date:
+            changed_fields.append("Delivery Date")
+        
+        return jsonify({
+            "status": 200, 
+            "message": f"Data berhasil diubah ({', '.join(changed_fields)})", 
+            "affected": affected
+        })
     except ValueError as e:
         return jsonify({"status": 400, "message": str(e)}), 400
     except Exception as e:
