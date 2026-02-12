@@ -1,0 +1,321 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Update Order on Route</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <style>
+      .table-responsive { max-height: 600px; overflow-y: auto; }
+      .loading-overlay {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex; align-items: center; justify-content: center; z-index: 1000;
+      }
+      .table-container { position: relative; }
+      #tblData tbody tr.selectable { cursor: pointer; }
+      #tblData tbody tr.selected { background-color: rgba(13, 110, 253, 0.2) !important; }
+    </style>
+  </head>
+  <body class="p-4">
+    <div class="container">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h4 class="mb-0">Update Order on Route</h4>
+        <div class="d-flex gap-2">
+          <a href="/" class="btn btn-outline-secondary" title="Home">🏠</a>
+          <a href="/logout" class="btn btn-outline-danger" title="Logout">⎋</a>
+        </div>
+      </div>
+
+      <!-- Search Form -->
+      <div class="card mb-3">
+        <div class="card-body">
+          <form id="frmSearch" class="row g-3 align-items-end">
+            <div class="col-md-3">
+              <label class="form-label">Environment <span class="text-danger">*</span></label>
+              <select id="selectEnv" class="form-select" required>
+                <option value="">-- Pilih Environment --</option>
+                <option value="preprod">Preprod</option>
+                <option value="prod">Production</option>
+              </select>
+            </div>
+            <div class="col-md-7">
+              <label class="form-label">Manifest Reference <span class="text-danger">*</span></label>
+              <input id="manifestReference" type="text" class="form-control" placeholder="Masukan Manifest Reference" required />
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+              <button id="btnSearch" type="submit" class="btn btn-primary w-100">Cari</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="loadingSearch" class="d-none mb-3">
+        <div class="d-flex align-items-center gap-2">
+          <div class="spinner-border text-primary" role="status" style="width: 1.5rem; height: 1.5rem;"></div>
+          <span class="text-muted">Mencari data...</span>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0">Data Order (Manifest)</h5>
+          <small class="text-muted d-block mt-1" id="dataHint">Double-click salah satu baris untuk mengisi form Ubah Data Manifest di bawah</small>
+        </div>
+        <div class="card-body table-container">
+          <div id="loadingTable" class="loading-overlay d-none">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tblData">
+              <thead class="table-dark sticky-top">
+                <tr id="tableHeader"></tr>
+              </thead>
+              <tbody id="tableBody">
+                <tr><td colspan="100%" class="text-center text-muted">Pilih Environment, masukan Manifest Reference dan klik Cari</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ubah Data Manifest -->
+      <div class="card mb-3" id="formCard" style="display: none;">
+        <div class="card-header">
+          <h5 class="mb-0">Ubah Data Manifest</h5>
+          <small class="text-white-50 d-block mt-1">Double-click satu baris di tabel di atas, lalu isi perubahan di bawah ini</small>
+        </div>
+        <div class="card-body">
+          <form id="frmUpdate" class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Ubah Status Manifest</label>
+              <select id="selectStatus" class="form-select">
+                <option value="">-- Tidak Diubah --</option>
+                <option value="new">new</option>
+                <option value="loading">loading</option>
+                <option value="ready_to_deliver">ready_to_deliver</option>
+                <option value="in_delivery">in_delivery</option>
+                <option value="delivery_success">delivery_success</option>
+                <option value="delivery_completed">delivery_completed</option>
+                <option value="rejected">rejected</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Ubah Integration Id</label>
+              <input id="inputIntegrationId" type="text" class="form-control" placeholder="Kosongkan jika tidak diubah" />
+            </div>
+            <div class="col-12 d-flex justify-content-end mt-3">
+              <button id="btnSave" type="submit" class="btn btn-success">Simpan Perubahan</button>
+            </div>
+          </form>
+          <small class="text-muted mt-2 d-block">* Hanya field yang diisi/dipilih yang akan diubah</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" tabindex="-1" id="modalError">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Error</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body"><p id="errorMessage"></p></div>
+          <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" tabindex="-1" id="modalConfirm">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Konfirmasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body"><p id="confirmMessage"></p></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-primary" id="btnConfirmSave">Ya, Simpan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal" tabindex="-1" id="modalSuccess">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header"><h5 class="modal-title">Berhasil</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body"><p id="successMessage"></p></div>
+          <div class="modal-footer"><button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const frmSearch = document.getElementById('frmSearch');
+      const selectEnv = document.getElementById('selectEnv');
+      const manifestReference = document.getElementById('manifestReference');
+      const btnSearch = document.getElementById('btnSearch');
+      const loadingSearch = document.getElementById('loadingSearch');
+      const loadingTable = document.getElementById('loadingTable');
+      const tableHeader = document.getElementById('tableHeader');
+      const tableBody = document.getElementById('tableBody');
+      const formCard = document.getElementById('formCard');
+      const frmUpdate = document.getElementById('frmUpdate');
+      const selectStatus = document.getElementById('selectStatus');
+      const inputIntegrationId = document.getElementById('inputIntegrationId');
+      const btnSave = document.getElementById('btnSave');
+      const errorModal = new bootstrap.Modal(document.getElementById('modalError'));
+      const errorMessage = document.getElementById('errorMessage');
+      const confirmModal = new bootstrap.Modal(document.getElementById('modalConfirm'));
+      const confirmMessage = document.getElementById('confirmMessage');
+      const successModal = new bootstrap.Modal(document.getElementById('modalSuccess'));
+      const successMessage = document.getElementById('successMessage');
+      const btnConfirmSave = document.getElementById('btnConfirmSave');
+
+      const COLUMN_ORDER = ['order_id', 'faktur_id', 'order_status', 'route_status', 'manifest_reference', 'manifest_integration_id'];
+      let dataList = [];
+
+      function showError(msg) { errorMessage.textContent = msg; errorModal.show(); }
+      function showSuccess(msg) { successMessage.textContent = msg; successModal.show(); }
+
+      function resetForm() {
+        selectEnv.value = '';
+        manifestReference.value = '';
+        selectStatus.value = '';
+        inputIntegrationId.value = '';
+        formCard.style.display = 'none';
+        tableHeader.innerHTML = '';
+        tableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Pilih Environment, masukan Manifest Reference dan klik Cari</td></tr>';
+        dataList = [];
+      }
+
+      function renderTable() {
+        tableHeader.innerHTML = '';
+        COLUMN_ORDER.forEach(col => {
+          const th = document.createElement('th');
+          th.textContent = col;
+          th.style.whiteSpace = 'nowrap';
+          tableHeader.appendChild(th);
+        });
+        tableBody.innerHTML = '';
+        if (!dataList.length) return;
+        dataList.forEach((row, idx) => {
+          const tr = document.createElement('tr');
+          tr.className = 'selectable';
+          tr.dataset.index = idx;
+          COLUMN_ORDER.forEach(col => {
+            const td = document.createElement('td');
+            const v = row[col];
+            td.textContent = v != null && v !== undefined ? String(v) : '';
+            td.style.whiteSpace = 'nowrap';
+            tr.appendChild(td);
+          });
+          tableBody.appendChild(tr);
+        });
+      }
+
+      async function loadData() {
+        const env = selectEnv.value.trim();
+        const ref = manifestReference.value.trim();
+        if (!env) { showError('Environment wajib dipilih'); return; }
+        if (!ref) { showError('Manifest Reference wajib diisi'); return; }
+        loadingSearch.classList.remove('d-none');
+        btnSearch.disabled = true;
+        loadingTable.classList.remove('d-none');
+        formCard.style.display = 'none';
+        dataList = [];
+        try {
+          const res = await fetch(`/api/update-order-on-route/search?env=${encodeURIComponent(env)}&manifest_reference=${encodeURIComponent(ref)}`);
+          const json = await res.json();
+          if (json.status === 200) {
+            dataList = Array.isArray(json.data) ? json.data : [];
+            renderTable();
+            const hint = document.getElementById('dataHint');
+            if (hint) hint.textContent = 'Menampilkan ' + dataList.length + ' data. Double-click salah satu baris untuk mengisi form Ubah Data Manifest di bawah.';
+            formCard.style.display = 'block';
+            selectStatus.value = '';
+            inputIntegrationId.value = '';
+            if (dataList.length > 0) {
+              selectStatus.value = dataList[0].route_status || '';
+              inputIntegrationId.value = dataList[0].manifest_integration_id != null ? String(dataList[0].manifest_integration_id) : '';
+            }
+          } else if (json.status === 404) {
+            showError("Manifest Reference '" + ref + "' tidak ditemukan");
+            tableHeader.innerHTML = '';
+            tableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Data tidak ditemukan</td></tr>';
+          } else {
+            showError(json.message || 'Error saat mengambil data');
+          }
+        } catch (e) {
+          showError('Error: ' + e.message);
+        } finally {
+          loadingSearch.classList.add('d-none');
+          btnSearch.disabled = false;
+          loadingTable.classList.add('d-none');
+        }
+      }
+
+      tableBody.addEventListener('dblclick', function(e) {
+        const tr = e.target.closest('tr.selectable');
+        if (!tr || !dataList.length) return;
+        const idx = parseInt(tr.dataset.index, 10);
+        if (isNaN(idx) || idx < 0 || idx >= dataList.length) return;
+        document.querySelectorAll('#tblData tbody tr.selected').forEach(r => r.classList.remove('selected'));
+        tr.classList.add('selected');
+        const row = dataList[idx];
+        selectStatus.value = row.route_status || '';
+        inputIntegrationId.value = row.manifest_integration_id != null ? String(row.manifest_integration_id) : '';
+      });
+
+      async function saveUpdate() {
+        const env = selectEnv.value.trim();
+        const ref = manifestReference.value.trim();
+        const status = selectStatus.value.trim();
+        const integrationId = inputIntegrationId.value.trim();
+        if (!env) { showError('Environment wajib dipilih'); return; }
+        if (!ref) { showError('Manifest Reference wajib diisi'); return; }
+        if (!status && !integrationId) {
+          showError('Minimal satu field (Status Manifest atau Integration Id) harus diisi');
+          return;
+        }
+        btnSave.disabled = true;
+        try {
+          const payload = { env, manifest_reference: ref };
+          if (status) payload.status = status;
+          if (integrationId) payload.manifest_integration_id = integrationId;
+          const res = await fetch('/api/update-order-on-route/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const json = await res.json();
+          if (json.status === 200) {
+            showSuccess(json.message || 'Data berhasil diubah');
+            resetForm();
+          } else {
+            showError(json.message || 'Gagal mengubah data');
+          }
+        } catch (e) {
+          showError('Error: ' + e.message);
+        } finally {
+          btnSave.disabled = false;
+        }
+      }
+
+      frmSearch.addEventListener('submit', function(e) { e.preventDefault(); loadData(); });
+      frmUpdate.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const env = selectEnv.value.trim();
+        const ref = manifestReference.value.trim();
+        const status = selectStatus.value.trim();
+        const integrationId = inputIntegrationId.value.trim();
+        if (!ref) { showError('Manifest Reference wajib diisi'); return; }
+        if (!status && !integrationId) { showError('Minimal satu field harus diisi'); return; }
+        let msg = 'Apakah Anda yakin ingin mengubah data manifest "' + ref + '" di environment ' + env.toUpperCase() + '?';
+        if (status) msg += '\nStatus: ' + status;
+        if (integrationId) msg += '\nIntegration Id: ' + integrationId;
+        confirmMessage.textContent = msg;
+        confirmModal.show();
+      });
+      btnConfirmSave.addEventListener('click', function() { confirmModal.hide(); saveUpdate(); });
+      manifestReference.addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); loadData(); } });
+    </script>
+  </body>
+</html>

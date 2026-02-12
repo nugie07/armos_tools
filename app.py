@@ -1734,6 +1734,147 @@ def api_export_data_csv_download():
         return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
 
 
+# ---------- Menu 14: Update Order on Route ----------
+
+
+@app.get("/menu/update-order-on-route")
+def menu_update_order_on_route():
+    return render_template("update_order_on_route.html")
+
+
+def find_orders_by_manifest_reference(env: str, manifest_reference: str) -> List[Dict[str, Any]]:
+    """
+    Cari semua order yang ada di manifest_reference (join order, route_detail, route).
+    Returns list of dicts dengan kolom: order_id, faktur_id, order_status, route_status,
+    manifest_reference, manifest_integration_id.
+    """
+    sql = """SELECT
+        od.order_id,
+        od.faktur_id,
+        od.status AS order_status,
+        ro.status AS route_status,
+        ro.manifest_reference,
+        ro.manifest_integration_id
+    FROM "order" od
+    LEFT JOIN route_detail rd ON rd.order_id = od.order_id
+    LEFT JOIN route ro ON ro.route_id = rd.route_id
+    WHERE ro.manifest_reference = %s
+    ORDER BY od.order_id"""
+    try:
+        with get_db_connection_by_env(env) as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql, (manifest_reference,))
+                rows = cur.fetchall()
+                cols = [c[0] for c in cur.description]
+                return [dict(zip(cols, r)) for r in rows]
+    except Exception as e:
+        logger.error(f"Error finding orders by manifest_reference: {str(e)}")
+        raise
+
+
+@app.get("/api/update-order-on-route/search")
+def api_update_order_on_route_search():
+    env = request.args.get("env", "").strip().lower()
+    manifest_reference = request.args.get("manifest_reference", "").strip()
+    if not env:
+        return jsonify({"status": 400, "message": "Environment wajib dipilih"}), 400
+    if env not in ["preprod", "prod"]:
+        return jsonify({"status": 400, "message": "Environment harus preprod atau prod"}), 400
+    if not manifest_reference:
+        return jsonify({"status": 400, "message": "Manifest Reference wajib diisi"}), 400
+    try:
+        rows = find_orders_by_manifest_reference(env, manifest_reference)
+        if not rows:
+            return jsonify({"status": 404, "message": f"Manifest Reference '{manifest_reference}' tidak ditemukan"}), 404
+        return jsonify({"status": 200, "data": list(rows), "count": len(rows)})
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
+def update_route_manifest(
+    env: str,
+    manifest_reference: str,
+    status: str = None,
+    manifest_integration_id: str = None,
+) -> int:
+    """
+    Update route: status dan/atau manifest_integration_id untuk semua route yang match manifest_reference.
+    Hanya field yang tidak None yang di-SET.
+    Returns jumlah baris route yang terpengaruh.
+    """
+    valid_statuses = [
+        "new", "loading", "ready_to_deliver", "in_delivery",
+        "delivery_success", "delivery_completed", "rejected"
+    ]
+    if status is not None and status not in valid_statuses:
+        raise ValueError(f"Status tidak valid. Harus salah satu dari: {', '.join(valid_statuses)}")
+    set_parts = []
+    params = []
+    if status is not None:
+        set_parts.append("ro.status = %s")
+        params.append(status)
+    if manifest_integration_id is not None:
+        set_parts.append("ro.manifest_integration_id = %s")
+        params.append(manifest_integration_id)
+    if not set_parts:
+        raise ValueError("Minimal satu field (status atau manifest_integration_id) harus diisi")
+    params.append(manifest_reference)
+    sql = f"""UPDATE route ro
+    SET {", ".join(set_parts)}
+    FROM route_detail rd
+    JOIN "order" od ON od.order_id = rd.order_id
+    WHERE ro.route_id = rd.route_id
+    AND ro.manifest_reference = %s"""
+    with get_db_connection_by_env(env) as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, tuple(params))
+            affected = cur.rowcount
+        conn.commit()
+        return affected
+
+
+@app.post("/api/update-order-on-route/update")
+def api_update_order_on_route_update():
+    payload = request.get_json(silent=True) or {}
+    env = str(payload.get("env", "")).strip().lower()
+    manifest_reference = str(payload.get("manifest_reference", "")).strip()
+    status = payload.get("status")
+    if status is not None:
+        status = str(status).strip() or None
+    manifest_integration_id = payload.get("manifest_integration_id")
+    if manifest_integration_id is not None:
+        manifest_integration_id = str(manifest_integration_id).strip() or None
+    if not env:
+        return jsonify({"status": 400, "message": "Environment wajib dipilih"}), 400
+    if env not in ["preprod", "prod"]:
+        return jsonify({"status": 400, "message": "Environment harus preprod atau prod"}), 400
+    if not manifest_reference:
+        return jsonify({"status": 400, "message": "Manifest Reference wajib diisi"}), 400
+    if status is None and manifest_integration_id is None:
+        return jsonify({"status": 400, "message": "Minimal satu field (status atau manifest_integration_id) harus diisi"}), 400
+    try:
+        affected = update_route_manifest(
+            env=env,
+            manifest_reference=manifest_reference,
+            status=status,
+            manifest_integration_id=manifest_integration_id,
+        )
+        changed = []
+        if status is not None:
+            changed.append("Status Manifest")
+        if manifest_integration_id is not None:
+            changed.append("Integration ID")
+        return jsonify({
+            "status": 200,
+            "message": f"Data manifest berhasil diubah ({', '.join(changed)}). {affected} route terpengaruh.",
+            "affected": affected,
+        })
+    except ValueError as e:
+        return jsonify({"status": 400, "message": str(e)}), 400
+    except Exception as e:
+        return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", "5000")), debug=False)
 
