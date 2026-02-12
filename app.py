@@ -1798,9 +1798,10 @@ def update_route_manifest(
     manifest_integration_id: str = None,
 ) -> int:
     """
-    Update route: status dan/atau manifest_integration_id untuk semua route yang match manifest_reference.
+    Update route: status dan/atau manifest_integration_id untuk 1 row route yang match manifest_reference.
     Hanya field yang tidak None yang di-SET.
-    Returns jumlah baris route yang terpengaruh.
+    Query: UPDATE route SET ... WHERE manifest_reference = %s
+    Returns jumlah baris route yang terpengaruh (1 jika ada).
     """
     valid_statuses = [
         "new", "loading", "ready_to_deliver", "in_delivery",
@@ -1811,20 +1812,17 @@ def update_route_manifest(
     set_parts = []
     params = []
     if status is not None:
-        set_parts.append("ro.status = %s")
+        set_parts.append("status = %s")
         params.append(status)
     if manifest_integration_id is not None:
-        set_parts.append("ro.manifest_integration_id = %s")
+        set_parts.append("manifest_integration_id = %s")
         params.append(manifest_integration_id)
     if not set_parts:
         raise ValueError("Minimal satu field (status atau manifest_integration_id) harus diisi")
     params.append(manifest_reference)
-    sql = f"""UPDATE route ro
+    sql = f"""UPDATE route
     SET {", ".join(set_parts)}
-    FROM route_detail rd
-    JOIN "order" od ON od.order_id = rd.order_id
-    WHERE ro.route_id = rd.route_id
-    AND ro.manifest_reference = %s"""
+    WHERE manifest_reference = %s"""
     with get_db_connection_by_env(env) as conn:
         with conn.cursor() as cur:
             cur.execute(sql, tuple(params))

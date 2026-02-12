@@ -13,8 +13,6 @@
         display: flex; align-items: center; justify-content: center; z-index: 1000;
       }
       .table-container { position: relative; }
-      #tblData tbody tr.selectable { cursor: pointer; }
-      #tblData tbody tr.selected { background-color: rgba(13, 110, 253, 0.2) !important; }
     </style>
   </head>
   <body class="p-4">
@@ -61,7 +59,7 @@
       <div class="card mb-3">
         <div class="card-header">
           <h5 class="mb-0">Data Order (Manifest)</h5>
-          <small class="text-muted d-block mt-1" id="dataHint">Double-click salah satu baris untuk mengisi form Ubah Data Manifest di bawah</small>
+          <small class="text-muted d-block mt-1" id="dataHint">Data order dalam manifest. Isi form di bawah untuk mengubah status atau integration id manifest ini.</small>
         </div>
         <div class="card-body table-container">
           <div id="loadingTable" class="loading-overlay d-none">
@@ -84,15 +82,10 @@
       <div class="card mb-3" id="formCard" style="display: none;">
         <div class="card-header">
           <h5 class="mb-0">Ubah Data Manifest</h5>
-          <small class="text-white-50 d-block mt-1">Double-click satu baris di tabel di atas, lalu isi perubahan di bawah ini</small>
+          <small class="text-white-50 d-block mt-1">Isi perubahan untuk manifest reference yang dicari di atas</small>
         </div>
         <div class="card-body">
           <form id="frmUpdate" class="row g-3">
-            <div class="col-12">
-              <label class="form-label">Faktur Id</label>
-              <div id="displayFakturId" class="form-control bg-light" style="cursor: default;">-</div>
-              <small class="text-muted">Faktur yang dipilih dari tabel di atas (double-click baris untuk memilih)</small>
-            </div>
             <div class="col-md-6">
               <label class="form-label">Ubah Status Manifest</label>
               <select id="selectStatus" class="form-select">
@@ -165,7 +158,6 @@
       const frmUpdate = document.getElementById('frmUpdate');
       const selectStatus = document.getElementById('selectStatus');
       const inputIntegrationId = document.getElementById('inputIntegrationId');
-      const displayFakturId = document.getElementById('displayFakturId');
       const btnSave = document.getElementById('btnSave');
       const errorModal = new bootstrap.Modal(document.getElementById('modalError'));
       const errorMessage = document.getElementById('errorMessage');
@@ -202,10 +194,8 @@
         });
         tableBody.innerHTML = '';
         if (!dataList.length) return;
-        dataList.forEach((row, idx) => {
+        dataList.forEach((row) => {
           const tr = document.createElement('tr');
-          tr.className = 'selectable';
-          tr.dataset.index = idx;
           COLUMN_ORDER.forEach(col => {
             const td = document.createElement('td');
             const v = row[col];
@@ -234,16 +224,10 @@
             dataList = Array.isArray(json.data) ? json.data : [];
             renderTable();
             const hint = document.getElementById('dataHint');
-            if (hint) hint.textContent = 'Menampilkan ' + dataList.length + ' data. Double-click salah satu baris untuk mengisi form Ubah Data Manifest di bawah.';
+            if (hint) hint.textContent = 'Menampilkan ' + dataList.length + ' data. Isi form di bawah untuk mengubah manifest ini.';
             formCard.style.display = 'block';
             selectStatus.value = '';
             inputIntegrationId.value = '';
-            if (displayFakturId) displayFakturId.textContent = '-';
-            if (dataList.length > 0) {
-              selectStatus.value = dataList[0].route_status || '';
-              inputIntegrationId.value = dataList[0].manifest_integration_id != null ? String(dataList[0].manifest_integration_id) : '';
-              if (displayFakturId) displayFakturId.textContent = dataList[0].faktur_id != null ? String(dataList[0].faktur_id) : '-';
-            }
           } else if (json.status === 404) {
             showError("Manifest Reference '" + ref + "' tidak ditemukan");
             tableHeader.innerHTML = '';
@@ -259,19 +243,6 @@
           loadingTable.classList.add('d-none');
         }
       }
-
-      tableBody.addEventListener('dblclick', function(e) {
-        const tr = e.target.closest('tr.selectable');
-        if (!tr || !dataList.length) return;
-        const idx = parseInt(tr.dataset.index, 10);
-        if (isNaN(idx) || idx < 0 || idx >= dataList.length) return;
-        document.querySelectorAll('#tblData tbody tr.selected').forEach(r => r.classList.remove('selected'));
-        tr.classList.add('selected');
-        const row = dataList[idx];
-        if (displayFakturId) displayFakturId.textContent = row.faktur_id != null ? String(row.faktur_id) : '-';
-        selectStatus.value = row.route_status || '';
-        inputIntegrationId.value = row.manifest_integration_id != null ? String(row.manifest_integration_id) : '';
-      });
 
       async function saveUpdate() {
         const env = selectEnv.value.trim();
