@@ -1624,6 +1624,26 @@ def export_data_lov_config(env: str) -> List[Dict[str, Any]]:
             return [dict(zip(cols, r)) for r in cur.fetchall()]
 
 
+def export_data_master_location(env: str) -> List[Dict[str, Any]]:
+    """Export data dari mst_location_parent"""
+    sql = '''SELECT * FROM mst_location_parent ORDER BY mst_location_parent_id'''
+    with get_db_connection_by_env(env) as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql)
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in cur.fetchall()]
+
+
+def export_data_child_location(env: str) -> List[Dict[str, Any]]:
+    """Export data dari mst_location_child"""
+    sql = '''SELECT * FROM mst_location_child ORDER BY mst_location_child_id'''
+    with get_db_connection_by_env(env) as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql)
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in cur.fetchall()]
+
+
 @app.post("/api/export-data-csv/generate")
 def api_export_data_csv_generate():
     payload = request.get_json(silent=True) or {}
@@ -1647,7 +1667,9 @@ def api_export_data_csv_generate():
     valid_data_types = {
         "dataproduct": ("Data Product", export_data_product),
         "datavehicle": ("Data Vehicle", export_data_vehicle),
-        "lovconfig": ("Lov Config", export_data_lov_config)
+        "lovconfig": ("Lov Config", export_data_lov_config),
+        "masterlocation": ("Master Location", export_data_master_location),
+        "childlocation": ("Child Location", export_data_child_location),
     }
     
     if data_type not in valid_data_types:
