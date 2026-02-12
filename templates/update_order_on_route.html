@@ -88,6 +88,11 @@
         </div>
         <div class="card-body">
           <form id="frmUpdate" class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Faktur Id</label>
+              <div id="displayFakturId" class="form-control bg-light" style="cursor: default;">-</div>
+              <small class="text-muted">Faktur yang dipilih dari tabel di atas (double-click baris untuk memilih)</small>
+            </div>
             <div class="col-md-6">
               <label class="form-label">Ubah Status Manifest</label>
               <select id="selectStatus" class="form-select">
@@ -160,6 +165,7 @@
       const frmUpdate = document.getElementById('frmUpdate');
       const selectStatus = document.getElementById('selectStatus');
       const inputIntegrationId = document.getElementById('inputIntegrationId');
+      const displayFakturId = document.getElementById('displayFakturId');
       const btnSave = document.getElementById('btnSave');
       const errorModal = new bootstrap.Modal(document.getElementById('modalError'));
       const errorMessage = document.getElementById('errorMessage');
@@ -232,9 +238,11 @@
             formCard.style.display = 'block';
             selectStatus.value = '';
             inputIntegrationId.value = '';
+            if (displayFakturId) displayFakturId.textContent = '-';
             if (dataList.length > 0) {
               selectStatus.value = dataList[0].route_status || '';
               inputIntegrationId.value = dataList[0].manifest_integration_id != null ? String(dataList[0].manifest_integration_id) : '';
+              if (displayFakturId) displayFakturId.textContent = dataList[0].faktur_id != null ? String(dataList[0].faktur_id) : '-';
             }
           } else if (json.status === 404) {
             showError("Manifest Reference '" + ref + "' tidak ditemukan");
@@ -260,6 +268,7 @@
         document.querySelectorAll('#tblData tbody tr.selected').forEach(r => r.classList.remove('selected'));
         tr.classList.add('selected');
         const row = dataList[idx];
+        if (displayFakturId) displayFakturId.textContent = row.faktur_id != null ? String(row.faktur_id) : '-';
         selectStatus.value = row.route_status || '';
         inputIntegrationId.value = row.manifest_integration_id != null ? String(row.manifest_integration_id) : '';
       });
