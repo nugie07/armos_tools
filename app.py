@@ -1298,10 +1298,10 @@ def menu_ubah_order_status():
     return render_template("ubah_order_status.html")
 
 
-def find_order_by_order_number(env: str, order_number: str) -> Optional[Dict[str, Any]]:
+def find_orders_by_order_number(env: str, order_number: str) -> List[Dict[str, Any]]:
     """
-    Cari order berdasarkan order_number (do_number atau faktur_id) di environment tertentu.
-    Returns None jika tidak ditemukan.
+    Cari semua order yang match order_number (do_number atau faktur_id) di environment tertentu.
+    Returns list of dicts; bisa kosong jika tidak ada yang match.
     """
     sql = '''SELECT 
         order_id,
@@ -1343,20 +1343,17 @@ def find_order_by_order_number(env: str, order_number: str) -> Optional[Dict[str
         atena_sorting_code
     FROM "order" 
     WHERE do_number = %s OR faktur_id = %s
-    ORDER BY order_id DESC
-    LIMIT 1'''
+    ORDER BY order_id DESC'''
     
     try:
         with get_db_connection_by_env(env) as conn:
             with conn.cursor() as cur:
                 cur.execute(sql, (order_number, order_number))
-                row = cur.fetchone()
-                if not row:
-                    return None
+                rows = cur.fetchall()
                 cols = [c[0] for c in cur.description]
-                return dict(zip(cols, row))
+                return [dict(zip(cols, row)) for row in rows]
     except Exception as e:
-        logger.error(f"Error finding order: {str(e)}")
+        logger.error(f"Error finding orders: {str(e)}")
         raise
 
 
@@ -1373,10 +1370,10 @@ def api_ubah_order_status_search():
         return jsonify({"status": 400, "message": "Order Number wajib diisi"}), 400
     
     try:
-        order = find_order_by_order_number(env, order_number)
-        if not order:
+        orders = find_orders_by_order_number(env, order_number)
+        if not orders:
             return jsonify({"status": 404, "message": f"Order Number {order_number} tidak ditemukan"}), 404
-        return jsonify({"status": 200, "data": order})
+        return jsonify({"status": 200, "data": orders})
     except Exception as e:
         return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
 

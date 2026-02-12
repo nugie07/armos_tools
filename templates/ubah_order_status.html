@@ -25,6 +25,12 @@
       .table-container {
         position: relative;
       }
+      #tblOrder tbody tr.selectable {
+        cursor: pointer;
+      }
+      #tblOrder tbody tr.selected {
+        background-color: rgba(13, 110, 253, 0.2) !important;
+      }
     </style>
   </head>
   <body class="p-4">
@@ -102,6 +108,7 @@
       <div class="card mb-3" id="statusUpdateCard" style="display: none;">
         <div class="card-header">
           <h5 class="mb-0">Ubah Data Order</h5>
+          <small class="text-white-50 d-block mt-1">Pilih satu baris di tabel di atas untuk mengubah data order tersebut</small>
         </div>
         <div class="card-body">
           <form id="frmUpdateStatus" class="row g-3">
@@ -226,6 +233,17 @@
 
       let currentOrderData = null;
 
+      // Urutan kolom datatable (sesuai requirement)
+      const ORDER_TABLE_COLUMNS = [
+        'order_id', 'faktur_id', 'faktur_date', 'delivery_date', 'do_number', 'status', 'skip_count',
+        'created_date', 'created_by', 'updated_date', 'updated_by', 'notes', 'customer_id', 'warehouse_id',
+        'delivery_type_id', 'order_integration_id', 'origin_name', 'origin_address_1', 'origin_address_2',
+        'origin_city', 'origin_zipcode', 'origin_phone', 'origin_email', 'destination_name',
+        'destination_address_1', 'destination_address_2', 'destination_city', 'destination_zip_code',
+        'destination_phone', 'destination_email', 'client_id', 'cancel_reason', 'rdo_integration_id',
+        'address_change', 'divisi', 'pre_status', 'atena_sorting_code'
+      ];
+
       // Function to reset form
       function resetForm() {
         // Reset search form
@@ -244,8 +262,9 @@
         orderTableHeader.innerHTML = '';
         orderTableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Pilih Environment, masukan Order Number dan klik Cari untuk melihat data</td></tr>';
         
-        // Clear current order data
+        // Clear current order data and list
         currentOrderData = null;
+        window._orderList = null;
       }
 
       // Function to show error
@@ -260,12 +279,30 @@
         successModal.show();
       }
 
-      // Function to render table headers dynamically
+      // Update form placeholders/title from selected order
+      function updateFormPlaceholders(data) {
+        if (!data) {
+          inputOrderIntegrationId.placeholder = 'Kosongkan jika tidak diubah';
+          inputOrderIntegrationId.title = '';
+          inputDeliveryDate.title = 'Pilih baris order di tabel untuk mengubah';
+          return;
+        }
+        inputOrderIntegrationId.placeholder = data.order_integration_id != null && data.order_integration_id !== '' ? `Current: ${data.order_integration_id}` : 'Kosongkan jika tidak diubah';
+        if (data.delivery_date) {
+          const dateStr = (typeof data.delivery_date === 'string' && data.delivery_date.indexOf('T') !== -1) ? data.delivery_date.split('T')[0] : data.delivery_date;
+          inputDeliveryDate.title = `Current: ${dateStr}`;
+        } else {
+          inputDeliveryDate.title = 'Kosongkan jika tidak diubah';
+        }
+      }
+
+      // Function to render table headers in fixed column order
       function renderTableHeaders(container, data) {
         if (!data || Object.keys(data).length === 0) return;
         
         container.innerHTML = '';
-        const headers = Object.keys(data);
+        // Gunakan urutan ORDER_TABLE_COLUMNS; tampilkan hanya kolom yang ada di data
+        const headers = ORDER_TABLE_COLUMNS.filter(col => data.hasOwnProperty(col));
         headers.forEach(header => {
           const th = document.createElement('th');
           th.textContent = header;
@@ -274,11 +311,11 @@
         });
       }
 
-      // Function to render table row
-      function renderTableRow(container, data, headers) {
+      // Function to render multiple table rows (data = array of order objects)
+      function renderTableRows(container, dataList, headers) {
         container.innerHTML = '';
         
-        if (!data || Object.keys(data).length === 0) {
+        if (!dataList || dataList.length === 0) {
           const tr = document.createElement('tr');
           const td = document.createElement('td');
           td.colSpan = headers.length;
@@ -289,19 +326,24 @@
           return;
         }
 
-        const tr = document.createElement('tr');
-        headers.forEach(header => {
-          const td = document.createElement('td');
-          const value = data[header];
-          td.textContent = value !== null && value !== undefined ? String(value) : '';
-          td.style.whiteSpace = 'nowrap';
-          td.style.maxWidth = '300px';
-          td.style.overflow = 'hidden';
-          td.style.textOverflow = 'ellipsis';
-          td.title = value !== null && value !== undefined ? String(value) : '';
-          tr.appendChild(td);
+        dataList.forEach((data, index) => {
+          const tr = document.createElement('tr');
+          tr.className = 'selectable';
+          tr.dataset.index = index;
+          tr.dataset.orderId = data.order_id != null ? String(data.order_id) : '';
+          headers.forEach(header => {
+            const td = document.createElement('td');
+            const value = data[header];
+            td.textContent = value !== null && value !== undefined ? String(value) : '';
+            td.style.whiteSpace = 'nowrap';
+            td.style.maxWidth = '300px';
+            td.style.overflow = 'hidden';
+            td.style.textOverflow = 'ellipsis';
+            td.title = value !== null && value !== undefined ? String(value) : '';
+            tr.appendChild(td);
+          });
+          container.appendChild(tr);
         });
-        container.appendChild(tr);
       }
 
       // Load order by order number
@@ -329,34 +371,45 @@
           const json = await res.json();
           
           if (json.status === 200) {
-            const data = json.data || {};
+            const dataList = Array.isArray(json.data) ? json.data : (json.data ? [json.data] : []);
             
-            if (Object.keys(data).length > 0) {
-              // Render order table
-              const headers = Object.keys(data);
-              renderTableHeaders(orderTableHeader, data);
-              renderTableRow(orderTableBody, data, headers);
+            if (dataList.length > 0) {
+              const first = dataList[0];
+              const headers = ORDER_TABLE_COLUMNS.filter(col => first.hasOwnProperty(col));
+              renderTableHeaders(orderTableHeader, first);
+              renderTableRows(orderTableBody, dataList, headers);
               
-              // Store current order data
-              currentOrderData = data;
+              // Store list for row selection
+              currentOrderData = null;
+              window._orderList = dataList;
               
-              // Show update form and populate current values
               statusUpdateCard.style.display = 'block';
-              selectStatus.value = ''; // Default to "tidak diubah"
-              inputOrderIntegrationId.value = ''; // Default empty
-              inputOrderIntegrationId.placeholder = data.order_integration_id ? `Current: ${data.order_integration_id}` : 'Kosongkan jika tidak diubah';
-              // Format delivery_date for date input if exists
-              if (data.delivery_date) {
-                const dateStr = data.delivery_date.split('T')[0]; // Handle ISO format
-                inputDeliveryDate.value = '';
-                inputDeliveryDate.title = `Current: ${dateStr}`;
-              } else {
-                inputDeliveryDate.value = '';
-                inputDeliveryDate.title = 'Kosongkan jika tidak diubah';
+              updateFormPlaceholders(null);
+              selectStatus.value = '';
+              inputOrderIntegrationId.value = '';
+              inputDeliveryDate.value = '';
+              document.querySelectorAll('#tblOrder tbody tr.selected').forEach(r => r.classList.remove('selected'));
+              // Jika hanya 1 baris, auto-select
+              if (dataList.length === 1) {
+                const firstRow = orderTableBody.querySelector('tr.selectable');
+                if (firstRow) {
+                  firstRow.classList.add('selected');
+                  currentOrderData = dataList[0];
+                  updateFormPlaceholders(currentOrderData);
+                  selectStatus.value = currentOrderData.status || '';
+                  inputOrderIntegrationId.value = currentOrderData.order_integration_id != null ? String(currentOrderData.order_integration_id) : '';
+                  if (currentOrderData.delivery_date) {
+                    const d = currentOrderData.delivery_date;
+                    inputDeliveryDate.value = (typeof d === 'string' && d.indexOf('T') !== -1) ? d.split('T')[0] : d;
+                  } else {
+                    inputDeliveryDate.value = '';
+                  }
+                }
               }
             } else {
               orderTableHeader.innerHTML = '';
               orderTableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Tidak ada data ditemukan</td></tr>';
+              statusUpdateCard.style.display = 'none';
             }
           } else if (json.status === 404) {
             // Show modal for not found
@@ -439,6 +492,26 @@
           btnSave.disabled = false;
         }
       }
+
+      // Row click: pilih order untuk diedit
+      orderTableBody.addEventListener('click', (e) => {
+        const tr = e.target.closest('tr.selectable');
+        if (!tr || !window._orderList) return;
+        const index = parseInt(tr.dataset.index, 10);
+        if (isNaN(index) || index < 0 || index >= window._orderList.length) return;
+        document.querySelectorAll('#tblOrder tbody tr.selected').forEach(r => r.classList.remove('selected'));
+        tr.classList.add('selected');
+        currentOrderData = window._orderList[index];
+        updateFormPlaceholders(currentOrderData);
+        selectStatus.value = currentOrderData.status || '';
+        inputOrderIntegrationId.value = currentOrderData.order_integration_id != null ? String(currentOrderData.order_integration_id) : '';
+        if (currentOrderData.delivery_date) {
+          const d = currentOrderData.delivery_date;
+          inputDeliveryDate.value = (typeof d === 'string' && d.indexOf('T') !== -1) ? d.split('T')[0] : d;
+        } else {
+          inputDeliveryDate.value = '';
+        }
+      });
 
       // Event listeners
       frmSearch.addEventListener('submit', async (e) => {

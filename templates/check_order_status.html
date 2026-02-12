@@ -192,11 +192,11 @@
       }
 
       // Function to render table headers dynamically
-      function renderTableHeaders(container, data) {
+      function renderTableHeaders(container, data, orderedHeaders = null) {
         if (!data || data.length === 0) return;
         
         container.innerHTML = '';
-        const headers = Object.keys(data[0]);
+        const headers = orderedHeaders || Object.keys(data[0]);
         headers.forEach(header => {
           const th = document.createElement('th');
           th.textContent = header;
@@ -347,10 +347,12 @@
             const data = json.data || [];
             
             if (data.length > 0) {
-              // Render Product VS Inventory table
-              const headers = Object.keys(data[0]);
-              renderTableHeaders(productVsInventoryTableHeader, data);
-              renderTableRows(productVsInventoryTableBody, data, headers);
+              // Urutan kolom sesuai dengan query SQL
+              const orderedHeaders = ['sku', 'product_id', 'mp_product', 'faktur_qty', 'avail_qty', 'check_status'];
+              
+              // Render Product VS Inventory table dengan urutan yang ditentukan
+              renderTableHeaders(productVsInventoryTableHeader, data, orderedHeaders);
+              renderTableRows(productVsInventoryTableBody, data, orderedHeaders);
             } else {
               productVsInventoryTableHeader.innerHTML = '';
               productVsInventoryTableBody.innerHTML = '<tr><td colspan="100%" class="text-center text-muted">Tidak ada data Product VS Inventory ditemukan</td></tr>';
