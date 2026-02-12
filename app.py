@@ -1373,7 +1373,8 @@ def api_ubah_order_status_search():
         orders = find_orders_by_order_number(env, order_number)
         if not orders:
             return jsonify({"status": 404, "message": f"Order Number {order_number} tidak ditemukan"}), 404
-        return jsonify({"status": 200, "data": orders})
+        # Selalu kirim array agar frontend menampilkan semua baris (bisa > 1 untuk 1 order number)
+        return jsonify({"status": 200, "data": list(orders), "count": len(orders)})
     except Exception as e:
         return jsonify({"status": 500, "message": f"Error: {str(e)}"}), 500
 

@@ -80,6 +80,7 @@
       <div class="card mb-3">
         <div class="card-header">
           <h5 class="mb-0">Data Order</h5>
+          <small class="text-muted d-block mt-1" id="dataOrderHint">Double-click salah satu baris untuk mengisi form Ubah Data Order di bawah</small>
         </div>
         <div class="card-body table-container">
           <div id="loadingOrderTable" class="loading-overlay d-none">
@@ -108,7 +109,7 @@
       <div class="card mb-3" id="statusUpdateCard" style="display: none;">
         <div class="card-header">
           <h5 class="mb-0">Ubah Data Order</h5>
-          <small class="text-white-50 d-block mt-1">Pilih satu baris di tabel di atas untuk mengubah data order tersebut</small>
+          <small class="text-white-50 d-block mt-1">Double-click satu baris di tabel Data Order di atas, lalu isi perubahan di bawah ini</small>
         </div>
         <div class="card-body">
           <form id="frmUpdateStatus" class="row g-3">
@@ -379,9 +380,11 @@
               renderTableHeaders(orderTableHeader, first);
               renderTableRows(orderTableBody, dataList, headers);
               
-              // Store list for row selection
               currentOrderData = null;
               window._orderList = dataList;
+              
+              const hintEl = document.getElementById('dataOrderHint');
+              if (hintEl) hintEl.textContent = 'Menampilkan ' + dataList.length + ' data. Double-click salah satu baris untuk mengisi form Ubah Data Order di bawah.';
               
               statusUpdateCard.style.display = 'block';
               updateFormPlaceholders(null);
@@ -389,7 +392,7 @@
               inputOrderIntegrationId.value = '';
               inputDeliveryDate.value = '';
               document.querySelectorAll('#tblOrder tbody tr.selected').forEach(r => r.classList.remove('selected'));
-              // Jika hanya 1 baris, auto-select
+              // Jika hanya 1 baris, auto-select dan isi form
               if (dataList.length === 1) {
                 const firstRow = orderTableBody.querySelector('tr.selectable');
                 if (firstRow) {
@@ -493,8 +496,8 @@
         }
       }
 
-      // Row click: pilih order untuk diedit
-      orderTableBody.addEventListener('click', (e) => {
+      // Double-click baris: pilih order dan isi form Ubah Data Order
+      orderTableBody.addEventListener('dblclick', (e) => {
         const tr = e.target.closest('tr.selectable');
         if (!tr || !window._orderList) return;
         const index = parseInt(tr.dataset.index, 10);
