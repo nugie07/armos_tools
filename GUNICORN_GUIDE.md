@@ -118,6 +118,44 @@ tail -f gunicorn.log
 
 **Catatan**: Reload hanya bekerja jika gunicorn masih running. Jika sudah mati, gunakan start ulang.
 
+## Deploy (Pull + Reload)
+
+Script `deploy.sh` menjalankan **git pull origin main** lalu **kill -HUP** ke gunicorn (graceful reload). Progress deploy ditampilkan di layar.
+
+```bash
+# Beri permission sekali saja
+chmod +x deploy.sh
+
+# Jalankan deploy
+./deploy.sh
+```
+
+Output contoh:
+```
+==========================================
+  DEPLOY - 2025-02-15 10:30:00
+==========================================
+
+[1/2] Git pull origin main...
+------------------------------------------
+From https://github.com/...
+Already up to date.
+------------------------------------------
+[1/2] Git pull selesai.
+
+[2/2] Reload Gunicorn (kill -HUP)...
+------------------------------------------
+Signal HUP terkirim ke PID: 12345
+[2/2] Gunicorn reload selesai.
+------------------------------------------
+
+==========================================
+  DEPLOY SELESAI - 2025-02-15 10:30:05
+==========================================
+```
+
+Jika `gunicorn.pid` tidak ada atau proses sudah tidak berjalan, reload akan dilewati; jalankan `./start_gunicorn.sh` untuk start server.
+
 ## Troubleshooting
 
 ### Error: "No such process"
