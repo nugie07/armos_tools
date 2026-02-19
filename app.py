@@ -1137,48 +1137,24 @@ def menu_check_order_status():
 
 
 def find_orders_by_faktur_id(faktur_id: str) -> List[Dict[str, Any]]:
-    """Cari semua order berdasarkan faktur_id dengan urutan kolom yang spesifik."""
+    """Cari semua order berdasarkan faktur_id; created_by/updated_by dari keycloak_user (username)."""
     sql = '''SELECT 
-        order_id,
-        faktur_id,
-        faktur_date,
-        delivery_date,
-        do_number,
-        status,
-        skip_count,
-        created_date,
-        created_by,
-        updated_date,
-        updated_by,
-        notes,
-        customer_id,
-        warehouse_id,
-        delivery_type_id,
-        order_integration_id,
-        origin_name,
-        origin_address_1,
-        origin_address_2,
-        origin_city,
-        origin_zipcode,
-        origin_phone,
-        origin_email,
-        destination_name,
-        destination_address_1,
-        destination_address_2,
-        destination_city,
-        destination_zip_code,
-        destination_phone,
-        destination_email,
-        client_id,
-        cancel_reason,
-        rdo_integration_id,
-        address_change,
-        divisi,
-        pre_status,
-        atena_sorting_code
-    FROM "order" 
-    WHERE faktur_id = %s 
-    ORDER BY order_id DESC'''
+        o.order_id, o.faktur_id, o.faktur_date, o.delivery_date, o.do_number, o.status,
+        o.skip_count, o.created_date,
+        u1.username AS created_by,
+        o.updated_date,
+        u2.username AS updated_by,
+        o.notes, o.customer_id, o.warehouse_id, o.delivery_type_id, o.order_integration_id,
+        o.origin_name, o.origin_address_1, o.origin_address_2, o.origin_city, o.origin_zipcode,
+        o.origin_phone, o.origin_email, o.destination_name, o.destination_address_1,
+        o.destination_address_2, o.destination_city, o.destination_zip_code,
+        o.destination_phone, o.destination_email, o.client_id, o.cancel_reason,
+        o.rdo_integration_id, o.address_change, o.divisi, o.pre_status, o.atena_sorting_code
+    FROM "order" o
+    LEFT JOIN keycloak_user u1 ON u1.user_id = o.created_by
+    LEFT JOIN keycloak_user u2 ON u2.user_id = o.updated_by
+    WHERE o.faktur_id = %s
+    ORDER BY o.order_id DESC'''
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, (faktur_id,))

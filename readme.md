@@ -2,6 +2,8 @@
 
 Dokumentasi singkat untuk utilitas yang ada di repo ini: web app Flask, skrip integrasi WMS, dan skrip konversi.
 
+**Setup di server baru / pindah server:** lihat **[SETUP_SERVER.md](SETUP_SERVER.md)** dan jalankan **`./setup_server.sh`** setelah clone repo.
+
 ## Persiapan Lingkungan
 
 Buat file `.env` di root project berisi variabel berikut sesuai lingkungan Anda:

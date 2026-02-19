@@ -185,6 +185,17 @@
 
       let currentOrderId = null;
 
+      // Urutan kolom untuk LIST Order (sesuai query: created_by/updated_by = username dari keycloak_user)
+      const ORDER_LIST_COLUMNS = [
+        'order_id', 'faktur_id', 'faktur_date', 'delivery_date', 'do_number', 'status', 'skip_count',
+        'created_date', 'created_by', 'updated_date', 'updated_by', 'notes', 'customer_id', 'warehouse_id',
+        'delivery_type_id', 'order_integration_id', 'origin_name', 'origin_address_1', 'origin_address_2',
+        'origin_city', 'origin_zipcode', 'origin_phone', 'origin_email', 'destination_name',
+        'destination_address_1', 'destination_address_2', 'destination_city', 'destination_zip_code',
+        'destination_phone', 'destination_email', 'client_id', 'cancel_reason', 'rdo_integration_id',
+        'address_change', 'divisi', 'pre_status', 'atena_sorting_code'
+      ];
+
       // Function to show error
       function showError(message) {
         errorMessage.textContent = message;
@@ -258,9 +269,10 @@
             const data = json.data || [];
             
             if (data.length > 0) {
-              // Render order table
-              const headers = Object.keys(data[0]);
-              renderTableHeaders(orderTableHeader, data);
+              // Render order table (urutan kolom tetap, created_by/updated_by = username)
+              const first = data[0];
+              const headers = ORDER_LIST_COLUMNS.filter(h => first.hasOwnProperty(h));
+              renderTableHeaders(orderTableHeader, data, headers);
               renderTableRows(orderTableBody, data, headers);
               
               // Add double click event to order rows
