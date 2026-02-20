@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session, send_file, make_response
 import json
 from pathlib import Path
+import ijson
 import requests
 import math
 import random
@@ -465,7 +466,10 @@ def api_log_search():
     if not q_event:
         return jsonify({"status": 400, "message": "event keyword required"}), 400
 
-    data = _load_log_file(file_name)
+    d = data_log_dir()
+    p = d / file_name
+    if not p.exists() or not p.is_file():
+        return jsonify({"status": 200, "data": [], "page": page, "per_page": per_page, "pages": 0, "has_more": False})
 
     def _match(val: str, needle: str) -> bool:
         if not needle:
@@ -475,34 +479,20 @@ def api_log_search():
         return needle.lower() in str(val).lower()
 
     def _match_request_field(request_data: str, search_field: str, search_value: str) -> bool:
-        """
-        Cari field spesifik di request JSON.
-        Jika search_field diberikan, parse request JSON dan cari field tersebut.
-        Mendukung nested path seperti "header.route_id" atau "route_id".
-        Jika tidak, gunakan substring search seperti sebelumnya.
-        """
         if not search_field or not search_value:
-            # Jika tidak ada search_field, gunakan substring search
             return _match(request_data, search_value)
-        
         if not request_data:
             return False
-        
         try:
-            # Parse request JSON
             if isinstance(request_data, str):
                 request_obj = json.loads(request_data)
             else:
                 request_obj = request_data
-            
             if not isinstance(request_obj, dict):
                 return False
-            
-            # Support nested path seperti "header.route_id"
             field_value = None
-            if '.' in search_field:
-                # Nested path: "header.route_id"
-                parts = search_field.split('.')
+            if "." in search_field:
+                parts = search_field.split(".")
                 current = request_obj
                 for part in parts:
                     if isinstance(current, dict):
@@ -514,56 +504,55 @@ def api_log_search():
                         break
                 field_value = current
             else:
-                # Root level: "route_id"
                 field_value = request_obj.get(search_field)
-            
             if field_value is None:
                 return False
-            
-            # Match case-insensitive
             return search_value.lower() in str(field_value).lower()
         except (json.JSONDecodeError, TypeError, AttributeError):
-            # Jika gagal parse, fallback ke substring search
             return _match(request_data, search_value)
 
-    results = []
-    for row in data:
+    def _row_matches(row: dict) -> bool:
         if not isinstance(row, dict):
-            continue
-        
-        # Match event
-        # Untuk "[ARMOS -> SQL] Picklist Route", gunakan startswith karena di JSON ada "ID" di akhir
-        # Contoh: "[ARMOS -> SQL] Picklist Route ID 33846"
-        event_str = row.get("event", "").strip()
+            return False
+        event_str = (row.get("event") or "").strip()
         if q_event == "[ARMOS -> SQL] Picklist Route":
             event_match = event_str.startswith("[ARMOS -> SQL] Picklist Route")
         else:
-            # Untuk event lain, gunakan exact match
             event_match = event_str == q_event
-        
-        # Match request berdasarkan search_field atau substring
-        # Jika search_field kosong dan q_request kosong (field disabled), match semua
         if not search_field and not q_request:
-            request_match = True  # Field disabled, match semua
+            request_match = True
         else:
             request_match = _match_request_field(row.get("request"), search_field, q_request)
-        
-        if event_match and request_match:
-            results.append(row)
+        return event_match and request_match
 
-    total = len(results)
-    pages = max(1, math.ceil(total / per_page))
-    start = (page - 1) * per_page
-    end = start + per_page
-    paged = results[start:end]
+    # Stream-parse JSON array: no full load, paginate by skipping then taking
+    skip = (page - 1) * per_page
+    need = per_page + 1  # +1 to know has_more
+    paged: List[dict] = []
+    has_more = False
+    try:
+        with p.open("rb") as f:
+            for row in ijson.items(f, "item"):
+                if not _row_matches(row):
+                    continue
+                if skip > 0:
+                    skip -= 1
+                    continue
+                if len(paged) < per_page:
+                    paged.append(row)
+                else:
+                    has_more = True
+                    break
+    except Exception:
+        return jsonify({"status": 500, "message": "Error reading log file"}), 500
 
     return jsonify({
         "status": 200,
         "data": paged,
-        "total": total,
         "page": page,
         "per_page": per_page,
-        "pages": pages
+        "pages": page if not has_more else page + 1,
+        "has_more": has_more,
     })
 
 

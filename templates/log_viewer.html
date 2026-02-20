@@ -70,7 +70,7 @@
       <div class="d-flex align-items-center gap-2 mb-4">
         <button id="prevPage" class="btn btn-outline-secondary btn-sm">Prev</button>
         <span id="pageInfo" class="small text-muted">Page 1/1</span>
-        <button id="nextPage" class="btn btn-outline-secondary btn-sm">Next</button>
+        <button id="nextPage" class="btn btn-outline-secondary btn-sm" disabled>Next</button>
       </div>
 
       <div class="row g-3">
@@ -112,6 +112,7 @@
       let selectedRecordId = null;
       let currentPage = 1;
       let totalPages = 1;
+      let hasMore = false; // Untuk file besar: backend pakai streaming, total tidak dihitung
       let searchField = null; // Field yang akan dicari di request JSON (do_reference, manifest_reference, dll)
 
       // Mapping event ke konfigurasi search field
@@ -258,9 +259,11 @@
           if (json.status === 200) {
             currentData = (json.data || []).map((x, i) => ({...x, _idx: i}));
             totalPages = json.pages || 1;
+            hasMore = !!json.has_more;
             const info = document.getElementById('pageInfo');
-            if(info){ info.textContent = `Page ${json.page || 1}/${totalPages}`; }
+            if(info){ info.textContent = hasMore ? `Page ${json.page || 1} (ada halaman berikut)` : `Page ${json.page || 1}/${totalPages}`; }
             renderRows(currentData);
+            document.getElementById('nextPage').disabled = !hasMore;
             
             // Show popup jika data tidak ditemukan
             if (currentData.length === 0) {
@@ -283,9 +286,9 @@
 
       // Event listeners
       ddlEvent.addEventListener('change', updateRequestField);
-      btnSearch.addEventListener('click', doSearch);
+      btnSearch.addEventListener('click', () => { currentPage = 1; doSearch(); });
       document.getElementById('prevPage').addEventListener('click', () => { if(currentPage > 1){ currentPage--; doSearch(); } });
-      document.getElementById('nextPage').addEventListener('click', () => { if(currentPage < totalPages){ currentPage++; doSearch(); } });
+      document.getElementById('nextPage').addEventListener('click', () => { if(hasMore){ currentPage++; doSearch(); } });
       
       // Initialize
       loadFiles();
