@@ -446,12 +446,16 @@ def _load_log_file(file_name: str):
         return []
 
 
+# Max file size (bytes) to allow full load fallback when streaming fails. ~50MB
+_LOG_VIEWER_FULL_LOAD_MAX_BYTES = 50 * 1024 * 1024
+
+
 @app.get("/api/log/search")
 def api_log_search():
     file_name = request.args.get("file", "").strip()
     q_event = request.args.get("event", "").strip()
     q_request = request.args.get("request", "").strip()
-    search_field = request.args.get("search_field", "").strip()  # Field spesifik yang akan dicari di request JSON
+    search_field = request.args.get("search_field", "").strip()
     try:
         page = max(1, int(request.args.get("page", "1")))
     except Exception:
@@ -525,35 +529,52 @@ def api_log_search():
             request_match = _match_request_field(row.get("request"), search_field, q_request)
         return event_match and request_match
 
-    # Stream-parse JSON array: no full load, paginate by skipping then taking
-    skip = (page - 1) * per_page
-    need = per_page + 1  # +1 to know has_more
-    paged: List[dict] = []
-    has_more = False
-    try:
-        with p.open("rb") as f:
-            for row in ijson.items(f, "item"):
-                if not _row_matches(row):
-                    continue
-                if skip > 0:
-                    skip -= 1
-                    continue
-                if len(paged) < per_page:
-                    paged.append(row)
-                else:
-                    has_more = True
-                    break
-    except Exception:
-        return jsonify({"status": 500, "message": "Error reading log file"}), 500
+    def _run_search():
+        # Prefer streaming (ijson) to avoid loading huge files into memory
+        skip = (page - 1) * per_page
+        paged: List[dict] = []
+        has_more = False
+        try:
+            with p.open("rb") as f:
+                for row in ijson.items(f, "item"):
+                    if not _row_matches(row):
+                        continue
+                    if skip > 0:
+                        skip -= 1
+                        continue
+                    if len(paged) < per_page:
+                        paged.append(row)
+                    else:
+                        has_more = True
+                        break
+            return {"data": paged, "has_more": has_more}
+        except Exception:
+            # Fallback: full load only if file is small enough
+            file_size = p.stat().st_size
+            if file_size > _LOG_VIEWER_FULL_LOAD_MAX_BYTES:
+                raise
+            data = _load_log_file(file_name)
+            results = [row for row in data if isinstance(row, dict) and _row_matches(row)]
+            total = len(results)
+            start = (page - 1) * per_page
+            end = start + per_page
+            paged = results[start:end]
+            has_more = end < total
+            return {"data": paged, "has_more": has_more}
 
-    return jsonify({
-        "status": 200,
-        "data": paged,
-        "page": page,
-        "per_page": per_page,
-        "pages": page if not has_more else page + 1,
-        "has_more": has_more,
-    })
+    try:
+        out = _run_search()
+        return jsonify({
+            "status": 200,
+            "data": out["data"],
+            "page": page,
+            "per_page": per_page,
+            "pages": page if not out["has_more"] else page + 1,
+            "has_more": out["has_more"],
+        })
+    except Exception as e:
+        logging.exception("api_log_search failed: %s", e)
+        return jsonify({"status": 500, "message": "Error reading log file. Cek gunicorn.log."}), 500
 
 
 # ---------- Menu 4: PRODUCT to ROUTE ----------
