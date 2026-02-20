@@ -150,7 +150,7 @@ pip install -r requirements.txt
 
 ## Ekspor Log API ke JSON
 
-- `log_konversi.py`: ekspor log HARI INI ke `data_log/DDMMYYYY_log.json` (overwrite jika ada)
+- `log_konversi.py`: ekspor log HARI INI ke `data_log/DDMMYYYY_log.db` (SQLite, overwrite jika ada)
 - `konversi_30hari.py`: buat file per hari untuk 30 hari terakhir
 
 Contoh jalan:

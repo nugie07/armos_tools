@@ -1,14 +1,15 @@
 """
 log_konversi.py
 
-Export rows from table sys_api_request_log for TODAY into JSON file under data_log/.
-- File name format: DDMMYYYY_log.json (e.g., 29092025_log.json)
+Export rows from table sys_api_request_log for TODAY into SQLite file under data_log/.
+- File name format: DDMMYYYY_log.db (e.g., 20022026_log.db)
+- Table: log (api_request_log_id, event, request, response, created_date) with indexes
 - Overwrites if exists
 - Intended to be scheduled every 30 minutes (cron or scheduler)
 """
 
-import json
 import os
+import sqlite3
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
@@ -104,46 +105,67 @@ def fetch_logs(start: datetime, end: datetime) -> List[Dict[str, Any]]:
             return result
 
 
-def write_json_today() -> str:
-    start, end, file_part = daterange_today()
-    data = fetch_logs(start, end)
+def write_logs_to_sqlite(data: List[Dict[str, Any]], file_part: str) -> str:
+    """Write log rows to SQLite file data_log/{file_part}_log.db with indexes."""
     data_dir = ensure_data_dir()
-    out_path = os.path.join(data_dir, f"{file_part}_log.json")
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    out_path = os.path.join(data_dir, f"{file_part}_log.db")
+    conn = sqlite3.connect(out_path)
+    try:
+        conn.execute("DROP TABLE IF EXISTS log")
+        conn.execute(
+            "CREATE TABLE log ("
+            "api_request_log_id INTEGER, event TEXT, request TEXT, response TEXT, created_date TEXT)"
+        )
+        conn.execute("CREATE INDEX idx_log_event ON log(event)")
+        conn.execute("CREATE INDEX idx_log_created_date ON log(created_date)")
+        for row in data:
+            conn.execute(
+                "INSERT INTO log (api_request_log_id, event, request, response, created_date) VALUES (?, ?, ?, ?, ?)",
+                (
+                    row.get("api_request_log_id"),
+                    row.get("event") if row.get("event") is not None else None,
+                    row.get("request") if row.get("request") is not None else None,
+                    row.get("response") if row.get("response") is not None else None,
+                    row.get("created_date") if row.get("created_date") is not None else None,
+                ),
+            )
+        conn.commit()
+    finally:
+        conn.close()
     return out_path
 
 
-def clean_old_logs(retention_days: int = 7) -> list[str]:
-    """Remove log files older than retention_days based on filename DDMMYYYY_log.json.
+def write_sqlite_today() -> str:
+    start, end, file_part = daterange_today()
+    data = fetch_logs(start, end)
+    return write_logs_to_sqlite(data, file_part)
 
-    Returns list of deleted file paths.
-    """
+
+def clean_old_logs(retention_days: int = 7) -> list[str]:
+    """Remove log DB files older than retention_days based on filename DDMMYYYY_log.db."""
     data_dir = ensure_data_dir()
     deleted: list[str] = []
     cutoff = datetime.now().date() - timedelta(days=retention_days - 1)
     for name in os.listdir(data_dir):
-      if not name.endswith("_log.json") or len(name) < 13:
-          continue
-      date_str = name[:8]
-      try:
-          dt = datetime.strptime(date_str, "%d%m%Y").date()
-      except Exception:
-          # Skip files that don't match expected pattern
-          continue
-      if dt < cutoff:
-          try:
-              os.remove(os.path.join(data_dir, name))
-              deleted.append(name)
-          except Exception:
-              # ignore deletion errors
-              pass
+        if not name.endswith("_log.db") or len(name) < 12:
+            continue
+        date_str = name[:8]
+        try:
+            dt = datetime.strptime(date_str, "%d%m%Y").date()
+        except Exception:
+            continue
+        if dt < cutoff:
+            try:
+                os.remove(os.path.join(data_dir, name))
+                deleted.append(name)
+            except Exception:
+                pass
     return deleted
 
 
 if __name__ == "__main__":
-    out = write_json_today()
-    print(f"Log JSON written: {out}")
+    out = write_sqlite_today()
+    print(f"Log SQLite written: {out}")
     removed = clean_old_logs(retention_days=7)
     if removed:
         print(f"Removed old logs (>7 days): {', '.join(removed)}")

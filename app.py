@@ -5,8 +5,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from flask import Flask, jsonify, redirect, render_template, request, url_for, session, send_file, make_response
 import json
+import sqlite3
 from pathlib import Path
-import ijson
 import requests
 import math
 import random
@@ -430,24 +430,8 @@ def menu_log_viewer():
 @app.get("/api/log/files")
 def api_log_files():
     d = data_log_dir()
-    files = sorted([p.name for p in d.glob("*_log.json")])
+    files = sorted([p.name for p in d.glob("*_log.db")])
     return jsonify({"status": 200, "data": files})
-
-
-def _load_log_file(file_name: str):
-    d = data_log_dir()
-    p = d / file_name
-    if not p.exists() or not p.is_file():
-        return []
-    try:
-        with p.open("r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return []
-
-
-# Max file size (bytes) to allow full load fallback when streaming fails. ~50MB
-_LOG_VIEWER_FULL_LOAD_MAX_BYTES = 50 * 1024 * 1024
 
 
 @app.get("/api/log/search")
@@ -469,108 +453,68 @@ def api_log_search():
         return jsonify({"status": 400, "message": "file required"}), 400
     if not q_event:
         return jsonify({"status": 400, "message": "event keyword required"}), 400
+    if not file_name.endswith("_log.db"):
+        return jsonify({"status": 400, "message": "invalid file (must be *_log.db)"}), 400
 
     d = data_log_dir()
     p = d / file_name
     if not p.exists() or not p.is_file():
         return jsonify({"status": 200, "data": [], "page": page, "per_page": per_page, "pages": 0, "has_more": False})
+    try:
+        p_resolved = p.resolve()
+        d_resolved = d.resolve()
+        if not str(p_resolved).startswith(str(d_resolved)):
+            return jsonify({"status": 400, "message": "invalid path"}), 400
+    except Exception:
+        return jsonify({"status": 400, "message": "invalid path"}), 400
 
-    def _match(val: str, needle: str) -> bool:
-        if not needle:
-            return True
-        if val is None:
-            return False
-        return needle.lower() in str(val).lower()
+    # Build WHERE: event (exact or startswith for Picklist Route) + request (json_extract or LIKE)
+    event_condition = "event LIKE ?" if q_event == "[ARMOS -> SQL] Picklist Route" else "event = ?"
+    event_param = "[ARMOS -> SQL] Picklist Route%" if q_event == "[ARMOS -> SQL] Picklist Route" else q_event
 
-    def _match_request_field(request_data: str, search_field: str, search_value: str) -> bool:
-        if not search_field or not search_value:
-            return _match(request_data, search_value)
-        if not request_data:
-            return False
-        try:
-            if isinstance(request_data, str):
-                request_obj = json.loads(request_data)
-            else:
-                request_obj = request_data
-            if not isinstance(request_obj, dict):
-                return False
-            field_value = None
-            if "." in search_field:
-                parts = search_field.split(".")
-                current = request_obj
-                for part in parts:
-                    if isinstance(current, dict):
-                        current = current.get(part)
-                        if current is None:
-                            break
-                    else:
-                        current = None
-                        break
-                field_value = current
-            else:
-                field_value = request_obj.get(search_field)
-            if field_value is None:
-                return False
-            return search_value.lower() in str(field_value).lower()
-        except (json.JSONDecodeError, TypeError, AttributeError):
-            return _match(request_data, search_value)
+    if not search_field or not q_request:
+        request_condition = "1=1"
+        request_params: List[Any] = []
+    else:
+        # JSON path: "header.route_id" -> $.header.route_id
+        json_path = "$." + search_field
+        request_condition = "LOWER(CAST(json_extract(request, ?) AS TEXT)) LIKE LOWER('%' || ? || '%')"
+        request_params = [json_path, q_request]
 
-    def _row_matches(row: dict) -> bool:
-        if not isinstance(row, dict):
-            return False
-        event_str = (row.get("event") or "").strip()
-        if q_event == "[ARMOS -> SQL] Picklist Route":
-            event_match = event_str.startswith("[ARMOS -> SQL] Picklist Route")
-        else:
-            event_match = event_str == q_event
-        if not search_field and not q_request:
-            request_match = True
-        else:
-            request_match = _match_request_field(row.get("request"), search_field, q_request)
-        return event_match and request_match
-
-    def _run_search():
-        # Prefer streaming (ijson) to avoid loading huge files into memory
-        skip = (page - 1) * per_page
-        paged: List[dict] = []
-        has_more = False
-        try:
-            with p.open("rb") as f:
-                for row in ijson.items(f, "item"):
-                    if not _row_matches(row):
-                        continue
-                    if skip > 0:
-                        skip -= 1
-                        continue
-                    if len(paged) < per_page:
-                        paged.append(row)
-                    else:
-                        has_more = True
-                        break
-            return {"data": paged, "has_more": has_more}
-        except Exception:
-            # Fallback: full load only if file is small enough
-            file_size = p.stat().st_size
-            if file_size > _LOG_VIEWER_FULL_LOAD_MAX_BYTES:
-                raise
-            data = _load_log_file(file_name)
-            results = [row for row in data if isinstance(row, dict) and _row_matches(row)]
-            total = len(results)
-            start = (page - 1) * per_page
-            end = start + per_page
-            paged = results[start:end]
-            has_more = end < total
-            return {"data": paged, "has_more": has_more}
+    where_clause = " AND ".join([event_condition, request_condition])
+    params_count = [event_param] + request_params
+    params_select = [event_param] + request_params + [per_page, (page - 1) * per_page]
 
     try:
-        out = _run_search()
+        conn = sqlite3.connect(str(p))
+        conn.row_factory = sqlite3.Row
+        try:
+            cur = conn.execute(
+                f"SELECT COUNT(*) FROM log WHERE {where_clause}",
+                params_count,
+            )
+            total = cur.fetchone()[0]
+            cur = conn.execute(
+                f"SELECT api_request_log_id, event, request, response, created_date "
+                f"FROM log WHERE {where_clause} ORDER BY created_date LIMIT ? OFFSET ?",
+                params_select,
+            )
+            rows = cur.fetchall()
+            cols = [c[0] for c in cur.description]
+            data = [dict(zip(cols, r)) for r in rows]
+        finally:
+            conn.close()
+
+        pages = max(1, (total + per_page - 1) // per_page) if total else 1
+        has_more = page * per_page < total
+
         return jsonify({
             "status": 200,
-            "data": out["data"],
+            "data": data,
             "page": page,
             "per_page": per_page,
-            "pages": page if not out["has_more"] else page + 1,
-            "has_more": out["has_more"],
+            "pages": pages,
+            "has_more": has_more,
         })
     except Exception as e:
         logging.exception("api_log_search failed: %s", e)
