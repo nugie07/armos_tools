@@ -474,6 +474,22 @@ def api_log_search():
         if q_event == "[ARMOS -> SQL] Picklist Route":
             event_condition = "event LIKE ?"
             event_params = ["[ARMOS -> SQL] Picklist Route%"]
+        elif q_event == "[ARMOS -> WMS] Synchronizing Order Manifest":
+            # Event di log: "[ARMOS -> WMS] Synchronizing Order ID 478733 for Manifest"
+            event_condition = "event LIKE ?"
+            event_params = ["[ARMOS -> WMS] Synchronizing Order%Manifest%"]
+        elif q_event == "[ARMOS -> WMS] Synchronizing Route Manifest Generation":
+            # Event di log: "[ARMOS -> WMS] Synchronizing Route ID 47940 for Manifest Generation"
+            event_condition = "event LIKE ?"
+            event_params = ["[ARMOS -> WMS] Synchronizing Route%Manifest Generation%"]
+        elif q_event == "[ARMOS -> SQL] Patch Order Status":
+            # Event di log: "[ARMOS -> SQL] Patch Order Status to whs for Order ID 470184"
+            event_condition = "event LIKE ?"
+            event_params = ["[ARMOS -> SQL] Patch Order Status%"]
+        elif q_event == "[ARMOS -> ATENA] Patch Order Status":
+            # Event di log: "[ARMOS -> ATENA] Patch Order Status to whs for Order ID 470184"
+            event_condition = "event LIKE ?"
+            event_params = ["[ARMOS -> ATENA] Patch Order Status%"]
         else:
             event_condition = "event = ?"
             event_params = [q_event]
@@ -487,31 +503,32 @@ def api_log_search():
         request_params = [json_path, q_request]
 
     where_clause = " AND ".join([event_condition, request_condition])
-    params_count = event_params + request_params
-    params_select = event_params + request_params + [per_page, (page - 1) * per_page]
+    # Pagination tanpa COUNT: ambil per_page+1, terbaru di atas (ORDER BY created_date DESC)
+    limit_fetch = per_page + 1
+    offset = (page - 1) * per_page
+    params_select = event_params + request_params + [limit_fetch, offset]
 
     try:
         conn = sqlite3.connect(str(p))
         conn.row_factory = sqlite3.Row
         try:
             cur = conn.execute(
-                f"SELECT COUNT(*) FROM log WHERE {where_clause}",
-                params_count,
-            )
-            total = cur.fetchone()[0]
-            cur = conn.execute(
                 f"SELECT api_request_log_id, event, request, response, created_date "
-                f"FROM log WHERE {where_clause} ORDER BY created_date LIMIT ? OFFSET ?",
+                f"FROM log WHERE {where_clause} ORDER BY created_date DESC LIMIT ? OFFSET ?",
                 params_select,
             )
             rows = cur.fetchall()
+            if len(rows) > per_page:
+                rows = rows[:per_page]
+                has_more = True
+            else:
+                has_more = False
             cols = [c[0] for c in cur.description]
             data = [dict(zip(cols, r)) for r in rows]
         finally:
             conn.close()
 
-        pages = max(1, (total + per_page - 1) // per_page) if total else 1
-        has_more = page * per_page < total
+        pages = page if not has_more else page + 1
 
         return jsonify({
             "status": 200,

@@ -181,7 +181,7 @@
         
         if (config) {
           searchRequest.disabled = config.disabled;
-          lblRequest.textContent = config.label;
+          lblRequest.textContent = config.disabled ? config.label : config.label + ' (opsional)';
           searchRequest.placeholder = config.placeholder;
           searchField = config.searchField || null;
           
@@ -190,7 +190,7 @@
           }
         } else {
           searchRequest.disabled = false;
-          lblRequest.textContent = 'Cari Request';
+          lblRequest.textContent = 'Cari Request (opsional)';
           searchRequest.placeholder = 'Masukan Request';
           searchField = null;
         }
