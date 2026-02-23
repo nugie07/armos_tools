@@ -22,13 +22,13 @@
 
       <div class="row g-3 mb-3">
         <div class="col-md-4">
-          <label class="form-label">Pilih File JSON</label>
+          <label class="form-label">Pilih File Log</label>
           <select id="ddlFile" class="form-select"></select>
         </div>
         <div class="col-md-4">
-          <label class="form-label">Cari Event</label>
+          <label class="form-label">Cari Event <span class="text-muted">(opsional)</span></label>
           <select id="ddlEvent" class="form-select">
-            <option value="">-- Pilih Event --</option>
+            <option value="">-- Semua Event --</option>
             <option value="[ARMOS -> WMS] Syncing Inventory">[ARMOS -> WMS] Syncing Inventory</option>
             <option value="[ARMOS -> WMS] Synchronizing Order Manifest">[ARMOS -> WMS] Synchronizing Order Manifest</option>
             <option value="[ARMOS -> WMS] Synchronizing Route Manifest Generation">[ARMOS -> WMS] Synchronizing Route Manifest Generation</option>
@@ -41,7 +41,7 @@
           </select>
         </div>
         <div class="col-md-4">
-          <label class="form-label" id="lblRequest">Cari Request</label>
+          <label class="form-label" id="lblRequest">Cari Request <span class="text-muted">(opsional)</span></label>
           <input id="searchRequest" type="text" class="form-control" placeholder="Masukan Request" />
         </div>
       </div>
@@ -207,7 +207,13 @@
       async function loadFiles(){
         const res = await fetch('/api/log/files');
         const json = await res.json();
-        renderFileOptions(json.data || []);
+        const files = json.data || [];
+        renderFileOptions(files);
+        if (files.length > 0) {
+          ddlFile.value = files[0];
+          currentPage = 1;
+          doSearch();
+        }
       }
 
       function fillDetails(r){
@@ -238,7 +244,7 @@
 
       async function doSearch(){
         const file = ddlFile.value;
-        if(!file){ alert('Pilih file JSON terlebih dahulu'); return; }
+        if(!file){ alert('Pilih file log terlebih dahulu'); return; }
         if(!ddlEvent.value){ alert('Pilih Event terlebih dahulu'); return; }
         
         const qEvent = ddlEvent.value.trim();
@@ -261,15 +267,10 @@
             totalPages = json.pages || 1;
             hasMore = !!json.has_more;
             const info = document.getElementById('pageInfo');
-            if(info){ info.textContent = hasMore ? `Page ${json.page || 1} (ada halaman berikut)` : `Page ${json.page || 1}/${totalPages}`; }
+            if(info){ info.textContent = `Page ${json.page || 1}/${totalPages}`; }
             renderRows(currentData);
             document.getElementById('nextPage').disabled = !hasMore;
-            
-            // Show popup jika data tidak ditemukan
-            if (currentData.length === 0) {
-              alert('Data Tidak ada');
-            }
-            
+
             if(prevSelected != null){
               const found = currentData.find(r => String(r.api_request_log_id) === String(prevSelected));
               if(found){ fillDetails(found); }
@@ -286,13 +287,14 @@
 
       // Event listeners
       ddlEvent.addEventListener('change', updateRequestField);
+      ddlFile.addEventListener('change', () => { currentPage = 1; doSearch(); });
       btnSearch.addEventListener('click', () => { currentPage = 1; doSearch(); });
       document.getElementById('prevPage').addEventListener('click', () => { if(currentPage > 1){ currentPage--; doSearch(); } });
       document.getElementById('nextPage').addEventListener('click', () => { if(hasMore){ currentPage++; doSearch(); } });
-      
+
       // Initialize
       loadFiles();
-      updateRequestField(); // Set initial state
+      updateRequestField();
     </script>
   </body>
 </html>

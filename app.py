@@ -445,14 +445,12 @@ def api_log_search():
     except Exception:
         page = 1
     try:
-        per_page = max(1, int(request.args.get("per_page", "10")))
+        per_page = max(1, int(request.args.get("per_page", "15")))
     except Exception:
-        per_page = 10
+        per_page = 15
 
     if not file_name:
         return jsonify({"status": 400, "message": "file required"}), 400
-    if not q_event:
-        return jsonify({"status": 400, "message": "event keyword required"}), 400
     if not file_name.endswith("_log.db"):
         return jsonify({"status": 400, "message": "invalid file (must be *_log.db)"}), 400
 
@@ -468,22 +466,29 @@ def api_log_search():
     except Exception:
         return jsonify({"status": 400, "message": "invalid path"}), 400
 
-    # Build WHERE: event (exact or startswith for Picklist Route) + request (json_extract or LIKE)
-    event_condition = "event LIKE ?" if q_event == "[ARMOS -> SQL] Picklist Route" else "event = ?"
-    event_param = "[ARMOS -> SQL] Picklist Route%" if q_event == "[ARMOS -> SQL] Picklist Route" else q_event
+    # Build WHERE: event optional, request optional
+    if not q_event:
+        event_condition = "1=1"
+        event_params: List[Any] = []
+    else:
+        if q_event == "[ARMOS -> SQL] Picklist Route":
+            event_condition = "event LIKE ?"
+            event_params = ["[ARMOS -> SQL] Picklist Route%"]
+        else:
+            event_condition = "event = ?"
+            event_params = [q_event]
 
     if not search_field or not q_request:
         request_condition = "1=1"
         request_params: List[Any] = []
     else:
-        # JSON path: "header.route_id" -> $.header.route_id
         json_path = "$." + search_field
         request_condition = "LOWER(CAST(json_extract(request, ?) AS TEXT)) LIKE LOWER('%' || ? || '%')"
         request_params = [json_path, q_request]
 
     where_clause = " AND ".join([event_condition, request_condition])
-    params_count = [event_param] + request_params
-    params_select = [event_param] + request_params + [per_page, (page - 1) * per_page]
+    params_count = event_params + request_params
+    params_select = event_params + request_params + [per_page, (page - 1) * per_page]
 
     try:
         conn = sqlite3.connect(str(p))
