@@ -1,17 +1,20 @@
 """
 log_konversi.py
 
-Export rows from table sys_api_request_log for TODAY into SQLite file under data_log/.
-- File name format: DDMMYYYY_log.db (e.g., 20022026_log.db)
-- Table: log (api_request_log_id, event, request, response, created_date) with indexes
+Export rows from table sys_api_request_log for TODAY into SQLite files under data_log/.
+- Struktur: data_log / DDMMYYYY / {slug}.db (satu file per tipe event)
+- Table: log (api_request_log_id, event, request, response, created_date) dengan index
 - Overwrites if exists
 - Intended to be scheduled every 30 minutes (cron or scheduler)
 """
 
 import os
 import sqlite3
+from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
+
+from log_config import LOG_EVENT_SLUGS, event_to_slug
 
 
 def try_load_dotenv() -> None:
@@ -72,6 +75,14 @@ def ensure_data_dir() -> str:
     return data_dir
 
 
+def ensure_data_dir_date(date_folder: str) -> str:
+    """data_log/DDMMYYYY/"""
+    data_dir = ensure_data_dir()
+    path = os.path.join(data_dir, date_folder)
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
 def daterange_today() -> tuple[datetime, datetime, str]:
     now = datetime.now()
     start = datetime(year=now.year, month=now.month, day=now.day)
@@ -105,11 +116,9 @@ def fetch_logs(start: datetime, end: datetime) -> List[Dict[str, Any]]:
             return result
 
 
-def write_logs_to_sqlite(data: List[Dict[str, Any]], file_part: str) -> str:
-    """Write log rows to SQLite file data_log/{file_part}_log.db with indexes."""
-    data_dir = ensure_data_dir()
-    out_path = os.path.join(data_dir, f"{file_part}_log.db")
-    conn = sqlite3.connect(out_path)
+def _write_one_sqlite(data: List[Dict[str, Any]], out_path: str) -> None:
+    """Tulis satu file SQLite (satu event slug) dengan index."""
+    conn = sqlite3.connect(out_path, timeout=30)
     try:
         conn.execute("DROP TABLE IF EXISTS log")
         conn.execute(
@@ -132,31 +141,48 @@ def write_logs_to_sqlite(data: List[Dict[str, Any]], file_part: str) -> str:
         conn.commit()
     finally:
         conn.close()
-    return out_path
 
 
-def write_sqlite_today() -> str:
+def write_logs_to_sqlite_per_event(data: List[Dict[str, Any]], file_part: str) -> List[str]:
+    """Group by event slug, tulis data_log/file_part/{slug}.db untuk setiap slug. Return list path."""
+    grouped: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+    for row in data:
+        slug = event_to_slug(row.get("event"))
+        grouped[slug].append(row)
+    date_dir = ensure_data_dir_date(file_part)
+    written: List[str] = []
+    for slug, rows in grouped.items():
+        out_path = os.path.join(date_dir, f"{slug}.db")
+        _write_one_sqlite(rows, out_path)
+        written.append(out_path)
+    return written
+
+
+def write_sqlite_today() -> List[str]:
+    """Export log hari ini ke data_log/DDMMYYYY/{slug}.db. Return list path yang ditulis."""
     start, end, file_part = daterange_today()
     data = fetch_logs(start, end)
-    return write_logs_to_sqlite(data, file_part)
+    return write_logs_to_sqlite_per_event(data, file_part)
 
 
 def clean_old_logs(retention_days: int = 7) -> list[str]:
-    """Remove log DB files older than retention_days based on filename DDMMYYYY_log.db."""
+    """Hapus folder log data_log/DDMMYYYY/ yang lebih lama dari retention_days."""
     data_dir = ensure_data_dir()
     deleted: list[str] = []
     cutoff = datetime.now().date() - timedelta(days=retention_days - 1)
     for name in os.listdir(data_dir):
-        if not name.endswith("_log.db") or len(name) < 12:
+        path = os.path.join(data_dir, name)
+        if not os.path.isdir(path) or len(name) != 8:
             continue
-        date_str = name[:8]
         try:
-            dt = datetime.strptime(date_str, "%d%m%Y").date()
+            dt = datetime.strptime(name, "%d%m%Y").date()
         except Exception:
             continue
         if dt < cutoff:
             try:
-                os.remove(os.path.join(data_dir, name))
+                for f in os.listdir(path):
+                    os.remove(os.path.join(path, f))
+                os.rmdir(path)
                 deleted.append(name)
             except Exception:
                 pass
@@ -164,10 +190,10 @@ def clean_old_logs(retention_days: int = 7) -> list[str]:
 
 
 if __name__ == "__main__":
-    out = write_sqlite_today()
-    print(f"Log SQLite written: {out}")
+    written = write_sqlite_today()
+    print(f"Log SQLite written: {len(written)} file(s) -> {written}")
     removed = clean_old_logs(retention_days=7)
     if removed:
-        print(f"Removed old logs (>7 days): {', '.join(removed)}")
+        print(f"Removed old log folders (>7 days): {', '.join(removed)}")
 
 

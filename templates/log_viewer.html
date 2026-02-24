@@ -8,9 +8,31 @@
     <style>
       .monospace { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; }
       textarea.monospace { height: 200px; }
+      #loadingOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        pointer-events: auto;
+      }
+      #loadingOverlay.d-none { pointer-events: none; }
+      #loadingOverlay .spinner-border { width: 3rem; height: 3rem; }
     </style>
   </head>
   <body class="p-4">
+    <div id="loadingOverlay" class="d-none">
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+        <p class="mt-2 mb-0 text-muted">Loading...</p>
+      </div>
+    </div>
+
     <div class="container">
       <div class="d-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0">Log Viewer</h4>
@@ -22,36 +44,28 @@
 
       <div class="row g-3 mb-3">
         <div class="col-md-4">
-          <label class="form-label">Pilih File Log</label>
-          <select id="ddlFile" class="form-select"></select>
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Cari Event <span class="text-muted">(opsional)</span></label>
-          <select id="ddlEvent" class="form-select">
-            <option value="">-- Semua Event --</option>
-            <option value="[ARMOS -> WMS] Syncing Inventory">[ARMOS -> WMS] Syncing Inventory</option>
-            <option value="[ARMOS -> WMS] Synchronizing Order Manifest">[ARMOS -> WMS] Synchronizing Order Manifest</option>
-            <option value="[ARMOS -> WMS] Synchronizing Route Manifest Generation">[ARMOS -> WMS] Synchronizing Route Manifest Generation</option>
-            <option value="[ARMOS -> SQL] Patch Order Status">[ARMOS -> SQL] Patch Order Status</option>
-            <option value="[ARMOS -> ATENA] Patch Order Status">[ARMOS -> ATENA] Patch Order Status</option>
-            <option value="[ARMOS -> SQL] Picklist Route">[ARMOS -> SQL] Picklist Route</option>
-            <option value="[FEED ORDER V2 SQL -> TMS]">[FEED ORDER V2 SQL -> TMS]</option>
-            <option value="[FEED ORDER V2 ATENA -> TMS]">[FEED ORDER V2 ATENA -> TMS]</option>
-            <option value="[WMS -> ARMOS] WEBHOOK_GOOD_ISSUE_RESULTS">Webhook Good Issue</option>
+          <label class="form-label">Pilih Folder (Tanggal)</label>
+          <select id="ddlFolder" class="form-select">
+            <option value="">-- Pilih folder tanggal --</option>
           </select>
         </div>
         <div class="col-md-4">
-          <label class="form-label" id="lblRequest">Cari Request <span class="text-muted">(opsional)</span></label>
+          <label class="form-label">Pilih Event</label>
+          <select id="ddlEvent" class="form-select">
+            <option value="">-- Pilih event --</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" id="lblRequest">Cari Request (opsional)</label>
           <input id="searchRequest" type="text" class="form-control" placeholder="Masukan Request" />
         </div>
       </div>
 
       <div class="mb-3 d-flex align-items-center gap-2">
-        <button id="btnSearch" class="btn btn-primary">Search</button>
-        <div id="loading" class="spinner-border text-primary d-none" role="status" style="width: 1.5rem; height: 1.5rem;"><span class="visually-hidden">Loading...</span></div>
+        <button id="btnSearch" class="btn btn-primary" disabled>Search</button>
       </div>
       <div class="mb-3">
-        <small class="text-muted">Double Klik dalam Data dibawah untuk melihat details</small>
+        <small class="text-muted">Pilih folder tanggal dan event, lalu klik Search. Double klik baris untuk melihat detail.</small>
       </div>
 
       <div class="table-responsive mb-4">
@@ -95,12 +109,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      const ddlFile = document.getElementById('ddlFile');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      const ddlFolder = document.getElementById('ddlFolder');
       const ddlEvent = document.getElementById('ddlEvent');
       const searchRequest = document.getElementById('searchRequest');
       const lblRequest = document.getElementById('lblRequest');
       const btnSearch = document.getElementById('btnSearch');
-      const loading = document.getElementById('loading');
       const tblBody = document.querySelector('#tblLogs tbody');
 
       const detailEvent = document.getElementById('detailEvent');
@@ -108,6 +122,7 @@
       const detailRequest = document.getElementById('detailRequest');
       const detailResponse = document.getElementById('detailResponse');
 
+      let eventOptions = []; // { slug, label, request_config }
       let currentData = [];
       let selectedRecordId = null;
       let currentPage = 1;
@@ -116,123 +131,94 @@
       let searchField = null;
 
       const PER_PAGE = 15;
+      const SEARCH_TIMEOUT_MS = 90000;
 
-      // Mapping event ke konfigurasi search field
-      const eventConfig = {
-        '[ARMOS -> WMS] Syncing Inventory': {
-          disabled: true,
-          label: 'Cari Request',
-          placeholder: 'Masukan Request'
-        },
-        '[ARMOS -> WMS] Synchronizing Order Manifest': {
-          disabled: false,
-          label: 'Masukan Do Reference',
-          placeholder: 'contoh do_reference":"B03SI2505-0558"',
-          searchField: 'do_reference'
-        },
-        '[ARMOS -> WMS] Synchronizing Route Manifest Generation': {
-          disabled: false,
-          label: 'Masukan Manifest Reference',
-          placeholder: 'contoh Manifest Reference":"RMSDA0120250508#34"',
-          searchField: 'manifest_reference'
-        },
-        '[ARMOS -> SQL] Patch Order Status': {
-          disabled: false,
-          label: 'Masukan FakturReference',
-          placeholder: 'contoh Faktur Reference":"M30SI2505-0009"',
-          searchField: 'faktur_reference'
-        },
-        '[ARMOS -> ATENA] Patch Order Status': {
-          disabled: false,
-          label: 'Masukan Route Id',
-          placeholder: 'contoh Route Id:"RMSDA0120250919#66"',
-          searchField: 'route_id'
-        },
-        '[ARMOS -> SQL] Picklist Route': {
-          disabled: false,
-          label: 'Masukan Route Id',
-          placeholder: 'contoh Route Id:"RMSDA0120250919#66"',
-          searchField: 'header.route_id'
-        },
-        '[FEED ORDER V2 SQL -> TMS]': {
-          disabled: false,
-          label: 'Masukan outbound reference',
-          placeholder: 'contoh Outbound Reference "C10SI2509-0041"',
-          searchField: 'outbound_reference'
-        },
-        '[FEED ORDER V2 ATENA -> TMS]': {
-          disabled: false,
-          label: 'Masukan outbound reference',
-          placeholder: 'contoh Outbound Reference "C10SI2509-0041"',
-          searchField: 'outbound_reference'
-        },
-        '[WMS -> ARMOS] WEBHOOK_GOOD_ISSUE_RESULTS': {
-          disabled: false,
-          label: 'Masukan manifest reference',
-          placeholder: 'contoh manifest_reference":"RMSDA0120251118#196"',
-          searchField: 'manifest_reference'
-        }
-      };
-
-      // Update UI berdasarkan event yang dipilih
-      function updateRequestField() {
-        const selectedEvent = ddlEvent.value;
-        const config = eventConfig[selectedEvent];
-        
-        if (config) {
-          searchRequest.disabled = config.disabled;
-          lblRequest.textContent = config.disabled ? config.label : config.label + ' (opsional)';
-          searchRequest.placeholder = config.placeholder;
-          searchField = config.searchField || null;
-          
-          if (config.disabled) {
-            searchRequest.value = '';
-          }
+      function setLoading(on) {
+        if (on) {
+          loadingOverlay.classList.remove('d-none');
         } else {
+          loadingOverlay.classList.add('d-none');
+        }
+      }
+
+      function updateRequestField() {
+        const slug = ddlEvent.value;
+        const opt = eventOptions.find(o => o.slug === slug);
+        if (opt && opt.request_config) {
+          const c = opt.request_config;
           searchRequest.disabled = false;
+          lblRequest.textContent = (c.label || 'Cari Request') + ' (opsional)';
+          searchRequest.placeholder = c.placeholder || 'Masukan Request';
+          searchField = c.search_field || null;
+        } else {
+          searchRequest.disabled = true;
+          searchRequest.value = '';
           lblRequest.textContent = 'Cari Request (opsional)';
           searchRequest.placeholder = 'Masukan Request';
           searchField = null;
         }
       }
 
-      function renderFileOptions(files){
-        ddlFile.innerHTML = '';
-        files.forEach(f => {
+      function updateSearchButton() {
+        btnSearch.disabled = !ddlFolder.value || !ddlEvent.value;
+      }
+
+      function renderFolderOptions(folders) {
+        ddlFolder.innerHTML = '<option value="">-- Pilih folder tanggal --</option>';
+        (folders || []).forEach(f => {
           const opt = document.createElement('option');
           opt.value = f;
           opt.textContent = f;
-          ddlFile.appendChild(opt);
+          ddlFolder.appendChild(opt);
         });
       }
 
-      async function loadFiles(){
-        const res = await fetch('/api/log/files');
-        const json = await res.json();
-        const files = json.data || [];
-        renderFileOptions(files);
-        if (files.length > 0) {
-          ddlFile.value = files[0];
-          currentPage = 1;
-          doSearch();
+      function renderEventOptions(events) {
+        eventOptions = events || [];
+        ddlEvent.innerHTML = '<option value="">-- Pilih event --</option>';
+        eventOptions.forEach(ev => {
+          const opt = document.createElement('option');
+          opt.value = ev.slug;
+          opt.textContent = ev.label;
+          ddlEvent.appendChild(opt);
+        });
+      }
+
+      async function loadInitial() {
+        setLoading(true);
+        try {
+          const [foldRes, evRes] = await Promise.all([
+            fetch('/api/log/folders'),
+            fetch('/api/log/events')
+          ]);
+          const foldJson = await foldRes.json();
+          const evJson = await evRes.json();
+          if (foldJson.status === 200) renderFolderOptions(foldJson.data);
+          if (evJson.status === 200) renderEventOptions(evJson.data);
+          updateRequestField();
+          updateSearchButton();
+        } catch (err) {
+          alert('Gagal memuat data: ' + (err.message || 'Unknown error'));
+        } finally {
+          setLoading(false);
         }
       }
 
-      function fillDetails(r){
-        if(!r) return;
+      function fillDetails(r) {
+        if (!r) return;
         detailEvent.value = r.event ?? '';
         detailCreated.value = r.created_date ?? '';
         let reqText = r.request ?? '';
-        try { if (typeof reqText === 'string') { const o = JSON.parse(reqText); reqText = JSON.stringify(o, null, 2); } } catch(e) {}
+        try { if (typeof reqText === 'string') { const o = JSON.parse(reqText); reqText = JSON.stringify(o, null, 2); } } catch (e) {}
         detailRequest.value = reqText;
         let respText = r.response ?? '';
-        try { if (typeof respText === 'string') { const o = JSON.parse(respText); respText = JSON.stringify(o, null, 2); } } catch(e) {}
+        try { if (typeof respText === 'string') { const o = JSON.parse(respText); respText = JSON.stringify(o, null, 2); } } catch (e) {}
         detailResponse.value = respText;
       }
 
-      function renderRows(rows){
+      function renderRows(rows) {
         tblBody.innerHTML = '';
-        rows.forEach(r => {
+        (rows || []).forEach(r => {
           const tr = document.createElement('tr');
           tr.dataset.idx = r._idx;
           tr.innerHTML = `<td>${r.api_request_log_id ?? ''}</td><td>${r.event ?? ''}</td><td>${r.created_date ?? ''}</td>`;
@@ -244,52 +230,60 @@
         });
       }
 
-      async function doSearch(){
-        const file = ddlFile.value;
-        if(!file){ alert('Pilih file log terlebih dahulu'); return; }
+      async function doSearch() {
+        const folder = ddlFolder.value;
+        const eventSlug = ddlEvent.value;
+        if (!folder || !eventSlug) {
+          alert('Pilih folder tanggal dan event terlebih dahulu.');
+          return;
+        }
 
-        const qEvent = (ddlEvent.value || '').trim();
         const qReq = (searchRequest.value || '').trim();
-
         const prevSelected = selectedRecordId;
-        loading.classList.remove('d-none');
+        setLoading(true);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), SEARCH_TIMEOUT_MS);
         try {
-          const res = await fetch(`/api/log/search?file=${encodeURIComponent(file)}&event=${encodeURIComponent(qEvent)}&request=${encodeURIComponent(qReq)}&search_field=${encodeURIComponent(searchField || '')}&page=${currentPage}&per_page=${PER_PAGE}`);
+          const url = `/api/log/search?folder=${encodeURIComponent(folder)}&event=${encodeURIComponent(eventSlug)}&request=${encodeURIComponent(qReq)}&search_field=${encodeURIComponent(searchField || '')}&page=${currentPage}&per_page=${PER_PAGE}`;
+          const res = await fetch(url, { signal: controller.signal });
+          clearTimeout(timeoutId);
           const json = await res.json();
-          
+
           if (json.status === 200) {
-            currentData = (json.data || []).map((x, i) => ({...x, _idx: i}));
+            currentData = (json.data || []).map((x, i) => ({ ...x, _idx: i }));
             totalPages = json.pages || 1;
             hasMore = !!json.has_more;
             const info = document.getElementById('pageInfo');
-            if(info){ info.textContent = `Page ${json.page || 1}/${totalPages}`; }
+            if (info) info.textContent = `Page ${json.page || 1}/${totalPages}`;
             renderRows(currentData);
             document.getElementById('nextPage').disabled = !hasMore;
 
-            if(prevSelected != null){
+            if (prevSelected != null) {
               const found = currentData.find(r => String(r.api_request_log_id) === String(prevSelected));
-              if(found){ fillDetails(found); }
+              if (found) fillDetails(found);
             }
           } else {
             alert(json.message || 'Error saat melakukan pencarian');
           }
         } catch (error) {
-          alert('Error: ' + error.message);
+          clearTimeout(timeoutId);
+          if (error.name === 'AbortError') {
+            alert('Request timeout (90 detik). Coba lagi.');
+          } else {
+            alert('Gagal terhubung: ' + (error.message || 'Failed to fetch'));
+          }
         } finally {
-          loading.classList.add('d-none');
+          setLoading(false);
         }
       }
 
-      // Event listeners
-      ddlEvent.addEventListener('change', updateRequestField);
-      ddlFile.addEventListener('change', () => { currentPage = 1; doSearch(); });
+      ddlEvent.addEventListener('change', () => { updateRequestField(); updateSearchButton(); });
+      ddlFolder.addEventListener('change', updateSearchButton);
       btnSearch.addEventListener('click', () => { currentPage = 1; doSearch(); });
-      document.getElementById('prevPage').addEventListener('click', () => { if(currentPage > 1){ currentPage--; doSearch(); } });
-      document.getElementById('nextPage').addEventListener('click', () => { if(hasMore){ currentPage++; doSearch(); } });
+      document.getElementById('prevPage').addEventListener('click', () => { if (currentPage > 1) { currentPage--; doSearch(); } });
+      document.getElementById('nextPage').addEventListener('click', () => { if (hasMore) { currentPage++; doSearch(); } });
 
-      // Initialize
-      loadFiles();
-      updateRequestField();
+      loadInitial();
     </script>
   </body>
 </html>

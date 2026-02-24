@@ -20,6 +20,7 @@ from datetime import datetime
 from sync.manager import run_sync as sync_run, get_sync_status as sync_get_status, create_sync_log_table, count_sync_status as sync_count_status
 from sync.db import DatabaseManager
 import import_lokasi
+from log_config import LOG_EVENT_SLUGS, LOG_EVENT_REQUEST_CONFIG
 
 
 def try_load_dotenv() -> None:
@@ -427,17 +428,32 @@ def menu_log_viewer():
     return render_template("log_viewer.html")
 
 
-@app.get("/api/log/files")
-def api_log_files():
+@app.get("/api/log/folders")
+def api_log_folders():
+    """Daftar folder tanggal (DDMMYYYY) di data_log, terurut baru dulu."""
     d = data_log_dir()
-    files = sorted([p.name for p in d.glob("*_log.db")])
-    return jsonify({"status": 200, "data": files})
+    folders = sorted([p.name for p in d.iterdir() if p.is_dir() and len(p.name) == 8 and p.name.isdigit()], reverse=True)
+    return jsonify({"status": 200, "data": folders})
+
+
+@app.get("/api/log/events")
+def api_log_events():
+    """Daftar event (slug + label + request_config) untuk dropdown."""
+    events = []
+    for slug, label in LOG_EVENT_SLUGS:
+        cfg = LOG_EVENT_REQUEST_CONFIG.get(slug)
+        events.append({
+            "slug": slug,
+            "label": label,
+            "request_config": None if cfg is None else {"label": cfg["label"], "placeholder": cfg["placeholder"], "search_field": cfg.get("search_field")},
+        })
+    return jsonify({"status": 200, "data": events})
 
 
 @app.get("/api/log/search")
 def api_log_search():
-    file_name = request.args.get("file", "").strip()
-    q_event = request.args.get("event", "").strip()
+    folder = request.args.get("folder", "").strip()
+    event_slug = request.args.get("event", "").strip()
     q_request = request.args.get("request", "").strip()
     search_field = request.args.get("search_field", "").strip()
     try:
@@ -449,13 +465,16 @@ def api_log_search():
     except Exception:
         per_page = 15
 
-    if not file_name:
-        return jsonify({"status": 400, "message": "file required"}), 400
-    if not file_name.endswith("_log.db"):
-        return jsonify({"status": 400, "message": "invalid file (must be *_log.db)"}), 400
+    if not folder or not event_slug:
+        return jsonify({"status": 400, "message": "folder dan event wajib dipilih"}), 400
+    if len(folder) != 8 or not folder.isdigit():
+        return jsonify({"status": 400, "message": "invalid folder (harus DDMMYYYY)"}), 400
+    valid_slugs = {s for s, _ in LOG_EVENT_SLUGS}
+    if event_slug not in valid_slugs:
+        return jsonify({"status": 400, "message": "invalid event"}), 400
 
     d = data_log_dir()
-    p = d / file_name
+    p = d / folder / f"{event_slug}.db"
     if not p.exists() or not p.is_file():
         return jsonify({"status": 200, "data": [], "page": page, "per_page": per_page, "pages": 0, "has_more": False})
     try:
@@ -466,34 +485,7 @@ def api_log_search():
     except Exception:
         return jsonify({"status": 400, "message": "invalid path"}), 400
 
-    # Build WHERE: event optional, request optional
-    if not q_event:
-        event_condition = "1=1"
-        event_params: List[Any] = []
-    else:
-        if q_event == "[ARMOS -> SQL] Picklist Route":
-            event_condition = "event LIKE ?"
-            event_params = ["[ARMOS -> SQL] Picklist Route%"]
-        elif q_event == "[ARMOS -> WMS] Synchronizing Order Manifest":
-            # Event di log: "[ARMOS -> WMS] Synchronizing Order ID 478733 for Manifest"
-            event_condition = "event LIKE ?"
-            event_params = ["[ARMOS -> WMS] Synchronizing Order%Manifest%"]
-        elif q_event == "[ARMOS -> WMS] Synchronizing Route Manifest Generation":
-            # Event di log: "[ARMOS -> WMS] Synchronizing Route ID 47940 for Manifest Generation"
-            event_condition = "event LIKE ?"
-            event_params = ["[ARMOS -> WMS] Synchronizing Route%Manifest Generation%"]
-        elif q_event == "[ARMOS -> SQL] Patch Order Status":
-            # Event di log: "[ARMOS -> SQL] Patch Order Status to whs for Order ID 470184"
-            event_condition = "event LIKE ?"
-            event_params = ["[ARMOS -> SQL] Patch Order Status%"]
-        elif q_event == "[ARMOS -> ATENA] Patch Order Status":
-            # Event di log: "[ARMOS -> ATENA] Patch Order Status to whs for Order ID 470184"
-            event_condition = "event LIKE ?"
-            event_params = ["[ARMOS -> ATENA] Patch Order Status%"]
-        else:
-            event_condition = "event = ?"
-            event_params = [q_event]
-
+    # Satu DB = satu event, jadi tidak filter event. Hanya filter request (opsional).
     if not search_field or not q_request:
         request_condition = "1=1"
         request_params: List[Any] = []
@@ -502,14 +494,13 @@ def api_log_search():
         request_condition = "LOWER(CAST(json_extract(request, ?) AS TEXT)) LIKE LOWER('%' || ? || '%')"
         request_params = [json_path, q_request]
 
-    where_clause = " AND ".join([event_condition, request_condition])
-    # Pagination tanpa COUNT: ambil per_page+1, terbaru di atas (ORDER BY created_date DESC)
+    where_clause = request_condition
     limit_fetch = per_page + 1
     offset = (page - 1) * per_page
-    params_select = event_params + request_params + [limit_fetch, offset]
+    params_select = request_params + [limit_fetch, offset]
 
     try:
-        conn = sqlite3.connect(str(p))
+        conn = sqlite3.connect(str(p), timeout=30)
         conn.row_factory = sqlite3.Row
         try:
             cur = conn.execute(
