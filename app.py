@@ -1578,8 +1578,19 @@ def export_data_master_location(env: str) -> List[Dict[str, Any]]:
 
 
 def export_data_child_location(env: str) -> List[Dict[str, Any]]:
-    """Export data dari mst_location_child"""
-    sql = '''SELECT * FROM mst_location_child ORDER BY mst_location_child_id'''
+    """Export data dari mst_location_child dengan vehicle_type_name"""
+    sql = '''
+        SELECT
+            mlc.*,
+            mvt.name AS vehicle_type_name
+        FROM
+            mst_location_child mlc
+        LEFT JOIN
+            mst_vehicle_type mvt
+        ON
+            mvt.mst_vehicle_type_id::text = mlc.restriction_type_id
+        ORDER BY mlc.mst_location_child_id
+    '''
     with get_db_connection_by_env(env) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
